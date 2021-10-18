@@ -6,11 +6,12 @@ max-level: 3
 enchantment-target: BREAKABLE
 
 actions:
-  - BREAK_BLOCK
+  - BLOCK_DROP_ITEMS
+  - CATCH_FISH
 
 levels:
   1:
     conditions:
-      - is_sneaking(user,false)
+      - chance(50)
     effects:
-      - POTION_EFFECT(USER,BLINDNESS,40,1)
+      - smelt()

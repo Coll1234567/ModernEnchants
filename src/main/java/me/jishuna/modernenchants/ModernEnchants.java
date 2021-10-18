@@ -26,6 +26,7 @@ import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
 import me.jishuna.modernenchants.listeners.BlockListener;
 import me.jishuna.modernenchants.listeners.CombatListener;
+import me.jishuna.modernenchants.listeners.MiscListener;
 import me.jishuna.modernenchants.packets.IncomingItemListener;
 import me.jishuna.modernenchants.packets.OutgoingItemListener;
 
@@ -40,6 +41,8 @@ public class ModernEnchants extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
+		this.loadConfiguration();
+		
 		this.effectRegistry = new EffectRegistry();
 		this.conditionRegistry = new ConditionRegistry();
 		this.enchantmentRegistry = new EnchantmentRegistry(this);
@@ -47,6 +50,7 @@ public class ModernEnchants extends JavaPlugin {
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
+		pm.registerEvents(new MiscListener(), this);
 
 		this.registerPackets();
 

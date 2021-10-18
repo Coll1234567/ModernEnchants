@@ -36,6 +36,10 @@ public class EffectRegistry {
 			}
 		}
 	}
+	
+	public EnchantmentEffect getEffect(String key) {
+		return this.actionMap.get(key);
+	}
 
 	public void registerEffect(String name, EnchantmentEffect action) {
 		this.actionMap.put(name, action);

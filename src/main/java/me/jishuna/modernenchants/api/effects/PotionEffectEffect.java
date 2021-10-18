@@ -17,6 +17,12 @@ public class PotionEffectEffect extends EnchantmentEffect {
 	private static final Set<String> ALL_TYPES = Arrays.stream(PotionEffectType.values()).map(PotionEffectType::getName)
 			.collect(Collectors.toSet());
 
+	private static final String[] DESCRIPTION = new String[] { "test", "test2" };
+
+	public PotionEffectEffect() {
+		super(DESCRIPTION);
+	}
+
 	@Override
 	public Consumer<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
 		checkLength(data, 4);

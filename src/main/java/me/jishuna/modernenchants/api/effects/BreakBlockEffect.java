@@ -10,6 +10,11 @@ import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
 @RegisterEffect(name = "break_relative")
 public class BreakBlockEffect extends EnchantmentEffect {
+	private static final String[] DESCRIPTION = new String[] { "test", "test2" };
+
+	public BreakBlockEffect() {
+		super(DESCRIPTION);
+	}
 
 	@Override
 	public Consumer<EnchantmentContext> parseString(String[] data) {

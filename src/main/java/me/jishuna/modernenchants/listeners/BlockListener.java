@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.ActionType;
@@ -30,6 +31,9 @@ public class BlockListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
+		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withTargetBlock(block).withUser(player)
+				.build();
+
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
 
@@ -37,12 +41,34 @@ public class BlockListener implements Listener {
 				continue;
 
 			int level = enchants.getValue();
-			EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withTargetBlock(block)
-					.withUser(player).build();
 
 			ignore = true;
 			enchantment.processActions(level, ActionType.BREAK_BLOCK, context);
 			ignore = false;
+		}
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onDropItems(BlockDropItemEvent event) {
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		ItemStack item = player.getEquipment().getItemInMainHand();
+
+		if (item.getType().isAir())
+			return;
+
+		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withTargetBlock(block).withUser(player)
+				.build();
+
+		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
+			Enchantment enchant = enchants.getKey();
+
+			if (!(enchant instanceof CustomEnchantment enchantment))
+				continue;
+
+			int level = enchants.getValue();
+
+			enchantment.processActions(level, ActionType.BLOCK_DROP_ITEMS, context);
 		}
 	}
 }

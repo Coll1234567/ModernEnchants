@@ -19,7 +19,7 @@ public class ActionsCommand extends SimpleCommandHandler {
 	private final ModernEnchants plugin;
 
 	public ActionsCommand(ModernEnchants plugin) {
-		super("minetweaks.command.actions");
+		super("modernenchants.command.actions");
 		this.plugin = plugin;
 	}
 
