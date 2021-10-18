@@ -1,0 +1,13 @@
+min-level: 1
+max-level: 3
+enchantment-target: BREAKABLE
+
+actions:
+  - BREAK_BLOCK
+
+levels:
+  1:
+    conditions:
+      - is_sneaking(user,false)
+    effects:
+      - POTION_EFFECT(USER,BLINDNESS,40,1)

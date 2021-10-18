@@ -1,0 +1,9 @@
+name: ModernEnchants
+version: @version@
+main: me.jishuna.modernenchants.ModernEnchants
+authors: [Jishuna]
+api-version: 1.17
+
+commands:
+  modernenchants:
+    description: Base plugin command
