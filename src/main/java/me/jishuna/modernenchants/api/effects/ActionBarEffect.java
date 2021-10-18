@@ -4,9 +4,9 @@ import java.util.function.Consumer;
 
 import org.bukkit.entity.Player;
 
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
-import me.jishuna.modernenchants.api.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.annotations.RegisterEffect;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 

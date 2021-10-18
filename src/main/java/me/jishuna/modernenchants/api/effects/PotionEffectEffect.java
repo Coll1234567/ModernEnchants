@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
-import me.jishuna.modernenchants.api.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.annotations.RegisterEffect;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 @RegisterEffect(name = "potion_effect")
 public class PotionEffectEffect extends EnchantmentEffect {

@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants.api.enchantment;
+package me.jishuna.modernenchants.api.enchantments;
 
 import java.util.HashMap;
 import java.util.Map;

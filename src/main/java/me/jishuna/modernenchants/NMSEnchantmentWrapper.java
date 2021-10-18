@@ -1,6 +1,6 @@
 package me.jishuna.modernenchants;
 
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import net.minecraft.network.chat.ChatComponentText;
 import net.minecraft.network.chat.IChatBaseComponent;
 import net.minecraft.world.entity.EnumItemSlot;

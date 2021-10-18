@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants.api.enchantment;
+package me.jishuna.modernenchants.api.enchantments;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -18,9 +18,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {

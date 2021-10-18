@@ -2,8 +2,8 @@ package me.jishuna.modernenchants.api.conditions;
 
 import java.util.function.Predicate;
 
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 public abstract class EnchantmentCondition {
 	public abstract Predicate<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException;

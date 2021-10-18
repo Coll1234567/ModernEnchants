@@ -5,8 +5,8 @@ import java.util.function.Consumer;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import me.jishuna.modernenchants.api.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.annotations.RegisterEffect;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
 @RegisterEffect(name = "break_relative")
 public class BreakBlockEffect extends EnchantmentEffect {

@@ -11,19 +11,19 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
 public class CombatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof LivingEntity damager))
+		if (!(event.getDamager()instanceof LivingEntity damager))
 			return;
-		
-		if (!(event.getEntity() instanceof LivingEntity target))
+
+		if (!(event.getEntity()instanceof LivingEntity target))
 			return;
-		
+
 		boolean isPlayer = (target instanceof Player);
 		ItemStack item = damager.getEquipment().getItemInMainHand();
 
@@ -37,12 +37,14 @@ public class CombatListener implements Listener {
 				continue;
 
 			int level = enchants.getValue();
-			EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withUser(damager).withOpponent(target).build();
+			EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withUser(damager)
+					.withOpponent(target).build();
 
 			if (isPlayer) {
 				enchantment.processActions(level, ActionType.ATTACK_PLAYER, context);
+			} else {
+				enchantment.processActions(level, ActionType.ATTACK_MOB, context);
 			}
-			enchantment.processActions(level, ActionType.ATTACK_MOB, context);
 		}
 	}
 }

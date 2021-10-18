@@ -2,9 +2,9 @@ package me.jishuna.modernenchants.api.effects;
 
 import java.util.function.Consumer;
 
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
-import me.jishuna.modernenchants.api.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.annotations.RegisterEffect;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 @RegisterEffect(name = "burn")
 public class BurnEffect extends EnchantmentEffect {

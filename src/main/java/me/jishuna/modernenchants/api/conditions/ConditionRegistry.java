@@ -6,9 +6,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import me.jishuna.commonlib.utils.ClassUtils;
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
-import me.jishuna.modernenchants.api.RegisterCondition;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.annotations.RegisterCondition;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 public class ConditionRegistry {
 	private static final Class<?> TYPE_CLASS = EnchantmentCondition.class;

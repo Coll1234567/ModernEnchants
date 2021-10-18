@@ -14,7 +14,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 
 public class IncomingItemListener extends PacketAdapter {
 

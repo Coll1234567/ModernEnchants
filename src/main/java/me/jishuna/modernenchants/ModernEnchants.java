@@ -18,11 +18,11 @@ import com.comphenix.protocol.ProtocolManager;
 
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
-import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentRegistry;
+import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
 import me.jishuna.modernenchants.listeners.BlockListener;
 import me.jishuna.modernenchants.listeners.CombatListener;

@@ -11,8 +11,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
 public class BlockListener implements Listener {
 
