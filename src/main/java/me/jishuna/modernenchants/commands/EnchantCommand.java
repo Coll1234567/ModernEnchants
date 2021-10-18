@@ -12,7 +12,7 @@ import org.bukkit.util.StringUtil;
 
 import me.jishuna.commonlib.commands.SimpleCommandHandler;
 import me.jishuna.modernenchants.ModernEnchants;
-import me.jishuna.modernenchants.api.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 
 public class EnchantCommand extends SimpleCommandHandler {
 

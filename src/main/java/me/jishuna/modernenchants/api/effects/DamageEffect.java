@@ -2,9 +2,9 @@ package me.jishuna.modernenchants.api.effects;
 
 import java.util.function.Consumer;
 
-import me.jishuna.modernenchants.api.EnchantmentContext;
 import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.RegisterEffect;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 @RegisterEffect(name = "damage")
 public class DamageEffect extends EnchantmentEffect {

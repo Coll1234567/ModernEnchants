@@ -5,10 +5,10 @@ import java.util.function.Predicate;
 
 import org.bukkit.entity.LivingEntity;
 
-import me.jishuna.modernenchants.api.EnchantmentContext;
 import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.RegisterCondition;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 @RegisterCondition(name = "in_water")
 public class InWaterCondition extends EnchantmentCondition {

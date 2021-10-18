@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants.api;
+package me.jishuna.modernenchants.api.enchantment;
 
 import java.util.Optional;
 

@@ -2,6 +2,7 @@ name: ModernEnchants
 version: @version@
 main: me.jishuna.modernenchants.ModernEnchants
 authors: [Jishuna]
+depend: [ProtocolLib]
 api-version: 1.17
 
 commands:

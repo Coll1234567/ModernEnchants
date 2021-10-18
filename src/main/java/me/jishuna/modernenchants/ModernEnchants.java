@@ -13,14 +13,21 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
-import me.jishuna.modernenchants.api.CustomEnchantment;
-import me.jishuna.modernenchants.api.EnchantmentRegistry;
 import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
+import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
 import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
+import me.jishuna.modernenchants.listeners.BlockListener;
+import me.jishuna.modernenchants.listeners.CombatListener;
+import me.jishuna.modernenchants.packets.IncomingItemListener;
+import me.jishuna.modernenchants.packets.OutgoingItemListener;
 
 public class ModernEnchants extends JavaPlugin {
 	private static final String PATH = "Enchantments";
@@ -41,7 +48,8 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
 
-		this.copyDefaults();
+		this.registerPackets();
+
 		this.loadEnchantments();
 
 		getCommand("modernenchants").setExecutor(new ModernEnchantsCommandHandler(this));
@@ -56,23 +64,24 @@ public class ModernEnchants extends JavaPlugin {
 		}
 
 		File enchantFolder = new File(this.getDataFolder(), PATH);
-		if (!enchantFolder.exists())
+		if (!enchantFolder.exists()) {
 			enchantFolder.mkdirs();
+			this.copyDefaults();
+		}
 
 		for (File file : enchantFolder.listFiles()) {
 			String name = file.getName();
 			if (!name.endsWith(".yml"))
 				continue;
 
-			String enchantName = name.replace(".yml", "").toLowerCase();
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 			try {
 				CustomEnchantment enchantment = new CustomEnchantment(this, this.effectRegistry, this.conditionRegistry,
-						enchantName, config);
+						config);
 				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
 			} catch (InvalidEnchantmentException e) {
 				this.getLogger().warning(
-						"An error occured loading enchantment \"" + enchantName + "\" - " + e.getLocalizedMessage());
+						"An error occured loading enchantment \"" + config.getString("name", "Unknown") + "\" - " + e.getLocalizedMessage());
 			}
 		}
 		Enchantment.stopAcceptingRegistrations();
@@ -97,6 +106,13 @@ public class ModernEnchants extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void registerPackets() {
+		ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+
+		manager.addPacketListener(new OutgoingItemListener(this));
+		manager.addPacketListener(new IncomingItemListener(this));
 	}
 
 	public void loadConfiguration() {

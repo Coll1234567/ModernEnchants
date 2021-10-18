@@ -2,8 +2,8 @@ package me.jishuna.modernenchants.api.effects;
 
 import java.util.function.Consumer;
 
-import me.jishuna.modernenchants.api.EnchantmentContext;
 import me.jishuna.modernenchants.api.InvalidEnchantmentException;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 public abstract class EnchantmentEffect {
 	public abstract Consumer<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException;

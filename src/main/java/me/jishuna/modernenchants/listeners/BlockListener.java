@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants;
+package me.jishuna.modernenchants.listeners;
 
 import java.util.Map.Entry;
 
@@ -11,8 +11,8 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.CustomEnchantment;
-import me.jishuna.modernenchants.api.EnchantmentContext;
+import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 public class BlockListener implements Listener {
 

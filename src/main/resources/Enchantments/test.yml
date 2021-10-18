@@ -1,3 +1,6 @@
+name: 'test'
+display-name: '&6Fancy&aWoo'
+
 min-level: 1
 max-level: 3
 enchantment-target: BREAKABLE

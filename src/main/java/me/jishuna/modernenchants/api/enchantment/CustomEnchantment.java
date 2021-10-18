@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants.api;
+package me.jishuna.modernenchants.api.enchantment;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -17,8 +17,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
+import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.modernenchants.api.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
+import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {
 	private static final Set<String> TARGETS = Arrays.stream(EnchantmentTarget.values())
@@ -26,6 +29,7 @@ public class CustomEnchantment extends Enchantment {
 
 	private final EnchantmentTarget enchantTarget;
 	private final String name;
+	private final String displayName;
 	private final int minLevel;
 	private final int maxLevel;
 
@@ -34,10 +38,11 @@ public class CustomEnchantment extends Enchantment {
 	private final Multimap<Integer, Predicate<EnchantmentContext>> conditions = ArrayListMultimap.create();
 
 	public CustomEnchantment(JavaPlugin plugin, EffectRegistry effectRegistry, ConditionRegistry conditionRegistry,
-			String name, ConfigurationSection section) throws InvalidEnchantmentException {
-		super(new NamespacedKey(plugin, name));
+			ConfigurationSection section) throws InvalidEnchantmentException {
+		super(new NamespacedKey(plugin, section.getString("name")));
 
-		this.name = name;
+		this.name = section.getString("name").toLowerCase();
+		this.displayName = ChatColor.translateAlternateColorCodes('&', section.getString("display-name", name));
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
@@ -110,6 +115,10 @@ public class CustomEnchantment extends Enchantment {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	public String getDisplayName() {
+		return displayName;
 	}
 
 	@Override
