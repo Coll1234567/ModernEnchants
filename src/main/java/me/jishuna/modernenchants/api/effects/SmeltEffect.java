@@ -47,10 +47,8 @@ public class SmeltEffect extends EnchantmentEffect {
 			}
 		}
 
-		if (context.getEvent()instanceof PlayerFishEvent event) {
-			if (event.getCaught() != null && event.getCaught()instanceof Item item) {
-				handleItem(item);
-			}
+		if (context.getEvent()instanceof PlayerFishEvent event && event.getCaught()instanceof Item item) {
+			handleItem(item);
 		}
 	}
 
