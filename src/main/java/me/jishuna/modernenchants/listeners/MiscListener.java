@@ -26,7 +26,8 @@ public class MiscListener implements Listener {
 			return;
 
 		if (event.getState() == State.CAUGHT_FISH) {
-			EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withUser(player).build();
+			EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withItem(item).withUser(player)
+					.build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();

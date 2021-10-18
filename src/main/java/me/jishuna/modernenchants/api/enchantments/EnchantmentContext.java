@@ -5,21 +5,29 @@ import java.util.Optional;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.effects.ActionTarget;
 
 public class EnchantmentContext {
 
 	private final Event event;
+	private final ItemStack item;
 	private final Block targetBlock;
 	private final LivingEntity user;
 	private final LivingEntity opponent;
 
-	public EnchantmentContext(Event event, Block targetBlock, LivingEntity user, LivingEntity opponent) {
+	public EnchantmentContext(Event event, ItemStack item, Block targetBlock, LivingEntity user,
+			LivingEntity opponent) {
 		this.event = event;
+		this.item = item;
 		this.targetBlock = targetBlock;
 		this.user = user;
 		this.opponent = opponent;
+	}
+	
+	public Optional<ItemStack> getItem() {
+		return Optional.ofNullable(item);
 	}
 
 	public Optional<Block> getTargetBlock() {
@@ -46,6 +54,7 @@ public class EnchantmentContext {
 
 	public static class Builder {
 		private final Event event;
+		private ItemStack item;
 		private Block targetBlock;
 		private LivingEntity user;
 		private LivingEntity opponent;
@@ -63,6 +72,11 @@ public class EnchantmentContext {
 			return this;
 		}
 
+		public Builder withItem(ItemStack item) {
+			this.item = item;
+			return this;
+		}
+
 		public Builder withUser(LivingEntity entity) {
 			this.user = entity;
 			return this;
@@ -74,7 +88,7 @@ public class EnchantmentContext {
 		}
 
 		public EnchantmentContext build() {
-			return new EnchantmentContext(event, targetBlock, user, opponent);
+			return new EnchantmentContext(event, item, targetBlock, user, opponent);
 		}
 	}
 }

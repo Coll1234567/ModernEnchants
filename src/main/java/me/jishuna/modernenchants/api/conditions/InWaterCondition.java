@@ -15,7 +15,7 @@ public class InWaterCondition extends EnchantmentCondition {
 
 	@Override
 	public Predicate<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
-		checkLength(data, 1);
+		checkLength(data, 2);
 
 		String targetString = data[0].toUpperCase();
 		if (!ActionTarget.ALL_TARGETS.contains(targetString))

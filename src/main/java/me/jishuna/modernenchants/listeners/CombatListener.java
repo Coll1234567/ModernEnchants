@@ -18,22 +18,22 @@ public class CombatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
-		if (!(event.getDamager() instanceof LivingEntity damager))
+		if (!(event.getDamager()instanceof LivingEntity damager))
 			return;
 
-		if (!(event.getEntity() instanceof LivingEntity target))
+		if (!(event.getEntity()instanceof LivingEntity target))
 			return;
 
-		//boolean damagerIsPlayer = (damager instanceof Player);
+		// boolean damagerIsPlayer = (damager instanceof Player);
 		boolean targetIsPlayer = (target instanceof Player);
 		ItemStack item = damager.getEquipment().getItemInMainHand();
 
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withUser(damager)
+		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withItem(item).withUser(damager)
 				.withOpponent(target).build();
-		
+
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
 
