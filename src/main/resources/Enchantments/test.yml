@@ -12,6 +12,6 @@ actions:
 levels:
   1:
     conditions:
-      - chance(50)
+      - correct_tool(true)
     effects:
       - smelt()

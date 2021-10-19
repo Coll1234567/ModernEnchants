@@ -16,14 +16,14 @@ public class CorrectToolCondition extends EnchantmentCondition {
 	public Predicate<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
 		checkLength(data, 1);
 
-		boolean bool = Boolean.parseBoolean(data[1]);
+		boolean bool = Boolean.parseBoolean(data[0]);
 
 		return context -> {
 			ItemStack item = context.getItem().orElse(null);
 			Block block = context.getTargetBlock().orElse(null);
 
 			if (item == null || block == null)
-				return false;
+				return true;
 
 			return block.isPreferredTool(item) == bool;
 		};
