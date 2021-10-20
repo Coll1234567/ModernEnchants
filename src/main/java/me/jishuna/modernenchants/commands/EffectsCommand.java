@@ -11,7 +11,6 @@ import org.bukkit.util.StringUtil;
 
 import me.jishuna.commonlib.commands.SimpleCommandHandler;
 import me.jishuna.modernenchants.ModernEnchants;
-import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import net.md_5.bungee.api.ChatColor;
 
 public class EffectsCommand extends SimpleCommandHandler {
@@ -39,15 +38,15 @@ public class EffectsCommand extends SimpleCommandHandler {
 		}
 
 		String name = args[0];
-		EnchantmentEffect effect = this.plugin.getEffectRegistry().getEffect(name);
+		String[] desc = this.plugin.getEffectRegistry().getDescription(name);
 
-		if (effect == null) {
+		if (desc == null) {
 			sendUsage(sender, name);
 			return true;
 		}
 
 		sender.sendMessage("");
-		for (String line : effect.getDescription()) {
+		for (String line : desc) {
 			sender.sendMessage(line);
 		}
 		return true;

@@ -7,64 +7,93 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
+import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
 
 public class EnchantmentContext {
 
 	private final Event event;
+	private final ActionType type;
 	private final ItemStack item;
 	private final Block targetBlock;
 	private final LivingEntity user;
 	private final LivingEntity opponent;
 
-	public EnchantmentContext(Event event, ItemStack item, Block targetBlock, LivingEntity user,
+	public EnchantmentContext(Event event, ActionType type, ItemStack item, Block targetBlock, LivingEntity user,
 			LivingEntity opponent) {
 		this.event = event;
+		this.type = type;
 		this.item = item;
 		this.targetBlock = targetBlock;
 		this.user = user;
 		this.opponent = opponent;
 	}
-	
+
+	public ItemStack getItemDirect() {
+		return this.item;
+	}
+
 	public Optional<ItemStack> getItem() {
-		return Optional.ofNullable(item);
+		return Optional.ofNullable(getItemDirect());
+	}
+
+	public Block getTargetBlockDirect() {
+		return this.targetBlock;
 	}
 
 	public Optional<Block> getTargetBlock() {
-		return Optional.ofNullable(targetBlock);
+		return Optional.ofNullable(getTargetBlockDirect());
+	}
+
+	public LivingEntity getUserDirect() {
+		return this.user;
 	}
 
 	public Optional<LivingEntity> getUser() {
-		return Optional.ofNullable(user);
+		return Optional.ofNullable(getUserDirect());
+	}
+
+	public LivingEntity getOpponentDirect() {
+		return this.opponent;
 	}
 
 	public Optional<LivingEntity> getOpponent() {
-		return Optional.ofNullable(opponent);
+		return Optional.ofNullable(getOpponentDirect());
+	}
+
+	public LivingEntity getTargetDirect(ActionTarget target) {
+		if (target == ActionTarget.USER)
+			return getUserDirect();
+		return getOpponentDirect();
 	}
 
 	public Optional<LivingEntity> getTarget(ActionTarget target) {
-		if (target == ActionTarget.USER)
-			return getUser();
-		return getOpponent();
+		return Optional.ofNullable(getTargetDirect(target));
 	}
 
 	public Event getEvent() {
 		return event;
 	}
 
+	public ActionType getType() {
+		return type;
+	}
+
 	public static class Builder {
 		private final Event event;
+		private final ActionType type;
 		private ItemStack item;
 		private Block targetBlock;
 		private LivingEntity user;
 		private LivingEntity opponent;
 
-		private Builder(Event event) {
+		private Builder(Event event, ActionType type) {
 			this.event = event;
+			this.type = type;
 		}
 
-		public static Builder fromEvent(Event event) {
-			return new Builder(event);
+		public static Builder create(Event event, ActionType type) {
+			return new Builder(event, type);
 		}
 
 		public Builder withTargetBlock(Block block) {
@@ -88,7 +117,7 @@ public class EnchantmentContext {
 		}
 
 		public EnchantmentContext build() {
-			return new EnchantmentContext(event, item, targetBlock, user, opponent);
+			return new EnchantmentContext(event, type, item, targetBlock, user, opponent);
 		}
 	}
 }

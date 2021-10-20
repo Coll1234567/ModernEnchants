@@ -6,12 +6,11 @@ max-level: 3
 enchantment-target: BREAKABLE
 
 actions:
-  - BLOCK_DROP_ITEMS
-  - CATCH_FISH
+  - BREAK_BLOCK
 
 levels:
   1:
-    conditions:
-      - correct_tool(true)
     effects:
-      - smelt()
+      - lightning(user)
+      - delay(100)
+      - fake_lightning(user,0,10,0)

@@ -1,6 +1,8 @@
 package me.jishuna.modernenchants.api.effects;
 
-import java.util.function.Consumer;
+import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
+import static me.jishuna.modernenchants.api.ParseUtils.readInt;
+import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
@@ -15,24 +17,26 @@ public class BurnEffect extends EnchantmentEffect {
 			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN + "The entity to ignite, either \"user\" or \"opponent\".",
 			ChatColor.GOLD + "  - Duration: " + ChatColor.GREEN + "The duration of the fire in ticks." };
 
-	public BurnEffect() {
-		super(DESCRIPTION);
+	private final ActionTarget target;
+	private final int duration;
+
+	public BurnEffect(String[] data) throws InvalidEnchantmentException {
+		super(data);
+		checkLength(data, 2);
+
+		this.target = readTarget(data[0]);
+		this.duration = readInt(data[1]);
+
+		if (this.duration <= 0)
+			throw new InvalidEnchantmentException("Duration must be greater than 0");
 	}
 
 	@Override
-	public Consumer<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
-		checkLength(data, 2);
-
-		String targetString = data[0].toUpperCase();
-		if (!ActionTarget.ALL_TARGETS.contains(targetString))
-			throw new InvalidEnchantmentException("Target must be either USER or OPPONENT, found: " + targetString);
-
-		ActionTarget target = ActionTarget.valueOf(targetString);
-
-		int duration = Integer.parseInt(data[1]);
-		if (duration <= 0)
-			throw new InvalidEnchantmentException("Duration must be greater than 0");
-
-		return context -> context.getTarget(target).ifPresent(entity -> entity.setFireTicks(duration));
+	public void handle(EnchantmentContext context) {
+		context.getTarget(target).ifPresent(entity -> entity.setFireTicks(duration));
+	}
+	
+	public static String[] getDescription() {
+		return DESCRIPTION;
 	}
 }

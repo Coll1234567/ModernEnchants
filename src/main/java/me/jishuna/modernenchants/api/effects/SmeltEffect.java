@@ -3,7 +3,6 @@ package me.jishuna.modernenchants.api.effects;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -17,7 +16,6 @@ import org.bukkit.inventory.RecipeChoice.MaterialChoice;
 
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
-import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatColor;
 
 @RegisterEffect(name = "smelt")
@@ -28,16 +26,11 @@ public class SmeltEffect extends EnchantmentEffect {
 
 	private Map<Material, Material> smeltingMap;
 
-	public SmeltEffect() {
-		super(DESCRIPTION);
+	public SmeltEffect(String[] data) {
+		super(data);
 	}
 
-	@Override
-	public Consumer<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
-		return this::handleSmelt;
-	}
-
-	private void handleSmelt(EnchantmentContext context) {
+	public void handle(EnchantmentContext context) {
 		if (this.smeltingMap == null)
 			loadSmeltables();
 
@@ -81,5 +74,9 @@ public class SmeltEffect extends EnchantmentEffect {
 				}
 			}
 		}
+	}
+	
+	public static String[] getDescription() {
+		return DESCRIPTION;
 	}
 }

@@ -1,55 +1,64 @@
 package me.jishuna.modernenchants.api.effects;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import me.jishuna.commonlib.utils.ClassUtils;
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 public class EffectRegistry {
 	private static final Class<?> TYPE_CLASS = EnchantmentEffect.class;
 
-	private final Map<String, EnchantmentEffect> actionMap = new HashMap<>();
+	private final Map<String, Class<? extends EnchantmentEffect>> effectMap = new HashMap<>();
 
 	public EffectRegistry() {
 		reloadEffects();
 	}
 
+	// Pretty sure this is not an unchecked cast
+	@SuppressWarnings("unchecked")
 	public void reloadEffects() {
-		this.actionMap.clear();
+		this.effectMap.clear();
 
 		for (Class<?> clazz : ClassUtils.getAllClassesInPackage("me.jishuna.modernenchants.api.effects",
 				this.getClass().getClassLoader())) {
 			if (!TYPE_CLASS.isAssignableFrom(clazz))
 				continue;
+
 			for (RegisterEffect annotation : clazz.getAnnotationsByType(RegisterEffect.class)) {
-				try {
-					EnchantmentEffect action = (EnchantmentEffect) clazz.getDeclaredConstructor().newInstance();
-					registerEffect(annotation.name(), action);
-				} catch (ReflectiveOperationException e) {
-					e.printStackTrace();
-				}
+				registerEffect(annotation.name(), (Class<? extends EnchantmentEffect>) clazz);
 			}
 		}
 	}
-	
-	public EnchantmentEffect getEffect(String key) {
-		return this.actionMap.get(key);
+
+	public String[] getDescription(String key) {
+		Class<? extends EnchantmentEffect> clazz = this.effectMap.get(key);
+
+		if (clazz == null)
+			return null;
+
+		String[] desc;
+		try {
+			Method method = clazz.getDeclaredMethod("getDescription");
+			desc = (String[]) method.invoke(null);
+		} catch (ReflectiveOperationException | IllegalArgumentException | ClassCastException e) {
+			return null;
+		}
+		return desc;
 	}
 
-	public void registerEffect(String name, EnchantmentEffect action) {
-		this.actionMap.put(name, action);
+	public void registerEffect(String name, Class<? extends EnchantmentEffect> clazz) {
+		this.effectMap.put(name, clazz);
 	}
 
 	public Set<String> getEffects() {
-		return this.actionMap.keySet();
+		return this.effectMap.keySet();
 	}
 
-	public Consumer<EnchantmentContext> parseString(String string) throws InvalidEnchantmentException {
+	public EnchantmentEffect parseString(String string) throws InvalidEnchantmentException {
 		int open = string.indexOf('(');
 		int close = string.lastIndexOf(')');
 
@@ -60,12 +69,19 @@ public class EffectRegistry {
 
 		String data = string.substring(open + 1, close);
 
-		EnchantmentEffect actionType = this.actionMap.get(type);
+		Class<? extends EnchantmentEffect> clazz = this.effectMap.get(type);
 
-		if (actionType == null)
-			return null;
+		if (clazz == null)
+			throw new InvalidEnchantmentException("The action type \"" + type + "\" was not found.");
 
-		return actionType.parseString(data.split(","));
+		EnchantmentEffect effect;
+		try {
+			effect = clazz.getDeclaredConstructor(String[].class).newInstance((Object) data.split(","));
+		} catch (ReflectiveOperationException | IllegalArgumentException e) {
+			throw new InvalidEnchantmentException("Unknown error: " + e.getMessage());
+		}
+
+		return effect;
 	}
 
 }

@@ -31,8 +31,8 @@ public class BlockListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withItem(item).withTargetBlock(block)
-				.withUser(player).build();
+		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.BREAK_BLOCK).withItem(item)
+				.withTargetBlock(block).withUser(player).build();
 
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
@@ -43,7 +43,7 @@ public class BlockListener implements Listener {
 			int level = enchants.getValue();
 
 			ignore = true;
-			enchantment.processActions(level, ActionType.BREAK_BLOCK, context);
+			enchantment.processActions(level, context);
 			ignore = false;
 		}
 	}
@@ -57,8 +57,8 @@ public class BlockListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withItem(item).withTargetBlock(block)
-				.withUser(player).build();
+		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.BLOCK_DROP_ITEMS)
+				.withItem(item).withTargetBlock(block).withUser(player).build();
 
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
@@ -67,8 +67,7 @@ public class BlockListener implements Listener {
 				continue;
 
 			int level = enchants.getValue();
-
-			enchantment.processActions(level, ActionType.BLOCK_DROP_ITEMS, context);
+			enchantment.processActions(level, context);
 		}
 	}
 }

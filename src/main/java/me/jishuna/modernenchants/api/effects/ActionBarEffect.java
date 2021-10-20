@@ -1,6 +1,7 @@
 package me.jishuna.modernenchants.api.effects;
 
-import java.util.function.Consumer;
+import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
+import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.entity.Player;
 
@@ -20,31 +21,27 @@ public class ActionBarEffect extends EnchantmentEffect {
 					+ "The entity to send the message to, either \"user\" or \"opponent\".",
 			ChatColor.GOLD + "  - Msg: " + ChatColor.GREEN + "The message to send, colors are supported." };
 
-	public ActionBarEffect() {
-		super(DESCRIPTION);
+	private final ActionTarget target;
+	private final String message;
+
+	public ActionBarEffect(String[] data) throws InvalidEnchantmentException {
+		super(data);
+		checkLength(data, 2);
+
+		this.target = readTarget(data[0]);
+		this.message = ChatColor.translateAlternateColorCodes('&', data[1]);
 	}
 
 	@Override
-	public Consumer<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
-		checkLength(data, 2);
-
-		String targetString = data[0].toUpperCase();
-		if (!ActionTarget.ALL_TARGETS.contains(targetString))
-			throw new InvalidEnchantmentException("Target must be either USER or OPPONENT, found: " + targetString);
-
-		String msg = ChatColor.translateAlternateColorCodes('&', data[1]);
-
-		return handle(ActionTarget.valueOf(targetString), msg);
+	public void handle(EnchantmentContext context) {
+		context.getTarget(target).ifPresent(entity -> {
+			if (entity instanceof Player player) {
+				player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+			}
+		});
 	}
-
-	public Consumer<EnchantmentContext> handle(ActionTarget target, String msg) {
-		return context -> {
-			context.getTarget(target).ifPresent(entity -> {
-				if (entity instanceof Player player) {
-					player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
-				}
-			});
-		};
+	
+	public static String[] getDescription() {
+		return DESCRIPTION;
 	}
-
 }

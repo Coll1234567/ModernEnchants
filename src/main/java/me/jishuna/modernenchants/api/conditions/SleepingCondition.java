@@ -10,13 +10,13 @@ import me.jishuna.modernenchants.api.effects.ActionTarget;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterCondition(name = "in_water")
-public class InWaterCondition extends EnchantmentCondition {
+@RegisterCondition(name = "sleeping")
+public class SleepingCondition extends EnchantmentCondition {
 
 	private final ActionTarget target;
 	private final boolean bool;
 
-	public InWaterCondition(String[] data) throws InvalidEnchantmentException {
+	public SleepingCondition(String[] data) throws InvalidEnchantmentException {
 		super(data);
 		checkLength(data, 2);
 
@@ -30,6 +30,6 @@ public class InWaterCondition extends EnchantmentCondition {
 
 		if (entity == null)
 			return false;
-		return entity.isInWater() == bool;
+		return entity.isSleeping() == bool;
 	}
 }

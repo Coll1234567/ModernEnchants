@@ -3,22 +3,23 @@ package me.jishuna.modernenchants.api.conditions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import me.jishuna.commonlib.utils.ClassUtils;
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
-import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 public class ConditionRegistry {
 	private static final Class<?> TYPE_CLASS = EnchantmentCondition.class;
 
-	private final Map<String, EnchantmentCondition> actionMap = new HashMap<>();
+	private final Map<String, Class<? extends EnchantmentCondition>> actionMap = new HashMap<>();
 
 	public ConditionRegistry() {
 		reloadConditions();
 	}
 
+	// Pretty sure this is not an unchecked cast
+	@SuppressWarnings("unchecked")
 	public void reloadConditions() {
 		this.actionMap.clear();
 
@@ -26,26 +27,26 @@ public class ConditionRegistry {
 				this.getClass().getClassLoader())) {
 			if (!TYPE_CLASS.isAssignableFrom(clazz))
 				continue;
+
 			for (RegisterCondition annotation : clazz.getAnnotationsByType(RegisterCondition.class)) {
-				try {
-					EnchantmentCondition action = (EnchantmentCondition) clazz.getDeclaredConstructor().newInstance();
-					registerCondition(annotation.name(), action);
-				} catch (ReflectiveOperationException e) {
-					e.printStackTrace();
-				}
+				registerEffect(annotation.name(), (Class<? extends EnchantmentCondition>) clazz);
 			}
 		}
 	}
 
-	public void registerCondition(String name, EnchantmentCondition action) {
-		this.actionMap.put(name, action);
+	public EnchantmentEffect getEffect(String key) {
+		return null;
 	}
 
-	public Set<String> getConditions() {
+	public void registerEffect(String name, Class<? extends EnchantmentCondition> clazz) {
+		this.actionMap.put(name, clazz);
+	}
+
+	public Set<String> getEffects() {
 		return this.actionMap.keySet();
 	}
 
-	public Predicate<EnchantmentContext> parseString(String string) throws InvalidEnchantmentException {
+	public EnchantmentCondition parseString(String string) throws InvalidEnchantmentException {
 		int open = string.indexOf('(');
 		int close = string.lastIndexOf(')');
 
@@ -56,12 +57,18 @@ public class ConditionRegistry {
 
 		String data = string.substring(open + 1, close);
 
-		EnchantmentCondition function = this.actionMap.get(type);
+		Class<? extends EnchantmentCondition> clazz = this.actionMap.get(type);
 
-		if (function == null)
-			return null;
+		if (clazz == null)
+			throw new InvalidEnchantmentException("The condition type \"" + type + "\" was not found.");
 
-		return function.parseString(data.split(","));
+		EnchantmentCondition effect;
+		try {
+			effect = clazz.getDeclaredConstructor(String[].class).newInstance((Object) data.split(","));
+		} catch (ReflectiveOperationException | IllegalArgumentException e) {
+			throw new InvalidEnchantmentException("Unknown error: " + e.getMessage());
+		}
+
+		return effect;
 	}
-
 }

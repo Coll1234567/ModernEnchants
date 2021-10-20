@@ -1,38 +1,35 @@
 package me.jishuna.modernenchants.api.conditions;
 
-import java.util.function.Predicate;
+import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
+import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterCondition(name = "is_gliding")
+@RegisterCondition(name = "gliding")
 public class GlidingCondition extends EnchantmentCondition {
 
-	@Override
-	public Predicate<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
+	private final ActionTarget target;
+	private final boolean bool;
+
+	public GlidingCondition(String[] data) throws InvalidEnchantmentException {
+		super(data);
 		checkLength(data, 2);
 
-		String targetString = data[0].toUpperCase();
-		if (!ActionTarget.ALL_TARGETS.contains(targetString))
-			throw new InvalidEnchantmentException("Target must be either USER or OPPONENT, found: " + targetString);
-
-		ActionTarget target = ActionTarget.valueOf(targetString);
-
-		boolean bool = Boolean.parseBoolean(data[1]);
-
-		return context -> {
-			LivingEntity entity = context.getTarget(target).orElse(null);
-
-			if (entity instanceof Player player) {
-				return player.isGliding() == bool;
-			}
-			return false;
-		};
+		this.target = readTarget(data[0]);
+		this.bool = Boolean.parseBoolean(data[1]);
 	}
 
+	@Override
+	public boolean check(EnchantmentContext context) {
+		LivingEntity entity = context.getTargetDirect(target);
+
+		if (entity == null)
+			return false;
+		return entity.isGliding() == bool;
+	}
 }

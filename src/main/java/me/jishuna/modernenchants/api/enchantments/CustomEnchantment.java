@@ -1,10 +1,10 @@
 package me.jishuna.modernenchants.api.enchantments;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.NamespacedKey;
@@ -13,13 +13,17 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
+import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
+import me.jishuna.modernenchants.api.effects.DelayEffect;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
+import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatColor;
 
@@ -27,19 +31,22 @@ public class CustomEnchantment extends Enchantment {
 	private static final Set<String> TARGETS = Arrays.stream(EnchantmentTarget.values())
 			.map(EnchantmentTarget::toString).collect(Collectors.toSet());
 
+	private final JavaPlugin plugin;
 	private final EnchantmentTarget enchantTarget;
 	private final String name;
 	private final String displayName;
 	private final int minLevel;
 	private final int maxLevel;
+	private boolean hasDelay = false;
 
 	private final Set<ActionType> actions = new HashSet<>();
-	private final Multimap<Integer, Consumer<EnchantmentContext>> effects = ArrayListMultimap.create();
-	private final Multimap<Integer, Predicate<EnchantmentContext>> conditions = ArrayListMultimap.create();
+	private final Multimap<Integer, EnchantmentEffect> effects = ArrayListMultimap.create();
+	private final Multimap<Integer, EnchantmentCondition> conditions = ArrayListMultimap.create();
 
 	public CustomEnchantment(JavaPlugin plugin, EffectRegistry effectRegistry, ConditionRegistry conditionRegistry,
 			ConfigurationSection section) throws InvalidEnchantmentException {
 		super(new NamespacedKey(plugin, section.getString("name")));
+		this.plugin = plugin;
 
 		this.name = section.getString("name").toLowerCase();
 		this.displayName = ChatColor.translateAlternateColorCodes('&', section.getString("display-name", name));
@@ -73,15 +80,19 @@ public class CustomEnchantment extends Enchantment {
 
 			int level = Integer.parseInt(levelString);
 			for (String actionString : levelSection.getStringList("effects")) {
-				Consumer<EnchantmentContext> effect = effectRegistry.parseString(actionString);
+				EnchantmentEffect effect = effectRegistry.parseString(actionString);
 
 				if (effect != null) {
 					effects.put(level, effect);
 				}
+
+				if (effect instanceof DelayEffect delay) {
+					this.hasDelay = true;
+				}
 			}
 
 			for (String conditionString : levelSection.getStringList("conditions")) {
-				Predicate<EnchantmentContext> condition = conditionRegistry.parseString(conditionString);
+				EnchantmentCondition condition = conditionRegistry.parseString(conditionString);
 
 				if (condition != null) {
 					conditions.put(level, condition);
@@ -90,22 +101,59 @@ public class CustomEnchantment extends Enchantment {
 		}
 	}
 
-	public void processActions(int level, ActionType type, EnchantmentContext context) {
-		if (!listensFor(type))
+	public void processActions(int level, EnchantmentContext context) {
+		if (!listensFor(context.getType()))
 			return;
 
-		processActions(level, context);
-	}
-
-	public void processActions(int level, EnchantmentContext context) {
-		for (Predicate<EnchantmentContext> condition : this.conditions.get(level)) {
-			if (!condition.test(context))
+		for (EnchantmentCondition condition : this.conditions.get(level)) {
+			if (!condition.check(context))
 				return;
 		}
 
-		for (Consumer<EnchantmentContext> effect : this.effects.get(level)) {
-			effect.accept(context);
+		if (!hasDelay) {
+			processActionsDirect(level, context);
+		} else {
+			processActionsDelay(level, context);
 		}
+	}
+
+	private void processActionsDirect(int level, EnchantmentContext context) {
+		for (EnchantmentEffect effect : this.effects.get(level)) {
+			effect.handle(context);
+		}
+
+	}
+
+	private void processActionsDelay(int level, EnchantmentContext context) {
+		List<EnchantmentEffect> effectList = new ArrayList<>(this.effects.get(level));
+		final int size = effectList.size();
+
+		new BukkitRunnable() {
+			int index;
+			int delay;
+
+			@Override
+			public void run() {
+				if (delay > 0) {
+					delay--;
+					return;
+				}
+
+				while (index < size) {
+					EnchantmentEffect effect = effectList.get(index);
+					index++;
+
+					if (effect instanceof DelayEffect delayEffect) {
+						delay = delayEffect.getDelay();
+						return;
+					} else {
+						effect.handle(context);
+					}
+				}
+				cancel();
+			}
+		}.runTaskTimer(plugin, 0, 1);
+
 	}
 
 	public boolean listensFor(ActionType type) {

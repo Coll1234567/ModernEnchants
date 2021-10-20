@@ -1,6 +1,7 @@
 package me.jishuna.modernenchants.api.conditions;
 
-import java.util.function.Predicate;
+import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
+import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.entity.LivingEntity;
 
@@ -12,27 +13,26 @@ import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 @RegisterCondition(name = "has_permission")
 public class PermissionCondition extends EnchantmentCondition {
 
+	private final ActionTarget target;
+	private final String perm;
+	private final boolean bool;
+
+	public PermissionCondition(String[] data) throws InvalidEnchantmentException {
+		super(data);
+		checkLength(data, 3);
+
+		this.target = readTarget(data[0]);
+		this.perm = data[1];
+		this.bool = Boolean.parseBoolean(data[2]);
+	}
+
 	@Override
-	public Predicate<EnchantmentContext> parseString(String[] data) throws InvalidEnchantmentException {
-		checkLength(data, 1);
+	public boolean check(EnchantmentContext context) {
+		LivingEntity entity = context.getTargetDirect(target);
 
-		String targetString = data[0].toUpperCase();
-		if (!ActionTarget.ALL_TARGETS.contains(targetString))
-			throw new InvalidEnchantmentException("Target must be either USER or OPPONENT, found: " + targetString);
-
-		ActionTarget target = ActionTarget.valueOf(targetString);
-
-		String perm = data[1];
-
-		boolean bool = Boolean.parseBoolean(data[2]);
-
-		return context -> {
-			LivingEntity entity = context.getTarget(target).orElse(null);
-
-			if (entity == null)
-				return false;
-			return entity.hasPermission(perm) == bool;
-		};
+		if (entity == null)
+			return false;
+		return entity.hasPermission(perm) == bool;
 	}
 
 }

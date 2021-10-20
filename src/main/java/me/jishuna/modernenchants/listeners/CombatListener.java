@@ -24,15 +24,22 @@ public class CombatListener implements Listener {
 		if (!(event.getEntity()instanceof LivingEntity target))
 			return;
 
-		// boolean damagerIsPlayer = (damager instanceof Player);
+		handleAttacker(event, damager, target);
+	}
+
+	private void handleAttacker(EntityDamageByEntityEvent event, LivingEntity damager, LivingEntity target) {
 		boolean targetIsPlayer = (target instanceof Player);
+
 		ItemStack item = damager.getEquipment().getItemInMainHand();
 
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.fromEvent(event).withItem(item).withUser(damager)
-				.withOpponent(target).build();
+		EnchantmentContext playerContext = EnchantmentContext.Builder.create(event, ActionType.ATTACK_PLAYER)
+				.withItem(item).withUser(damager).withOpponent(target).build();
+
+		EnchantmentContext mobContext = EnchantmentContext.Builder.create(event, ActionType.ATTACK_MOB).withItem(item)
+				.withUser(damager).withOpponent(target).build();
 
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
@@ -43,9 +50,9 @@ public class CombatListener implements Listener {
 			int level = enchants.getValue();
 
 			if (targetIsPlayer) {
-				enchantment.processActions(level, ActionType.ATTACK_PLAYER, context);
+				enchantment.processActions(level, playerContext);
 			} else {
-				enchantment.processActions(level, ActionType.ATTACK_MOB, context);
+				enchantment.processActions(level, mobContext);
 			}
 		}
 	}
