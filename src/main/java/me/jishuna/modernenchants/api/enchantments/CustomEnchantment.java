@@ -1,12 +1,14 @@
 package me.jishuna.modernenchants.api.enchantments;
 
+import static me.jishuna.modernenchants.api.ParseUtils.readMaterial;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -28,15 +30,13 @@ import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {
-	private static final Set<String> TARGETS = Arrays.stream(EnchantmentTarget.values())
-			.map(EnchantmentTarget::toString).collect(Collectors.toSet());
-
 	private final JavaPlugin plugin;
-	private final EnchantmentTarget enchantTarget;
 	private final String name;
 	private final String displayName;
 	private final int minLevel;
 	private final int maxLevel;
+	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
+
 	private boolean hasDelay = false;
 
 	private final Set<ActionType> actions = new HashSet<>();
@@ -54,13 +54,6 @@ public class CustomEnchantment extends Enchantment {
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
 
-		String target = section.getString("enchantment-target", "").toUpperCase();
-
-		if (!TARGETS.contains(target))
-			throw new InvalidEnchantmentException("Invalid enchantment target: " + target);
-
-		this.enchantTarget = EnchantmentTarget.valueOf(target);
-
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();
 
@@ -68,6 +61,10 @@ public class CustomEnchantment extends Enchantment {
 				throw new InvalidEnchantmentException("Invalid enchantment action: " + action);
 
 			this.actions.add(ActionType.valueOf(action));
+		}
+
+		for (String item : section.getStringList("valid-items")) {
+			this.validItems.addAll(readMaterial(item.toUpperCase()));
 		}
 
 		ConfigurationSection levels = section.getConfigurationSection("levels");
@@ -181,7 +178,7 @@ public class CustomEnchantment extends Enchantment {
 
 	@Override
 	public EnchantmentTarget getItemTarget() {
-		return this.enchantTarget;
+		return EnchantmentTarget.BREAKABLE;
 	}
 
 	@Override
@@ -203,9 +200,8 @@ public class CustomEnchantment extends Enchantment {
 	}
 
 	@Override
-	public boolean canEnchantItem(ItemStack var1) {
-		// TODO Auto-generated method stub
-		return true;
+	public boolean canEnchantItem(ItemStack item) {
+		return this.validItems.contains(item.getType());
 	}
 
 }

@@ -6,12 +6,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_17_R1.util.CraftNamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 
 import me.jishuna.modernenchants.ModernEnchants;
-import me.jishuna.modernenchants.NMSEnchantmentWrapper;
-import net.minecraft.core.IRegistry;
 
 public class EnchantmentRegistry {
 
@@ -25,8 +22,6 @@ public class EnchantmentRegistry {
 	public void registerAndInjectEnchantment(CustomEnchantment enchantment) {
 		Enchantment.registerEnchantment(enchantment);
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
-		IRegistry.a(IRegistry.X, CraftNamespacedKey.toMinecraft(enchantment.getKey()),
-				new NMSEnchantmentWrapper(enchantment));
 	}
 
 	public CustomEnchantment getEnchantment(String name) {

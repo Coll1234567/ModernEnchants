@@ -1,7 +1,7 @@
 package me.jishuna.modernenchants.api.conditions;
 
 import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
-import static me.jishuna.modernenchants.api.ParseUtils.readInt;
+import static me.jishuna.modernenchants.api.ParseUtils.readFloat;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.entity.LivingEntity;
@@ -12,14 +12,14 @@ import me.jishuna.modernenchants.api.effects.ActionTarget;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterCondition(name = "level")
-public class LevelCondition extends EnchantmentCondition {
+@RegisterCondition(name = "attack_charge")
+public class AttackChargeCondition extends EnchantmentCondition {
 
 	private final ActionTarget target;
 	private final ConditionOperation operation;
-	private final int level;
+	private final float threshold;
 
-	public LevelCondition(String[] data) throws InvalidEnchantmentException {
+	public AttackChargeCondition(String[] data) throws InvalidEnchantmentException {
 		super(data);
 		checkLength(data, 2);
 
@@ -27,7 +27,7 @@ public class LevelCondition extends EnchantmentCondition {
 		String raw = data[1];
 
 		this.operation = ConditionOperation.parseCondition(raw.substring(0, 1));
-		this.level = readInt(raw.substring(1));
+		this.threshold = readFloat(raw.substring(1));
 	}
 
 	@Override
@@ -37,15 +37,15 @@ public class LevelCondition extends EnchantmentCondition {
 		if (!(entity instanceof Player player))
 			return false;
 
-		int currentLevel = player.getLevel();
+		float charge = player.getAttackCooldown();
 
 		switch (operation) {
 		case EQUAL:
-			return currentLevel == level;
+			return charge == threshold;
 		case GREATER_THAN:
-			return currentLevel > level;
+			return charge > threshold;
 		case LESS_THAN:
-			return currentLevel < level;
+			return charge < threshold;
 		default:
 			return false;
 		}

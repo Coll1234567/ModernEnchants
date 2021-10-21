@@ -18,7 +18,7 @@ public class LightningEffect extends EnchantmentEffect {
 	private final int z;
 
 	public LightningEffect(String[] data) throws InvalidEnchantmentException {
-		super(DESCRIPTION);
+		super(data);
 		checkLength(data, 1);
 
 		this.target = readTarget(data[0]);

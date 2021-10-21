@@ -1,0 +1,21 @@
+name: 'frost_aspect'
+display-name: '&3Frost Aspect'
+
+min-level: 1
+max-level: 2
+
+actions:
+  - ATTACK_MOB
+  - ATTACK_PLAYER
+  
+valid-items:
+  - SWORDS
+  - AXES
+
+levels:
+  1:
+    effects:
+      - freeze(opponent,40)
+  2:
+    effects:
+      - freeze(opponent,80)

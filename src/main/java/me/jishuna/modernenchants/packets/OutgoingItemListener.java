@@ -14,6 +14,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+import me.jishuna.commonlib.utils.StringUtils;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 
 public class OutgoingItemListener extends PacketAdapter {
@@ -64,7 +65,7 @@ public class OutgoingItemListener extends PacketAdapter {
 
 			int level = enchants.getValue();
 
-			lore.add(enchantment.getDisplayName() + " " + level);
+			lore.add(enchantment.getDisplayName() + " " + StringUtils.toRomanNumeral(level));
 		}
 		meta.setLore(lore);
 		item.setItemMeta(meta);

@@ -1,5 +1,11 @@
 package me.jishuna.modernenchants.api;
 
+import java.util.Collections;
+import java.util.Set;
+
+import org.bukkit.Material;
+
+import me.jishuna.commonlib.MaterialSets;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
@@ -30,12 +36,43 @@ public class ParseUtils {
 			throw new InvalidEnchantmentException("Expected a number but found: " + string);
 		}
 	}
-	
+
 	public static float readFloat(String string) throws InvalidEnchantmentException {
 		try {
 			return Float.parseFloat(string);
 		} catch (NumberFormatException ex) {
 			throw new InvalidEnchantmentException("Expected a number but found: " + string);
+		}
+	}
+
+	public static Set<Material> readMaterial(String string) {
+		Material material = Material.matchMaterial(string);
+
+		if (material != null) {
+			return Set.of(material);
+		}
+
+		switch (string) {
+		case "SWORDS":
+			return MaterialSets.SWORDS;
+		case "AXES":
+			return MaterialSets.AXES;
+		case "PICKAXES":
+			return MaterialSets.PICKAXES;
+		case "SHOVELS":
+			return MaterialSets.SHOVELS;
+		case "HOES":
+			return MaterialSets.HOES;
+		case "HELMETS":
+			return MaterialSets.HELMETS;
+		case "CHESTPLATES":
+			return MaterialSets.CHESTPLATE;
+		case "PANTS", "LEGGINGS":
+			return MaterialSets.PANTS;
+		case "BOOTS":
+			return MaterialSets.CHESTPLATE;
+		default:
+			return Collections.emptySet();
 		}
 	}
 }

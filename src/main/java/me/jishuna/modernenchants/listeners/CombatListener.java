@@ -55,5 +55,32 @@ public class CombatListener implements Listener {
 				enchantment.processActions(level, mobContext);
 			}
 		}
+
+		for (ItemStack armor : damager.getEquipment().getArmorContents()) {
+			if (armor == null || armor.getType().isAir())
+				continue;
+			
+			playerContext = EnchantmentContext.Builder.create(event, ActionType.ATTACK_PLAYER)
+					.withItem(armor).withUser(damager).withOpponent(target).build();
+
+			mobContext = EnchantmentContext.Builder.create(event, ActionType.ATTACK_MOB).withItem(armor)
+					.withUser(damager).withOpponent(target).build();
+			
+			for (Entry<Enchantment, Integer> enchants : armor.getEnchantments().entrySet()) {
+				Enchantment enchant = enchants.getKey();
+
+				if (!(enchant instanceof CustomEnchantment enchantment))
+					continue;
+
+				int level = enchants.getValue();
+
+				if (targetIsPlayer) {
+					enchantment.processActions(level, playerContext);
+				} else {
+					enchantment.processActions(level, mobContext);
+				}
+			}
+		}
+
 	}
 }

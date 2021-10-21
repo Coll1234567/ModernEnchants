@@ -20,7 +20,7 @@ public class LaunchEffect extends EnchantmentEffect {
 	private final int z;
 
 	public LaunchEffect(String[] data) throws InvalidEnchantmentException {
-		super(DESCRIPTION);
+		super(data);
 		checkLength(data, 4);
 
 		this.target = readTarget(data[0]);

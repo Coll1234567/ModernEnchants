@@ -19,7 +19,7 @@ public class BreakBlockEffect extends EnchantmentEffect {
 	private final int z;
 
 	public BreakBlockEffect(String[] data) throws InvalidEnchantmentException {
-		super(DESCRIPTION);
+		super(data);
 		checkLength(data, 3);
 		
 		this.x = readInt(data[0]);

@@ -26,6 +26,7 @@ import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
 import me.jishuna.modernenchants.listeners.BlockListener;
 import me.jishuna.modernenchants.listeners.CombatListener;
+import me.jishuna.modernenchants.listeners.EnchantingListener;
 import me.jishuna.modernenchants.listeners.MiscListener;
 import me.jishuna.modernenchants.packets.IncomingItemListener;
 import me.jishuna.modernenchants.packets.OutgoingItemListener;
@@ -42,7 +43,7 @@ public class ModernEnchants extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		this.loadConfiguration();
-		
+
 		this.effectRegistry = new EffectRegistry();
 		this.conditionRegistry = new ConditionRegistry();
 		this.enchantmentRegistry = new EnchantmentRegistry(this);
@@ -51,6 +52,8 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
 		pm.registerEvents(new MiscListener(), this);
+		
+		pm.registerEvents(new EnchantingListener(), this);
 
 		this.registerPackets();
 
@@ -84,8 +87,8 @@ public class ModernEnchants extends JavaPlugin {
 						config);
 				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
 			} catch (InvalidEnchantmentException e) {
-				this.getLogger().warning(
-						"An error occured loading enchantment \"" + config.getString("name", "Unknown") + "\" - " + e.getLocalizedMessage());
+				this.getLogger().warning("An error occured loading enchantment \"" + config.getString("name", "Unknown")
+						+ "\" - " + e.getLocalizedMessage());
 			}
 		}
 		Enchantment.stopAcceptingRegistrations();
@@ -98,11 +101,12 @@ public class ModernEnchants extends JavaPlugin {
 			try (final JarFile jar = new JarFile(jarFile);) {
 				final Enumeration<JarEntry> entries = jar.entries();
 				while (entries.hasMoreElements()) {
-					final String name = entries.nextElement().getName();
+					final JarEntry entry = entries.nextElement();
+					if (entry.isDirectory())
+						continue;
+					
+					final String name = entry.getName();
 					if (name.startsWith(PATH + "/")) {
-						if (!name.endsWith(".yml"))
-							continue;
-
 						FileUtils.loadResourceFile(this, name);
 					}
 				}

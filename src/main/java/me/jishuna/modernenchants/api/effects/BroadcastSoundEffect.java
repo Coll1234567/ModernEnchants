@@ -5,30 +5,45 @@ import static me.jishuna.modernenchants.api.ParseUtils.readFloat;
 import static me.jishuna.modernenchants.api.ParseUtils.readInt;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.bukkit.Sound;
+
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterEffect(name = "explosion")
-public class ExplosionEffect extends EnchantmentEffect {
+@RegisterEffect(name = "broadcast_sound")
+public class BroadcastSoundEffect extends EnchantmentEffect {
+	private static final Set<String> ALL_SOUNDS = Arrays.stream(Sound.values()).map(Enum::toString)
+			.collect(Collectors.toSet());
+
 	private static final String[] DESCRIPTION = new String[] { "test", "test2" };
 
 	private final ActionTarget target;
-	private final float power;
-	private final boolean fire;
-	private final boolean breakBlocks;
+	private final Sound sound;
+	private final float volume;
+	private final float pitch;
 	private final int x;
 	private final int y;
 	private final int z;
 
-	public ExplosionEffect(String[] data) throws InvalidEnchantmentException {
+	public BroadcastSoundEffect(String[] data) throws InvalidEnchantmentException {
 		super(data);
 		checkLength(data, 4);
 
 		this.target = readTarget(data[0]);
-		this.power = readFloat(data[1]);
-		this.fire = Boolean.parseBoolean(data[2]);
-		this.breakBlocks = Boolean.parseBoolean(data[3]);
+
+		String particleString = data[1].toUpperCase();
+		if (!ALL_SOUNDS.contains(particleString))
+			throw new InvalidEnchantmentException("Invalid sound type: " + particleString);
+
+		this.sound = Sound.valueOf(particleString);
+
+		this.volume = readFloat(data[2]);
+		this.pitch = readFloat(data[3]);
 
 		if (data.length >= 7) {
 			this.x = readInt(data[4]);
@@ -43,7 +58,7 @@ public class ExplosionEffect extends EnchantmentEffect {
 
 	@Override
 	public void handle(EnchantmentContext context) {
-		context.getTarget(target).ifPresent(entity -> entity.getWorld()
-				.createExplosion(entity.getLocation().add(x, y, z), power, fire, breakBlocks));
+		context.getTarget(target).ifPresent(
+				entity -> entity.getWorld().playSound(entity.getLocation().add(x, y, z), sound, volume, pitch));
 	}
 }
