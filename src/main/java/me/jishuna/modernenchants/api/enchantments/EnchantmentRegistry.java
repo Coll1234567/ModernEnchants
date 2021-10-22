@@ -1,5 +1,6 @@
 package me.jishuna.modernenchants.api.enchantments;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -8,20 +9,17 @@ import java.util.stream.Collectors;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 
-import me.jishuna.modernenchants.ModernEnchants;
+import me.jishuna.commonlib.random.WeightedRandom;
 
 public class EnchantmentRegistry {
 
-	// private final ModernEnchants plugin;
+	private final WeightedRandom<CustomEnchantment> enchantRandom = new WeightedRandom<>();
 	private final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new HashMap<>();
-
-	public EnchantmentRegistry(ModernEnchants plugin) {
-		// this.plugin = plugin;
-	}
 
 	public void registerAndInjectEnchantment(CustomEnchantment enchantment) {
 		Enchantment.registerEnchantment(enchantment);
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
+		this.enchantRandom.add(enchantment.getWeight(), enchantment);
 	}
 
 	public CustomEnchantment getEnchantment(String name) {
@@ -30,6 +28,14 @@ public class EnchantmentRegistry {
 
 	public Set<String> getNames() {
 		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
+	}
+	
+	public Collection<CustomEnchantment> getAllEnchantments() {
+		return this.enchantmentMap.values();
+	}
+	
+	public CustomEnchantment getRandomEnchantment() {
+		return this.enchantRandom.poll();
 	}
 
 }

@@ -64,8 +64,28 @@ public class OutgoingItemListener extends PacketAdapter {
 				continue;
 
 			int level = enchants.getValue();
+			String text = enchantment.getDisplayName() + " " + StringUtils.toRomanNumeral(level);
 
-			lore.add(enchantment.getDisplayName() + " " + StringUtils.toRomanNumeral(level));
+			switch (enchantment.getDescriptionFormat()) {
+			case INLINE:
+				List<String> desc = StringUtils.splitString(enchantment.getDescription(), 30);
+				text += " " + (desc.isEmpty() ? "" : desc.get(0));
+				lore.add(text);
+
+				for (int i = 1; i < desc.size(); i++) {
+					lore.add(desc.get(i));
+				}
+				break;
+			case SEPERATE:
+				lore.add(text);
+				lore.addAll(StringUtils.splitString(enchantment.getDescription(), 30));
+				break;
+			case NONE:
+			default:
+				lore.add(text);
+				break;
+
+			}
 		}
 		meta.setLore(lore);
 		item.setItemMeta(meta);

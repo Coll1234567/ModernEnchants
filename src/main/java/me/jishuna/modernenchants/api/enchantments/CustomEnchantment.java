@@ -4,8 +4,10 @@ import static me.jishuna.modernenchants.api.ParseUtils.readMaterial;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Material;
@@ -17,10 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-
 import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.modernenchants.api.DescriptionFormat;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effects.DelayEffect;
@@ -32,17 +32,17 @@ import net.md_5.bungee.api.ChatColor;
 public class CustomEnchantment extends Enchantment {
 	private final JavaPlugin plugin;
 	private final String name;
+	private final String description;
 	private final String displayName;
+	private final double weight;
 	private final int minLevel;
 	private final int maxLevel;
+	private final DescriptionFormat format;
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
-
-	private boolean hasDelay = false;
-
 	private final Set<ActionType> actions = new HashSet<>();
-	private final Multimap<Integer, EnchantmentEffect> effects = ArrayListMultimap.create();
-	private final Multimap<Integer, EnchantmentCondition> conditions = ArrayListMultimap.create();
-
+	
+	private final Map<Integer, EnchantmentLevel> levels = new HashMap<>();
+	
 	public CustomEnchantment(JavaPlugin plugin, EffectRegistry effectRegistry, ConditionRegistry conditionRegistry,
 			ConfigurationSection section) throws InvalidEnchantmentException {
 		super(new NamespacedKey(plugin, section.getString("name")));
@@ -50,9 +50,18 @@ public class CustomEnchantment extends Enchantment {
 
 		this.name = section.getString("name").toLowerCase();
 		this.displayName = ChatColor.translateAlternateColorCodes('&', section.getString("display-name", name));
+		this.description = ChatColor.translateAlternateColorCodes('&', section.getString("description"));
 
+		this.weight = section.getDouble("weight", 100d);
+		
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
+
+		String format = section.getString("description-format");
+		if (!DescriptionFormat.ALL_FORMATS.contains(format))
+			throw new InvalidEnchantmentException("Invalid description format: " + format);
+
+		this.format = DescriptionFormat.valueOf(format);
 
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();
@@ -76,53 +85,37 @@ public class CustomEnchantment extends Enchantment {
 				continue;
 
 			int level = Integer.parseInt(levelString);
-			for (String actionString : levelSection.getStringList("effects")) {
-				EnchantmentEffect effect = effectRegistry.parseString(actionString);
-
-				if (effect != null) {
-					effects.put(level, effect);
-				}
-
-				if (effect instanceof DelayEffect delay) {
-					this.hasDelay = true;
-				}
-			}
-
-			for (String conditionString : levelSection.getStringList("conditions")) {
-				EnchantmentCondition condition = conditionRegistry.parseString(conditionString);
-
-				if (condition != null) {
-					conditions.put(level, condition);
-				}
-			}
+			this.levels.put(level, new EnchantmentLevel(levelSection, effectRegistry, conditionRegistry));
 		}
 	}
 
 	public void processActions(int level, EnchantmentContext context) {
 		if (!listensFor(context.getType()))
 			return;
+		
+		EnchantmentLevel encahntmentLevel = this.levels.get(level);
 
-		for (EnchantmentCondition condition : this.conditions.get(level)) {
+		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {
 			if (!condition.check(context))
 				return;
 		}
 
-		if (!hasDelay) {
-			processActionsDirect(level, context);
+		if (!encahntmentLevel.hasDelay()) {
+			processActionsDirect(level, context, encahntmentLevel);
 		} else {
-			processActionsDelay(level, context);
+			processActionsDelay(level, context, encahntmentLevel);
 		}
 	}
 
-	private void processActionsDirect(int level, EnchantmentContext context) {
-		for (EnchantmentEffect effect : this.effects.get(level)) {
+	private void processActionsDirect(int level, EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
+		for (EnchantmentEffect effect : encahntmentLevel.getEffects()) {
 			effect.handle(context);
 		}
 
 	}
 
-	private void processActionsDelay(int level, EnchantmentContext context) {
-		List<EnchantmentEffect> effectList = new ArrayList<>(this.effects.get(level));
+	private void processActionsDelay(int level, EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
+		List<EnchantmentEffect> effectList = new ArrayList<>(encahntmentLevel.getEffects());
 		final int size = effectList.size();
 
 		new BukkitRunnable() {
@@ -166,6 +159,10 @@ public class CustomEnchantment extends Enchantment {
 		return displayName;
 	}
 
+	public String getDescription() {
+		return description;
+	}
+
 	@Override
 	public int getMaxLevel() {
 		return this.maxLevel;
@@ -176,9 +173,24 @@ public class CustomEnchantment extends Enchantment {
 		return this.minLevel;
 	}
 
+	/**
+	 * @return the weight
+	 */
+	public double getWeight() {
+		return weight;
+	}
+
+	public Map<Integer, EnchantmentLevel> getLevels() {
+		return levels;
+	}
+
 	@Override
 	public EnchantmentTarget getItemTarget() {
 		return EnchantmentTarget.BREAKABLE;
+	}
+
+	public DescriptionFormat getDescriptionFormat() {
+		return format;
 	}
 
 	@Override

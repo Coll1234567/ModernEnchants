@@ -1,6 +1,11 @@
 name: 'frost_aspect'
 display-name: '&3Frost Aspect'
 
+description: '&7» Slows the movement speed of your target.'
+description-format: INLINE
+
+weight: 100
+
 min-level: 1
 max-level: 2
 
@@ -14,8 +19,10 @@ valid-items:
 
 levels:
   1:
+    min-enchanting-level: 0
     effects:
       - freeze(opponent,40)
   2:
+    min-enchanting-level: 15
     effects:
       - freeze(opponent,80)

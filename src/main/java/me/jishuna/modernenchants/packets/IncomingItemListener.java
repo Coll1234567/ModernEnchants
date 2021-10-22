@@ -14,6 +14,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
+import me.jishuna.commonlib.utils.StringUtils;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 
 public class IncomingItemListener extends PacketAdapter {
@@ -50,6 +51,10 @@ public class IncomingItemListener extends PacketAdapter {
 				continue;
 
 			lore.removeIf(line -> line.startsWith(enchantment.getDisplayName()));
+			
+			for (String desc : StringUtils.splitString(enchantment.getDescription(), 30)) {
+				lore.removeIf(line -> line.equals(desc));
+			}
 		}
 		meta.setLore(lore);
 		item.setItemMeta(meta);

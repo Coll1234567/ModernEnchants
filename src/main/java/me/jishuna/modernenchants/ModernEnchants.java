@@ -2,12 +2,17 @@ package me.jishuna.modernenchants;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.PluginManager;
@@ -46,20 +51,53 @@ public class ModernEnchants extends JavaPlugin {
 
 		this.effectRegistry = new EffectRegistry();
 		this.conditionRegistry = new ConditionRegistry();
-		this.enchantmentRegistry = new EnchantmentRegistry(this);
+		this.enchantmentRegistry = new EnchantmentRegistry();
 
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
 		pm.registerEvents(new MiscListener(), this);
-		
-		pm.registerEvents(new EnchantingListener(), this);
+
+		pm.registerEvents(new EnchantingListener(this.enchantmentRegistry), this);
 
 		this.registerPackets();
 
 		this.loadEnchantments();
 
 		getCommand("modernenchants").setExecutor(new ModernEnchantsCommandHandler(this));
+	}
+
+	@Override
+	public void onDisable() {
+		try {
+			Field byIdField = Enchantment.class.getDeclaredField("byKey");
+			Field byNameField = Enchantment.class.getDeclaredField("byName");
+			byIdField.setAccessible(true);
+			byNameField.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			Map<NamespacedKey, Enchantment> keyMap = (Map<NamespacedKey, Enchantment>) byIdField.get(null);
+			@SuppressWarnings("unchecked")
+			Map<String, Enchantment> nameMap = (Map<String, Enchantment>) byNameField.get(null);
+
+			Iterator<Entry<NamespacedKey, Enchantment>> keyIterator = keyMap.entrySet().iterator();
+			while (keyIterator.hasNext()) {
+				Enchantment enchant = keyIterator.next().getValue();
+
+				if (enchant instanceof CustomEnchantment)
+					keyIterator.remove();
+			}
+
+			Iterator<Entry<String, Enchantment>> nameIterator = nameMap.entrySet().iterator();
+			while (nameIterator.hasNext()) {
+				Enchantment enchant = nameIterator.next().getValue();
+
+				if (enchant instanceof CustomEnchantment)
+					nameIterator.remove();
+			}
+
+		} catch (ReflectiveOperationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void loadEnchantments() {
@@ -104,7 +142,7 @@ public class ModernEnchants extends JavaPlugin {
 					final JarEntry entry = entries.nextElement();
 					if (entry.isDirectory())
 						continue;
-					
+
 					final String name = entry.getName();
 					if (name.startsWith(PATH + "/")) {
 						FileUtils.loadResourceFile(this, name);
