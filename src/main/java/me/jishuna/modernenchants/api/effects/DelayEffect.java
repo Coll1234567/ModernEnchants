@@ -13,7 +13,7 @@ public class DelayEffect extends EnchantmentEffect {
 	private static final String[] DESCRIPTION = new String[] {
 			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Delays all following actions for a certain number of ticks.",
 			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "delay(ticks)",
-			ChatColor.GOLD + "  - Ticks: " + ChatColor.GREEN + "The number of ticks to wait"
+			ChatColor.GOLD + "  Ticks: " + ChatColor.GREEN + "The number of ticks to wait"
 		};
 	
 	private final int ticks;

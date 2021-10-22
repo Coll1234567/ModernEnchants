@@ -63,6 +63,8 @@ public class ModernEnchants extends JavaPlugin {
 		this.registerPackets();
 
 		this.loadEnchantments();
+		
+		new WornEnchantmentRunnable().runTaskTimer(this, 0, 10);
 
 		getCommand("modernenchants").setExecutor(new ModernEnchantsCommandHandler(this));
 	}

@@ -1,0 +1,24 @@
+name: 'spelunker'
+display-name: '&7Spelunker'
+
+description: '&7» Gives night vision while underground.'
+description-format: INLINE
+
+weight: 20
+
+min-level: 1
+max-level: 1
+
+actions:
+  - WORN
+  
+valid-items:
+  - HELMETS
+
+levels:
+  1:
+    min-enchanting-level: 0
+    conditions:
+      - underground(user,true)
+    effects:
+      - potion_effect(user,night_vision,220,1)
