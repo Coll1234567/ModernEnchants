@@ -33,18 +33,18 @@ public class BurnEffect extends EnchantmentEffect {
 		if (this.duration <= 0)
 			throw new InvalidEnchantmentException("Duration must be greater than 0");
 
-		boolean stack = false;
+		boolean shouldStack = false;
 
 		if (data.length >= 3) {
-			stack = Boolean.parseBoolean(data[2]);
+			shouldStack = Boolean.parseBoolean(data[2]);
 		}
-		this.stack = stack;
+		this.stack = shouldStack;
 	}
 
 	@Override
 	public void handle(EnchantmentContext context) {
-		context.getTarget(target).ifPresent(entity -> entity
-				.setFireTicks(Math.min((stack ? entity.getFireTicks() : 0) + duration, entity.getMaxFireTicks())));
+		context.getTarget(target)
+				.ifPresent(entity -> entity.setFireTicks((stack ? entity.getFireTicks() : 0) + duration));
 	}
 
 	public static String[] getDescription() {
