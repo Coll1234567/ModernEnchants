@@ -6,6 +6,7 @@ import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
@@ -37,7 +38,11 @@ public class HealthPercentCondition extends EnchantmentCondition {
 		if (entity == null)
 			return false;
 
-		double percent = (entity.getHealth() / entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * 100;
+		double current = entity.getHealth();
+		if (context.getEvent() instanceof EntityDamageEvent event && event.getEntity() == entity) {
+			current -= event.getFinalDamage();
+		}
+		double percent = (current / entity.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) * 100;
 
 		switch (operation) {
 		case EQUAL:

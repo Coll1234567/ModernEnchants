@@ -1,5 +1,6 @@
 package me.jishuna.modernenchants.api.conditions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -66,6 +67,9 @@ public class ConditionRegistry {
 		try {
 			effect = clazz.getDeclaredConstructor(String[].class).newInstance((Object) data.split(","));
 		} catch (ReflectiveOperationException | IllegalArgumentException e) {
+			if (e.getCause() instanceof InvalidEnchantmentException ex) {
+				throw ex;
+			}
 			throw new InvalidEnchantmentException("Unknown error: " + e.getMessage());
 		}
 

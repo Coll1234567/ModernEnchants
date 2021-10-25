@@ -12,7 +12,7 @@ import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 public class ParseUtils {
 	public static void checkLength(String[] args, int min) throws InvalidEnchantmentException {
 		if (args.length < min)
-			throw new InvalidEnchantmentException("This effect requires at least " + min + "arguments");
+			throw new InvalidEnchantmentException("This effect requires at least " + min + " arguments");
 	}
 
 	public static ActionTarget readTarget(String string) throws InvalidEnchantmentException {

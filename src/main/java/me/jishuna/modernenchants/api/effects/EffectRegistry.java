@@ -78,6 +78,9 @@ public class EffectRegistry {
 		try {
 			effect = clazz.getDeclaredConstructor(String[].class).newInstance((Object) data.split(","));
 		} catch (ReflectiveOperationException | IllegalArgumentException e) {
+			if (e.getCause() instanceof InvalidEnchantmentException ex) {
+				throw ex;
+			}
 			throw new InvalidEnchantmentException("Unknown error: " + e.getMessage());
 		}
 

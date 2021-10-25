@@ -1,0 +1,30 @@
+name: 'winged_escape'
+display-name: '&fWinged Escape'
+
+description: '&7» Launch into the sky at low health.'
+description-format: INLINE
+
+weight: 10
+
+min-level: 1
+max-level: 1
+
+actions:
+  - HURTBY_MOB
+  - HURTBY_PLAYER
+  - HURTBY_MOB_PROJECTILE
+  - HURTBY_PLAYER_PROJECTILE
+  - HURTBY_OTHER
+  
+valid-items:
+  - ELYTRA
+
+levels:
+  1:
+    min-enchanting-level: 25
+    conditions:
+      - gliding(user,false)
+      - health_percent(user,<20)
+    effects:
+      - delay(1)
+      - launch(user,0,2,0)

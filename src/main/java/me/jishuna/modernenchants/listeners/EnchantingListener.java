@@ -28,12 +28,17 @@ public class EnchantingListener implements Listener {
 		int count = random.nextInt(1, 4);
 
 		for (int i = 0; i < count; i++) {
-			CustomEnchantment enchantment = registry.getRandomEnchantment();
+			int tries = 10;
+			boolean valid = false;
 
-			if (!enchantment.canEnchantItem(target))
-				continue;
+			CustomEnchantment enchantment;
+			do {
+				enchantment = registry.getRandomEnchantment();
+				valid = enchantment.canEnchantItem(target) && !event.getEnchantsToAdd().keySet().contains(enchantment);
+				tries--;
+			} while (!valid && tries > 0);
 
-			if (event.getEnchantsToAdd().keySet().contains(enchantment))
+			if (!valid)
 				continue;
 
 			int level = enchantment.getStartLevel();

@@ -111,7 +111,7 @@ public class CombatListener implements Listener {
 					.withUser(target).withOpponent(damager).build();
 
 			EnchantmentContext mobContext = EnchantmentContext.Builder
-					.create(event, bow ? ActionType.ATTACK_MOB_PROJECTILE : ActionType.HURTBY_MOB).withItem(item)
+					.create(event, bow ? ActionType.HURTBY_MOB_PROJECTILE : ActionType.HURTBY_MOB).withItem(item)
 					.withUser(target).withOpponent(damager).build();
 
 			handleItem(item, damagerIsPlayer, playerContext, mobContext);

@@ -91,8 +91,7 @@ public class CustomEnchantment extends Enchantment {
 
 	public void processActions(int level, EnchantmentContext context) {
 		if (!listensFor(context.getType()))
-			return;
-		
+			return;
 		EnchantmentLevel encahntmentLevel = this.levels.get(level);
 
 		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {

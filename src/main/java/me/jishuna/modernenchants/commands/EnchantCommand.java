@@ -44,14 +44,9 @@ public class EnchantCommand extends SimpleCommandHandler {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 		if (args.length == 2) {
 			Set<String> modules = this.plugin.getEnchantmentRegistry().getNames();
-			List<String> suggestions = new ArrayList<>();
-
-			StringUtil.copyPartialMatches(args[0], modules, suggestions);
-
-			return suggestions;
+			return StringUtil.copyPartialMatches(args[0], modules, new ArrayList<>());
 		}
 		return Collections.emptyList();
-
 	}
 
 }

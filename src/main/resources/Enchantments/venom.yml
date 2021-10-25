@@ -1,0 +1,53 @@
+name: 'venom'
+display-name: '&2Venom'
+
+description: '&7» Chance to poison your target.'
+description-format: INLINE
+
+weight: 100
+
+min-level: 1
+max-level: 5
+
+actions:
+  - ATTACK_MOB
+  - ATTACK_PLAYER
+  - ATTACK_MOB_PROJECTILE
+  - ATTACK_PLAYER_PROJECTILE
+  
+valid-items:
+  - SWORDS
+  - AXES
+  - BOW
+
+levels:
+  1:
+    min-enchanting-level: 0
+    conditions:
+      - chance(4)
+    effects:
+      - potion_effect(opponent,POISON,100,1)
+  2:
+    min-enchanting-level: 6
+    conditions:
+      - chance(8)
+    effects:
+      - potion_effect(opponent,POISON,100,1)
+  3:
+    min-enchanting-level: 12
+    conditions:
+      - chance(12)
+    effects:
+      - potion_effect(opponent,POISON,100,1)
+  4:
+    min-enchanting-level: 18
+    conditions:
+      - chance(16)
+    effects:
+      - potion_effect(opponent,POISON,100,1)
+  5:
+    min-enchanting-level: 24
+    conditions:
+      - chance(20)
+    effects:
+      - potion_effect(opponent,POISON,100,1)
