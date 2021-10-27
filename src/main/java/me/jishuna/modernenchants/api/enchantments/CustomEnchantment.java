@@ -21,13 +21,13 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.DescriptionFormat;
+import me.jishuna.modernenchants.api.ParseUtils;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effects.DelayEffect;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
 import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
-import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {
 	private final JavaPlugin plugin;
@@ -40,20 +40,20 @@ public class CustomEnchantment extends Enchantment {
 	private final DescriptionFormat format;
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<ActionType> actions = new HashSet<>();
-	
+
 	private final Map<Integer, EnchantmentLevel> levels = new HashMap<>();
-	
+
 	public CustomEnchantment(JavaPlugin plugin, EffectRegistry effectRegistry, ConditionRegistry conditionRegistry,
 			ConfigurationSection section) throws InvalidEnchantmentException {
 		super(new NamespacedKey(plugin, section.getString("name")));
 		this.plugin = plugin;
 
 		this.name = section.getString("name").toLowerCase();
-		this.displayName = ChatColor.translateAlternateColorCodes('&', section.getString("display-name", name));
-		this.description = ChatColor.translateAlternateColorCodes('&', section.getString("description"));
+		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
+		this.description = ParseUtils.colorString(section.getString("description"));
 
 		this.weight = section.getDouble("weight", 100d);
-		
+
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
 
@@ -91,7 +91,8 @@ public class CustomEnchantment extends Enchantment {
 
 	public void processActions(int level, EnchantmentContext context) {
 		if (!listensFor(context.getType()))
-			return;
+			return;
+
 		EnchantmentLevel encahntmentLevel = this.levels.get(level);
 
 		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {

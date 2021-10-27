@@ -8,6 +8,9 @@ import org.bukkit.Material;
 import me.jishuna.commonlib.MaterialSets;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.ChatColor;
 
 public class ParseUtils {
 	public static void checkLength(String[] args, int min) throws InvalidEnchantmentException {
@@ -74,5 +77,13 @@ public class ParseUtils {
 		default:
 			return Collections.emptySet();
 		}
+	}
+
+	public static String colorString(String string) {
+		LegacyComponentSerializer serializer = LegacyComponentSerializer.builder().character('&').hexCharacter('#')
+				.hexColors().useUnusualXRepeatedCharacterHexFormat().build();
+		
+		return ChatColor.translateAlternateColorCodes('&',
+				serializer.serialize(MiniMessage.miniMessage().parse(string)));
 	}
 }

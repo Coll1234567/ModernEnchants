@@ -8,6 +8,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.StringUtil;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketAdapter;
@@ -50,8 +51,8 @@ public class IncomingItemListener extends PacketAdapter {
 			if (!(enchant instanceof CustomEnchantment enchantment))
 				continue;
 
-			lore.removeIf(line -> line.startsWith(enchantment.getDisplayName()));
-			
+			lore.removeIf(line -> StringUtil.startsWithIgnoreCase(line, enchantment.getDisplayName()));
+
 			for (String desc : StringUtils.splitString(enchantment.getDescription(), 30)) {
 				lore.removeIf(line -> line.equals(desc));
 			}

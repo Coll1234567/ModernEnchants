@@ -15,8 +15,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.modernenchants.api.PluginKeys;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
@@ -59,6 +61,14 @@ public class CombatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
+		// Cannot hurt (or use enchantments) on your own minion.
+		if (event.getEntity().getPersistentDataContainer()
+				.getOrDefault(PluginKeys.MINION_OWNER.getKey(), PersistentDataType.STRING, "")
+				.equals(event.getDamager().getUniqueId().toString())) {
+			event.setCancelled(true);
+			return;
+		}
+
 		if (!(event.getEntity()instanceof LivingEntity target))
 			return;
 
