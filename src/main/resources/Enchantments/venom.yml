@@ -4,7 +4,10 @@ display-name: '&2Venom'
 description: '&7» Chance to poison your target.'
 description-format: INLINE
 
-weight: 100
+weights:
+  enchanting: 100
+  trading: 100
+  loot: 100
 
 min-level: 1
 max-level: 5

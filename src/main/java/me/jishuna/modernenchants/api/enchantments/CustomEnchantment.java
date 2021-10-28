@@ -35,7 +35,7 @@ public class CustomEnchantment extends Enchantment {
 	private final String name;
 	private final String description;
 	private final String displayName;
-	private final double weight;
+	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
 	private final DescriptionFormat format;
@@ -52,8 +52,10 @@ public class CustomEnchantment extends Enchantment {
 		this.name = section.getString("name").toLowerCase();
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
 		this.description = ParseUtils.colorString(section.getString("description"));
+		
+		ConfigurationSection weights = section.getConfigurationSection("weights");
 
-		this.weight = section.getDouble("weight", 100d);
+		this.enchantingWeight = weights.getDouble("enchanting", 100d);
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
@@ -184,8 +186,8 @@ public class CustomEnchantment extends Enchantment {
 	/**
 	 * @return the weight
 	 */
-	public double getWeight() {
-		return weight;
+	public double getEnchantingWeight() {
+		return enchantingWeight;
 	}
 
 	public Map<Integer, EnchantmentLevel> getLevels() {

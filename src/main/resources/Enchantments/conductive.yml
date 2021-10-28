@@ -1,7 +1,7 @@
-name: 'decay'
-display-name: '&8Decay'
+name: 'conductive'
+display-name: '<#bfb152>Conductive</#bfb152>'
 
-description: '&7» Chance to wither your target.'
+description: '&7» Chance to strike your target with lightning.'
 description-format: INLINE
 
 weights:
@@ -13,14 +13,10 @@ min-level: 1
 max-level: 5
 
 actions:
-  - ATTACK_MOB
-  - ATTACK_PLAYER
   - ATTACK_MOB_PROJECTILE
   - ATTACK_PLAYER_PROJECTILE
   
 valid-items:
-  - SWORDS
-  - AXES
   - BOW
 
 levels:
@@ -29,28 +25,28 @@ levels:
     conditions:
       - chance(3)
     effects:
-      - potion_effect(opponent,WITHER,100,1)
+      - lightning(opponent)
   2:
     min-enchanting-level: 6
     conditions:
       - chance(6)
     effects:
-      - potion_effect(opponent,WITHER,100,1)
+      - lightning(opponent)
   3:
     min-enchanting-level: 12
     conditions:
       - chance(9)
     effects:
-      - potion_effect(opponent,WITHER,100,1)
+      - lightning(opponent)
   4:
     min-enchanting-level: 18
     conditions:
       - chance(12)
     effects:
-      - potion_effect(opponent,WITHER,100,1)
+      - lightning(opponent)
   5:
     min-enchanting-level: 24
     conditions:
       - chance(15)
     effects:
-      - potion_effect(opponent,WITHER,100,1)
+      - lightning(opponent)

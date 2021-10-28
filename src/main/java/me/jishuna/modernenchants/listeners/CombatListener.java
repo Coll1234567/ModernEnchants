@@ -3,6 +3,7 @@ package me.jishuna.modernenchants.listeners;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.enchantments.Enchantment;
@@ -15,10 +16,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.PluginKeys;
+import me.jishuna.modernenchants.api.Utils;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
@@ -61,10 +61,8 @@ public class CombatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
-		// Cannot hurt (or use enchantments) on your own minions.
-		if (event.getEntity().getPersistentDataContainer()
-				.getOrDefault(PluginKeys.MINION_OWNER.getKey(), PersistentDataType.STRING, "")
-				.equals(event.getDamager().getUniqueId().toString())) {
+		Optional<String> owner = Utils.getMobOwner(event.getEntity());
+		if (owner.isPresent() && owner.get().equals(event.getDamager().getUniqueId().toString())) {
 			event.setCancelled(true);
 			return;
 		}
@@ -76,6 +74,10 @@ public class CombatListener implements Listener {
 			handleDamage(event, damager, target, false);
 		} else if (event.getDamager()instanceof Projectile projectile
 				&& projectile.getShooter()instanceof LivingEntity shooter) {
+			if (owner.isPresent() && owner.get().equals(shooter.getUniqueId().toString())) {
+				event.setCancelled(true);
+				return;
+			}
 			handleDamage(event, shooter, target, true);
 		}
 	}

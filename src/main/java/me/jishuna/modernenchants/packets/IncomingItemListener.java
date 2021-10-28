@@ -2,10 +2,13 @@ package me.jishuna.modernenchants.packets;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.StringUtil;
@@ -43,9 +46,16 @@ public class IncomingItemListener extends PacketAdapter {
 			return;
 
 		ItemMeta meta = item.getItemMeta();
+		
+		Map<Enchantment, Integer> enchantMap;
+		if (item.getType() == Material.ENCHANTED_BOOK) {
+			enchantMap = ((EnchantmentStorageMeta)meta).getStoredEnchants();
+		} else {
+			enchantMap = meta.getEnchants();
+		}
 
 		List<String> lore = getLore(meta);
-		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
+		for (Entry<Enchantment, Integer> enchants : enchantMap.entrySet()) {
 			Enchantment enchant = enchants.getKey();
 
 			if (!(enchant instanceof CustomEnchantment enchantment))

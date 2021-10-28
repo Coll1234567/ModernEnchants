@@ -4,7 +4,10 @@ display-name: '<#52204e>Phantom Strike</#52204e>'
 description: '&7» Chance to spawn a phantom to attack your target.'
 description-format: INLINE
 
-weight: 80
+weights:
+  enchanting: 80
+  trading: 80
+  loot: 80
 
 min-level: 1
 max-level: 5

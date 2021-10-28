@@ -4,7 +4,10 @@ display-name: '&fWinged Escape'
 description: '&7» Launch into the sky at low health.'
 description-format: INLINE
 
-weight: 10
+weights:
+  enchanting: 10
+  trading: 10
+  loot: 10
 
 min-level: 1
 max-level: 1

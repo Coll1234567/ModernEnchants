@@ -1,10 +1,13 @@
 name: 'spelunker'
-display-name: '&7Spelunker'
+display-name: '<#fff6ba>Spelunker</#fff6ba>'
 
 description: '&7» Gives night vision while underground.'
 description-format: INLINE
 
-weight: 20
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
 
 min-level: 1
 max-level: 1

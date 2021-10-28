@@ -4,7 +4,10 @@ display-name: '<#8ed491>Bug Bite</#8ed491>'
 description: '&7» Chance to spawn a silverfish to attack your target.'
 description-format: INLINE
 
-weight: 80
+weights:
+  enchanting: 80
+  trading: 80
+  loot: 80
 
 min-level: 1
 max-level: 5

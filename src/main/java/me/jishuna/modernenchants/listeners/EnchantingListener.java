@@ -3,21 +3,25 @@ package me.jishuna.modernenchants.listeners;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
+import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentLevel;
-import me.jishuna.modernenchants.api.enchantments.EnchantmentRegistry;
 
 public class EnchantingListener implements Listener {
 
-	private final EnchantmentRegistry registry;
+	private final ModernEnchants plugin;
 
-	public EnchantingListener(EnchantmentRegistry registry) {
-		this.registry = registry;
+	public EnchantingListener(ModernEnchants plugin) {
+		this.plugin = plugin;
 	}
 
 	@EventHandler
@@ -26,6 +30,7 @@ public class EnchantingListener implements Listener {
 		ItemStack target = event.getItem();
 		ThreadLocalRandom random = ThreadLocalRandom.current();
 		int count = random.nextInt(1, 4);
+		boolean book = target.getType() == Material.BOOK;
 
 		for (int i = 0; i < count; i++) {
 			int tries = 10;
@@ -33,8 +38,9 @@ public class EnchantingListener implements Listener {
 
 			CustomEnchantment enchantment;
 			do {
-				enchantment = registry.getRandomEnchantment();
-				valid = enchantment.canEnchantItem(target) && !event.getEnchantsToAdd().keySet().contains(enchantment);
+				enchantment = plugin.getEnchantmentRegistry().getRandomEnchantment();
+				valid = (book || enchantment.canEnchantItem(target))
+						&& !event.getEnchantsToAdd().keySet().contains(enchantment);
 				tries--;
 			} while (!valid && tries > 0);
 
@@ -51,6 +57,26 @@ public class EnchantingListener implements Listener {
 			}
 
 			event.getEnchantsToAdd().put(enchantment, level);
+		}
+
+		if (book) {
+			Bukkit.getScheduler().runTask(this.plugin, () -> {
+				ItemStack item = event.getInventory().getItem(0);
+				if (item == null || item.getType() != Material.ENCHANTED_BOOK)
+					return;
+
+				EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+
+				for (Entry<Enchantment, Integer> toAdd : event.getEnchantsToAdd().entrySet()) {
+					Enchantment enchant = toAdd.getKey();
+
+					if (!meta.hasStoredEnchant(enchant))
+						meta.addStoredEnchant(enchant, toAdd.getValue(), true);
+				}
+
+				item.setItemMeta(meta);
+				event.getInventory().setItem(0, item);
+			});
 		}
 	}
 }

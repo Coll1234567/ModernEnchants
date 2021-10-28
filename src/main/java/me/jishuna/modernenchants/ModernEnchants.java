@@ -29,11 +29,12 @@ import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentRegistry;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
+import me.jishuna.modernenchants.listeners.AnvilListener;
 import me.jishuna.modernenchants.listeners.BlockListener;
 import me.jishuna.modernenchants.listeners.CombatListener;
 import me.jishuna.modernenchants.listeners.EnchantingListener;
-import me.jishuna.modernenchants.listeners.MiscListener;
 import me.jishuna.modernenchants.listeners.MinionListener;
+import me.jishuna.modernenchants.listeners.MiscListener;
 import me.jishuna.modernenchants.packets.IncomingItemListener;
 import me.jishuna.modernenchants.packets.OutgoingItemListener;
 
@@ -60,7 +61,8 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new MiscListener(), this);
 		pm.registerEvents(new MinionListener(), this);
 
-		pm.registerEvents(new EnchantingListener(this.enchantmentRegistry), this);
+		pm.registerEvents(new EnchantingListener(this), this);
+		pm.registerEvents(new AnvilListener(), this);
 
 		this.registerPackets();
 

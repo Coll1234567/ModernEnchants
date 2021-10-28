@@ -19,7 +19,10 @@ public class EnchantmentRegistry {
 	public void registerAndInjectEnchantment(CustomEnchantment enchantment) {
 		Enchantment.registerEnchantment(enchantment);
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
-		this.enchantRandom.add(enchantment.getWeight(), enchantment);
+
+		double enchantWeight = enchantment.getEnchantingWeight();
+		if (enchantWeight > 0)
+			this.enchantRandom.add(enchantWeight, enchantment);
 	}
 
 	public CustomEnchantment getEnchantment(String name) {
@@ -29,11 +32,11 @@ public class EnchantmentRegistry {
 	public Set<String> getNames() {
 		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
 	}
-	
+
 	public Collection<CustomEnchantment> getAllEnchantments() {
 		return this.enchantmentMap.values();
 	}
-	
+
 	public CustomEnchantment getRandomEnchantment() {
 		return this.enchantRandom.poll();
 	}

@@ -4,7 +4,10 @@ display-name: '&6Deepfry'
 description: '&7» Chance to cook caught fish.'
 description-format: INLINE
 
-weight: 50
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
 
 min-level: 1
 max-level: 3
