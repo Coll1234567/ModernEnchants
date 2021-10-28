@@ -28,9 +28,10 @@ public class AnvilListener implements Listener {
 
 		ItemStack second = event.getInventory().getItem(1);
 
+		ItemMeta meta = first.getItemMeta();
+		ItemMeta resultMeta = result.getItemMeta();
+
 		if (second == null || (second.getType() != first.getType() && second.getType() != Material.ENCHANTED_BOOK)) {
-			ItemMeta meta = first.getItemMeta();
-			ItemMeta resultMeta = result.getItemMeta();
 
 			for (Entry<Enchantment, Integer> toAdd : meta.getEnchants().entrySet()) {
 				Enchantment enchant = toAdd.getKey();
@@ -38,17 +39,13 @@ public class AnvilListener implements Listener {
 				if (!(enchant instanceof CustomEnchantment))
 					continue;
 
-				if (resultMeta.hasEnchant(enchant))
-					resultMeta.removeEnchant(enchant);
-
-				resultMeta.addEnchant(enchant, toAdd.getValue(), true);
+				addEnchant(result, resultMeta, enchant, toAdd.getValue());
 			}
+
 			result.setItemMeta(resultMeta);
 			event.setResult(result);
 		} else {
-			ItemMeta meta = first.getItemMeta();
 			ItemMeta secondMeta = second.getItemMeta();
-			ItemMeta resultMeta = result.getItemMeta();
 
 			if (secondMeta instanceof EnchantmentStorageMeta storageMeta) {
 				resultMeta = handleCombine(result, meta.getEnchants(), storageMeta.getStoredEnchants(), resultMeta);
