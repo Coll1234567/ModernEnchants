@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
@@ -22,7 +23,7 @@ public class CorrectToolCondition extends EnchantmentCondition {
 	}
 
 	@Override
-	public boolean check(EnchantmentContext context) {
+	public boolean check(EnchantmentContext context, CustomEnchantment enchant) {
 		ItemStack item = context.getItemDirect();
 		Block block = context.getTargetBlockDirect();
 

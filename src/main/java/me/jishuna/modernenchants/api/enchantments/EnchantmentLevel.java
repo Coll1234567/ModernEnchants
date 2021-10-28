@@ -29,7 +29,7 @@ public class EnchantmentLevel {
 				effects.add(effect);
 			}
 
-			if (effect instanceof DelayEffect delay) {
+			if (effect instanceof DelayEffect) {
 				this.hasDelay = true;
 			}
 		}

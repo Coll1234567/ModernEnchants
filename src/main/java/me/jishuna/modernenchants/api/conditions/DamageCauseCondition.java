@@ -10,6 +10,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
@@ -31,7 +32,7 @@ public class DamageCauseCondition extends EnchantmentCondition {
 	}
 
 	@Override
-	public boolean check(EnchantmentContext context) {
+	public boolean check(EnchantmentContext context, CustomEnchantment enchant) {
 		if (context.getEvent() instanceof EntityDamageEvent event) {
 			return event.getCause() == cause;
 		}

@@ -23,6 +23,7 @@ import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.DescriptionFormat;
 import me.jishuna.modernenchants.api.ParseUtils;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
+import me.jishuna.modernenchants.api.conditions.CooldownCondition;
 import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effects.DelayEffect;
 import me.jishuna.modernenchants.api.effects.EffectRegistry;
@@ -94,11 +95,18 @@ public class CustomEnchantment extends Enchantment {
 			return;
 
 		EnchantmentLevel encahntmentLevel = this.levels.get(level);
+		CooldownCondition cooldown = null;
 
 		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {
-			if (!condition.check(context))
+			if (!condition.check(context, this))
 				return;
+			
+			if (condition instanceof CooldownCondition cool)
+				cooldown = cool;
 		}
+		
+		if (cooldown != null) 
+			cooldown.setCooldown(context, this);
 
 		if (!encahntmentLevel.hasDelay()) {
 			processActionsDirect(level, context, encahntmentLevel);

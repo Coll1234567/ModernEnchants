@@ -29,6 +29,9 @@ public class MinionEffect extends EnchantmentEffect {
 	private final EntityType type;
 	private int count;
 	private String name;
+	private final int x;
+	private final int y;
+	private final int z;
 
 	public MinionEffect(String[] data) throws InvalidEnchantmentException {
 		super(data);
@@ -42,6 +45,16 @@ public class MinionEffect extends EnchantmentEffect {
 
 		this.count = readInt(data[1]);
 		this.name = ChatColor.translateAlternateColorCodes('&', data[2]);
+
+		if (data.length >= 6) {
+			this.x = readInt(data[3]);
+			this.y = readInt(data[4]);
+			this.z = readInt(data[5]);
+		} else {
+			this.x = 0;
+			this.y = 0;
+			this.z = 0;
+		}
 	}
 
 	@Override
@@ -49,7 +62,7 @@ public class MinionEffect extends EnchantmentEffect {
 		context.getUser().ifPresent(user -> {
 			LivingEntity target = context.getOpponentDirect();
 			for (int i = 0; i < count; i++) {
-				Entity entity = user.getWorld().spawn(user.getLocation(), type.getEntityClass());
+				Entity entity = user.getWorld().spawn(user.getLocation().add(x, y, z), type.getEntityClass());
 				entity.getPersistentDataContainer().set(PluginKeys.MINION_OWNER.getKey(), PersistentDataType.STRING,
 						user.getUniqueId().toString());
 				entity.setCustomName(name.replace("%owner%", user.getName()));

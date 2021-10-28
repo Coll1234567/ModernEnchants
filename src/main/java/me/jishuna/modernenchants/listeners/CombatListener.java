@@ -61,7 +61,7 @@ public class CombatListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
-		// Cannot hurt (or use enchantments) on your own minion.
+		// Cannot hurt (or use enchantments) on your own minions.
 		if (event.getEntity().getPersistentDataContainer()
 				.getOrDefault(PluginKeys.MINION_OWNER.getKey(), PersistentDataType.STRING, "")
 				.equals(event.getDamager().getUniqueId().toString())) {

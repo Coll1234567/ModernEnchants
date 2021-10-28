@@ -6,6 +6,7 @@ import static me.jishuna.modernenchants.api.ParseUtils.readDouble;
 import java.util.Random;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
@@ -26,7 +27,7 @@ public class ChanceCondition extends EnchantmentCondition {
 	}
 
 	@Override
-	public boolean check(EnchantmentContext context) {
+	public boolean check(EnchantmentContext context, CustomEnchantment enchant) {
 		return (RANDOM.nextDouble() * 100d) < chance;
 	}
 

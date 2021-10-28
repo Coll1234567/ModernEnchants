@@ -31,6 +31,14 @@ public class ParseUtils {
 			throw new InvalidEnchantmentException("Expected a whole number but found: " + string);
 		}
 	}
+	
+	public static long readLong(String string) throws InvalidEnchantmentException {
+		try {
+			return Long.parseLong(string);
+		} catch (NumberFormatException ex) {
+			throw new InvalidEnchantmentException("Expected a whole number but found: " + string);
+		}
+	}
 
 	public static double readDouble(String string) throws InvalidEnchantmentException {
 		try {

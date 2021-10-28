@@ -1,7 +1,7 @@
-name: 'bug_bite'
-display-name: '<#8ed491>Bug Bite</#8ed491>'
+name: 'phantom_strike'
+display-name: '<#52204e>Phantom Strike</#52204e>'
 
-description: '&7» Chance to spawn a silverfish to attack your target.'
+description: '&7» Chance to spawn a phantom to attack your target.'
 description-format: INLINE
 
 weight: 80
@@ -10,12 +10,11 @@ min-level: 1
 max-level: 5
 
 actions:
-  - ATTACK_MOB
-  - ATTACK_PLAYER
+  - ATTACK_MOB_PROJECTILE
+  - ATTACK_PLAYER_PROJECTILE
   
 valid-items:
-  - SWORDS
-  - AXES
+  - BOW
 
 levels:
   1:
@@ -24,32 +23,32 @@ levels:
       - chance(2)
       - cooldown(10)
     effects:
-      - minions(silverfish,1,%owner%'s Silverfish)
+      - minions(phantom,1,%owner%'s Phantom,0,10,0)
   2:
     min-enchanting-level: 6
     conditions:
       - chance(4)
       - cooldown(10)
     effects:
-      - minions(silverfish,1,%owner%'s Silverfish)
+      - minions(phantom,1,%owner%'s Phantom,0,10,0)
   3:
     min-enchanting-level: 12
     conditions:
       - chance(6)
       - cooldown(10)
     effects:
-      - minions(silverfish,1,%owner%'s Silverfish)
+      - minions(phantom,1,%owner%'s Phantom,0,10,0)
   4:
     min-enchanting-level: 18
     conditions:
       - chance(8)
       - cooldown(10)
     effects:
-      - minions(silverfish,1,%owner%'s Silverfish)
+      - minions(phantom,1,%owner%'s Phantom,0,10,0)
   5:
     min-enchanting-level: 24
     conditions:
       - chance(10)
       - cooldown(10)
     effects:
-      - minions(silverfish,1,%owner%'s Silverfish)
+      - minions(phantom,1,%owner%'s Phantom,0,10,0)

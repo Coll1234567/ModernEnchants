@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
 import me.jishuna.modernenchants.api.effects.ActionTarget;
+import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
@@ -26,7 +27,7 @@ public class SneakingCondition extends EnchantmentCondition {
 	}
 
 	@Override
-	public boolean check(EnchantmentContext context) {
+	public boolean check(EnchantmentContext context, CustomEnchantment enchant) {
 		LivingEntity entity = context.getTargetDirect(target);
 
 		if (entity instanceof Player player) {

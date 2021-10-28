@@ -4,8 +4,6 @@ import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
 import static me.jishuna.modernenchants.api.ParseUtils.readInt;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftLivingEntity;
-
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
@@ -45,8 +43,8 @@ public class FreezeEffect extends EnchantmentEffect {
 
 	@Override
 	public void handle(EnchantmentContext context) {
-		context.getTarget(target).ifPresent(entity -> ((CraftLivingEntity) entity).getHandle()
-				.setTicksFrozen((stack ? entity.getFreezeTicks() : 0) + duration));
+		context.getTarget(target)
+				.ifPresent(entity -> entity.setFreezeTicks((stack ? entity.getFreezeTicks() : 0) + duration));
 	}
 
 	public static String[] getDescription() {
