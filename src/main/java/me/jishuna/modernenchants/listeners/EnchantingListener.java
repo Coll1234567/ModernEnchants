@@ -47,36 +47,49 @@ public class EnchantingListener implements Listener {
 			if (!valid)
 				continue;
 
-			int level = enchantment.getStartLevel();
-
-			for (Entry<Integer, EnchantmentLevel> levelEntry : enchantment.getLevels().entrySet()) {
-				EnchantmentLevel enchantmentLevel = levelEntry.getValue();
-
-				if (enchantmentLevel.getMinExperienceLevel() <= cost)
-					level = Math.max(level, levelEntry.getKey());
-			}
-
-			event.getEnchantsToAdd().put(enchantment, level);
+			int[] levels = getLevelRange(enchantment, cost);
+			event.getEnchantsToAdd().put(enchantment, random.nextInt(levels[0], levels[1] + 1));
 		}
 
 		if (book) {
-			Bukkit.getScheduler().runTask(this.plugin, () -> {
-				ItemStack item = event.getInventory().getItem(0);
-				if (item == null || item.getType() != Material.ENCHANTED_BOOK)
-					return;
-
-				EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
-
-				for (Entry<Enchantment, Integer> toAdd : event.getEnchantsToAdd().entrySet()) {
-					Enchantment enchant = toAdd.getKey();
-
-					if (!meta.hasStoredEnchant(enchant))
-						meta.addStoredEnchant(enchant, toAdd.getValue(), true);
-				}
-
-				item.setItemMeta(meta);
-				event.getInventory().setItem(0, item);
-			});
+			handleBook(event);
 		}
+	}
+
+	private void handleBook(EnchantItemEvent event) {
+		Bukkit.getScheduler().runTask(this.plugin, () -> {
+			ItemStack item = event.getInventory().getItem(0);
+			if (item == null || item.getType() != Material.ENCHANTED_BOOK)
+				return;
+
+			EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+
+			for (Entry<Enchantment, Integer> toAdd : event.getEnchantsToAdd().entrySet()) {
+				Enchantment enchant = toAdd.getKey();
+
+				if (!meta.hasStoredEnchant(enchant))
+					meta.addStoredEnchant(enchant, toAdd.getValue(), true);
+			}
+
+			item.setItemMeta(meta);
+			event.getInventory().setItem(0, item);
+		});
+	}
+
+	private int[] getLevelRange(CustomEnchantment enchantment, int cost) {
+		int lowerCost = cost / 2;
+		int[] levels = new int[] { enchantment.getStartLevel(), enchantment.getStartLevel() };
+
+		for (Entry<Integer, EnchantmentLevel> levelEntry : enchantment.getLevels().entrySet()) {
+			EnchantmentLevel enchantmentLevel = levelEntry.getValue();
+			int level = levelEntry.getKey();
+
+			if (enchantmentLevel.getMinExperienceLevel() <= lowerCost && level > levels[0])
+				levels[0] = level;
+
+			if (enchantmentLevel.getMinExperienceLevel() <= cost && level > levels[1])
+				levels[1] = level;
+		}
+		return levels;
 	}
 }

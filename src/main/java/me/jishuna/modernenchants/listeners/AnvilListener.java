@@ -96,7 +96,7 @@ public class AnvilListener implements Listener {
 		if (meta.hasEnchant(enchant))
 			meta.removeEnchant(enchant);
 
-		if (enchant.canEnchantItem(result))
+		if (enchant.canEnchantItem(result) && !meta.hasConflictingEnchant(enchant))
 			meta.addEnchant(enchant, level, true);
 	}
 }
