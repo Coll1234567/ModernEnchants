@@ -2,7 +2,6 @@ name: 'phantom_strike'
 display-name: '<#52204e>Phantom Strike</#52204e>'
 
 description: '&7» Chance to spawn a phantom to attack your target.'
-description-format: INLINE
 
 weights:
   enchanting: 80

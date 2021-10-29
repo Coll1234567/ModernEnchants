@@ -2,7 +2,6 @@ name: 'spelunker'
 display-name: '<#fff6ba>Spelunker</#fff6ba>'
 
 description: '&7» Gives night vision while underground.'
-description-format: INLINE
 
 weights:
   enchanting: 20

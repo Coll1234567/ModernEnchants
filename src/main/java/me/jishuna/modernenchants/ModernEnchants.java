@@ -33,6 +33,7 @@ import me.jishuna.modernenchants.listeners.AnvilListener;
 import me.jishuna.modernenchants.listeners.BlockListener;
 import me.jishuna.modernenchants.listeners.CombatListener;
 import me.jishuna.modernenchants.listeners.EnchantingListener;
+import me.jishuna.modernenchants.listeners.InteractListener;
 import me.jishuna.modernenchants.listeners.MinionListener;
 import me.jishuna.modernenchants.listeners.MiscListener;
 import me.jishuna.modernenchants.packets.IncomingItemListener;
@@ -59,6 +60,7 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
 		pm.registerEvents(new MiscListener(), this);
+		pm.registerEvents(new InteractListener(), this);
 		pm.registerEvents(new MinionListener(), this);
 
 		pm.registerEvents(new EnchantingListener(this), this);

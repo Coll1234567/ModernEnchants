@@ -2,7 +2,6 @@ name: 'deepfry'
 display-name: '&6Deepfry'
 
 description: '&7» Chance to cook caught fish.'
-description-format: INLINE
 
 weights:
   enchanting: 50

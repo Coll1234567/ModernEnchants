@@ -2,7 +2,6 @@ name: 'frost_aspect'
 display-name: '&3Frost Aspect'
 
 description: '&7» Slows the movement speed of your target.'
-description-format: INLINE
 
 weights:
   enchanting: 100

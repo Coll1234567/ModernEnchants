@@ -1,2 +1,4 @@
 no-permission: '&4&l[&c&l!&4&l] &cYou do not have permission to use this command.'
 command-usage: '&4&l[&c&l!&4&l] &cInvalid argument: &7%arg%. &cValid arguments are: &7%args%.'
+
+description-format-change: '&aEnchantment description format changed to: &6%type%'

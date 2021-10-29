@@ -20,7 +20,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.DescriptionFormat;
 import me.jishuna.modernenchants.api.ParseUtils;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.conditions.CooldownCondition;
@@ -38,7 +37,6 @@ public class CustomEnchantment extends Enchantment {
 	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
-	private final DescriptionFormat format;
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<ActionType> actions = new HashSet<>();
 
@@ -59,12 +57,6 @@ public class CustomEnchantment extends Enchantment {
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
-
-		String format = section.getString("description-format");
-		if (!DescriptionFormat.ALL_FORMATS.contains(format))
-			throw new InvalidEnchantmentException("Invalid description format: " + format);
-
-		this.format = DescriptionFormat.valueOf(format);
 
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();
@@ -197,10 +189,6 @@ public class CustomEnchantment extends Enchantment {
 	@Override
 	public EnchantmentTarget getItemTarget() {
 		return EnchantmentTarget.BREAKABLE;
-	}
-
-	public DescriptionFormat getDescriptionFormat() {
-		return format;
 	}
 
 	@Override

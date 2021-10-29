@@ -17,7 +17,7 @@ import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterEffect(name = "play_sound")
+@RegisterEffect(name = "sound")
 public class SoundEffect extends EnchantmentEffect {
 	private static final Set<String> ALL_SOUNDS = Arrays.stream(Sound.values()).map(Enum::toString)
 			.collect(Collectors.toSet());

@@ -7,9 +7,11 @@ import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 import com.comphenix.protocol.PacketType;
@@ -18,6 +20,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 
 import me.jishuna.commonlib.utils.StringUtils;
+import me.jishuna.modernenchants.api.PluginKeys;
 import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 
 public class OutgoingItemListener extends PacketAdapter {
@@ -37,7 +40,7 @@ public class OutgoingItemListener extends PacketAdapter {
 				return;
 
 			for (ItemStack item : items) {
-				handleItem(item);
+				handleItem(event.getPlayer(), item);
 
 			}
 			packet.getItemListModifier().writeSafely(0, items);
@@ -47,20 +50,20 @@ public class OutgoingItemListener extends PacketAdapter {
 			if (item == null)
 				return;
 
-			handleItem(item);
+			handleItem(event.getPlayer(), item);
 			packet.getItemModifier().writeSafely(0, item);
 		}
 		event.setPacket(packet);
 	}
 
-	private void handleItem(ItemStack item) {
+	private void handleItem(Player player, ItemStack item) {
 		if (item == null || item.getType().isAir())
 			return;
 		ItemMeta meta = item.getItemMeta();
-		
+
 		Map<Enchantment, Integer> enchantMap;
 		if (item.getType() == Material.ENCHANTED_BOOK) {
-			enchantMap = ((EnchantmentStorageMeta)meta).getStoredEnchants();
+			enchantMap = ((EnchantmentStorageMeta) meta).getStoredEnchants();
 		} else {
 			enchantMap = meta.getEnchants();
 		}
@@ -75,8 +78,8 @@ public class OutgoingItemListener extends PacketAdapter {
 			int level = enchants.getValue();
 			String text = enchantment.getDisplayName() + " " + StringUtils.toRomanNumeral(level);
 
-			switch (enchantment.getDescriptionFormat()) {
-			case INLINE:
+			switch (getDisplayFormat(player)) {
+			case "inline":
 				List<String> desc = StringUtils.splitString(enchantment.getDescription(), 30);
 				text += " " + (desc.isEmpty() ? "" : desc.get(0));
 				lore.add(text);
@@ -85,11 +88,10 @@ public class OutgoingItemListener extends PacketAdapter {
 					lore.add(desc.get(i));
 				}
 				break;
-			case SEPERATE:
+			case "seperate":
 				lore.add(text);
 				lore.addAll(StringUtils.splitString(enchantment.getDescription(), 30));
 				break;
-			case NONE:
 			default:
 				lore.add(text);
 				break;
@@ -102,5 +104,10 @@ public class OutgoingItemListener extends PacketAdapter {
 
 	private List<String> getLore(ItemMeta meta) {
 		return meta.hasLore() ? meta.getLore() : new ArrayList<>();
+	}
+
+	private String getDisplayFormat(Player player) {
+		return player.getPersistentDataContainer().getOrDefault(PluginKeys.DISPLAY_FORMAT.getKey(),
+				PersistentDataType.STRING, "inline");
 	}
 }

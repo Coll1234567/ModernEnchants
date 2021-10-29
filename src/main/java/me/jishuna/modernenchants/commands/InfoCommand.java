@@ -13,7 +13,7 @@ public class InfoCommand extends SimpleCommandHandler {
 	private final ModernEnchants plugin;
 
 	public InfoCommand(ModernEnchants plugin) {
-		super("minetweaks.command.info");
+		super("modernenchants.command.info");
 		this.plugin = plugin;
 	}
 

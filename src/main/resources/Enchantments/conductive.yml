@@ -2,7 +2,6 @@ name: 'conductive'
 display-name: '<#bfb152>Conductive</#bfb152>'
 
 description: '&7» Chance to strike your target with lightning.'
-description-format: INLINE
 
 weights:
   enchanting: 80

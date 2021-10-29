@@ -1,13 +1,10 @@
 package me.jishuna.modernenchants.commands;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.util.StringUtil;
 
 import me.jishuna.commonlib.commands.SimpleCommandHandler;
 import me.jishuna.modernenchants.ModernEnchants;
@@ -39,16 +36,7 @@ public class ActionsCommand extends SimpleCommandHandler {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-		if (args.length == 2) {
-			Set<String> modules = this.plugin.getEnchantmentRegistry().getNames();
-			List<String> suggestions = new ArrayList<>();
-
-			StringUtil.copyPartialMatches(args[0], modules, suggestions);
-
-			return suggestions;
-		}
 		return Collections.emptyList();
-
 	}
 
 }

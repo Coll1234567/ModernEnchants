@@ -2,7 +2,6 @@ name: 'winged_escape'
 display-name: '&fWinged Escape'
 
 description: '&7» Launch into the sky at low health.'
-description-format: INLINE
 
 weights:
   enchanting: 10
@@ -31,3 +30,4 @@ levels:
     effects:
       - delay(1)
       - launch(user,0,2,0)
+      - sound(user,ENTITY_FIREWORK_ROCKET_LAUNCH,1,1)
