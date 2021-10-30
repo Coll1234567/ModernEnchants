@@ -45,6 +45,6 @@ public class PotionEffectEffect extends EnchantmentEffect {
 
 	@Override
 	public void handle(EnchantmentContext context) {
-		context.getTarget(target).ifPresent(entity -> entity.addPotionEffect(new PotionEffect(type, duration, level)));
+		context.getTarget(target).ifPresent(entity -> entity.addPotionEffect(new PotionEffect(type, duration, level, true)));
 	}
 }

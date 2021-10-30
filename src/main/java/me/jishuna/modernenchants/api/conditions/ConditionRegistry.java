@@ -23,7 +23,7 @@ public class ConditionRegistry {
 	public void reloadConditions() {
 		this.actionMap.clear();
 
-		for (Class<?> clazz : ClassUtils.getAllClassesInPackage("me.jishuna.modernenchants.api.conditions",
+		for (Class<?> clazz : ClassUtils.getAllClassesInSubpackages("me.jishuna.modernenchants.api.conditions",
 				this.getClass().getClassLoader())) {
 			if (!TYPE_CLASS.isAssignableFrom(clazz))
 				continue;

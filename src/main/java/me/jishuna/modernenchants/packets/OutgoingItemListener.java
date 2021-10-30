@@ -76,7 +76,9 @@ public class OutgoingItemListener extends PacketAdapter {
 				continue;
 
 			int level = enchants.getValue();
-			String text = enchantment.getDisplayName() + " " + StringUtils.toRomanNumeral(level);
+			String text = enchantment.getDisplayName() + (enchantment.getMaxLevel() != enchantment.getStartLevel()
+					? " " + StringUtils.toRomanNumeral(level)
+					: "");
 
 			switch (getDisplayFormat(player)) {
 			case "inline":

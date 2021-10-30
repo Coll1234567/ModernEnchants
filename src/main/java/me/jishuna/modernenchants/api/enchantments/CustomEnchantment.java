@@ -37,6 +37,7 @@ public class CustomEnchantment extends Enchantment {
 	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
+	private final boolean cursed;
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<ActionType> actions = new HashSet<>();
 
@@ -50,13 +51,15 @@ public class CustomEnchantment extends Enchantment {
 		this.name = section.getString("name").toLowerCase();
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
 		this.description = ParseUtils.colorString(section.getString("description"));
-		
+
 		ConfigurationSection weights = section.getConfigurationSection("weights");
 
 		this.enchantingWeight = weights.getDouble("enchanting", 100d);
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
+
+		this.cursed = section.getBoolean("cursed", false);
 
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();
@@ -94,12 +97,12 @@ public class CustomEnchantment extends Enchantment {
 		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {
 			if (!condition.check(context, this))
 				return;
-			
+
 			if (condition instanceof CooldownCondition cool)
 				cooldown = cool;
 		}
-		
-		if (cooldown != null) 
+
+		if (cooldown != null)
 			cooldown.setCooldown(context, this);
 
 		if (!encahntmentLevel.hasDelay()) {
@@ -199,8 +202,7 @@ public class CustomEnchantment extends Enchantment {
 
 	@Override
 	public boolean isCursed() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.cursed;
 	}
 
 	@Override

@@ -1,0 +1,25 @@
+name: 'fumbling_curse'
+display-name: '&cCurse of Fumbling'
+
+description: '&7» Makes your aim with this item worse.'
+
+weights:
+  enchanting: 0
+  trading: 100
+  loot: 100
+
+min-level: 1
+max-level: 1
+
+actions:
+  - SHOOT_PROJECTILE
+  
+valid-items:
+  - BOW
+  - CROSSBOW
+
+levels:
+  1:
+    min-enchanting-level: 0
+    effects:
+      - curse_aim(0.1)

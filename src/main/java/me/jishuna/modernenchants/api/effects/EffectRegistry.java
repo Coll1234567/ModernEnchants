@@ -23,7 +23,7 @@ public class EffectRegistry {
 	public void reloadEffects() {
 		this.effectMap.clear();
 
-		for (Class<?> clazz : ClassUtils.getAllClassesInPackage("me.jishuna.modernenchants.api.effects",
+		for (Class<?> clazz : ClassUtils.getAllClassesInSubpackages("me.jishuna.modernenchants.api.effects",
 				this.getClass().getClassLoader())) {
 			if (!TYPE_CLASS.isAssignableFrom(clazz))
 				continue;

@@ -122,8 +122,17 @@ public class ModernEnchants extends JavaPlugin {
 			this.copyDefaults();
 		}
 
-		for (File file : enchantFolder.listFiles()) {
+		this.loadFromFolder(enchantFolder);
+		Enchantment.stopAcceptingRegistrations();
+	}
+
+	private void loadFromFolder(File folder) {
+		for (File file : folder.listFiles()) {
 			String name = file.getName();
+
+			if (file.isDirectory())
+				loadFromFolder(file);
+
 			if (!name.endsWith(".yml"))
 				continue;
 
@@ -137,7 +146,6 @@ public class ModernEnchants extends JavaPlugin {
 						+ "\" - " + e.getLocalizedMessage());
 			}
 		}
-		Enchantment.stopAcceptingRegistrations();
 	}
 
 	private void copyDefaults() {
