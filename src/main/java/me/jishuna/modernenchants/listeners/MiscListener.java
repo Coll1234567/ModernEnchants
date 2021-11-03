@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerFishEvent.State;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.modernenchants.api.ActionType;
@@ -48,19 +49,19 @@ public class MiscListener implements Listener {
 
 	@EventHandler
 	public void onBowShoot(ProjectileLaunchEvent event) {
-		if (!(event.getEntity().getShooter() instanceof LivingEntity entity))
+		if (!(event.getEntity().getShooter()instanceof LivingEntity entity))
 			return;
-		
+
 		Set<ItemStack> items = new HashSet<>();
 		items.add(entity.getEquipment().getItemInMainHand());
 		items.add(entity.getEquipment().getItemInOffHand());
-		
+
 		for (ItemStack item : items) {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.SHOOT_PROJECTILE).withItem(item)
-					.withUser(entity).build();
+			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.SHOOT_PROJECTILE)
+					.withItem(item).withUser(entity).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();
@@ -71,6 +72,26 @@ public class MiscListener implements Listener {
 				int level = enchants.getValue();
 				enchantment.processActions(level, context);
 			}
+		}
+	}
+
+	@EventHandler
+	public void onDurabilityLoss(PlayerItemDamageEvent event) {
+		ItemStack item = event.getItem();
+		if (item.getType().isAir())
+			return;
+
+		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.DURABILITY_LOSS).withItem(item)
+				.withUser(event.getPlayer()).build();
+
+		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
+			Enchantment enchant = enchants.getKey();
+
+			if (!(enchant instanceof CustomEnchantment enchantment))
+				continue;
+
+			int level = enchants.getValue();
+			enchantment.processActions(level, context);
 		}
 	}
 

@@ -2,6 +2,7 @@ name: 'bug_bite'
 display-name: '<#8ed491>Bug Bite</#8ed491>'
 
 description: '&7» Chance to spawn a silverfish to attack your target.'
+description-long: '&7Each level provides a 2% increased chance to spawn a silverfish to attack your target. This effect has a 10 second cooldown.'
 
 weights:
   enchanting: 80

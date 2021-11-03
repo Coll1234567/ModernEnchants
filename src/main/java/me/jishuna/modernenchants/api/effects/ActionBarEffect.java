@@ -5,6 +5,7 @@ import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
 import org.bukkit.entity.Player;
 
+import me.jishuna.modernenchants.api.ParseUtils;
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
@@ -29,7 +30,7 @@ public class ActionBarEffect extends EnchantmentEffect {
 		checkLength(data, 2);
 
 		this.target = readTarget(data[0]);
-		this.message = ChatColor.translateAlternateColorCodes('&', data[1]);
+		this.message = ParseUtils.colorString(data[1]);
 	}
 
 	@Override

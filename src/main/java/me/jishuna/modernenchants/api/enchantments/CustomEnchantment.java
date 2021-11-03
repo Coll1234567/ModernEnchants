@@ -10,16 +10,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import me.jishuna.commonlib.utils.ChatUtils;
 import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.ParseUtils;
@@ -28,24 +27,21 @@ import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effects.DelayEffect;
 import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
-import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {
-	private static final int BOOK_PAGE_CENTER = 55; // Woo magic numbers
-
 	private final ModernEnchants plugin;
-	
+
 	private final String name;
 	private final String description;
 	private final String longDescription;
 	private final String displayName;
-	
+
 	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
 	private final boolean cursed;
-	
-	private List<String> validItemsRaw;
+
+	private final List<String> validItemsRaw = new ArrayList<>();
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<ActionType> actions = new HashSet<>();
 
@@ -78,9 +74,10 @@ public class CustomEnchantment extends Enchantment {
 			this.actions.add(ActionType.valueOf(action));
 		}
 
-		this.validItemsRaw = section.getStringList("valid-items");
-		for (String item : this.validItemsRaw) {
+		List<String> validItemStrings = section.getStringList("valid-items");
+		for (String item : validItemStrings) {
 			this.validItems.addAll(readMaterial(item.toUpperCase()));
+			this.validItemsRaw.add(StringUtils.capitalize(item.toLowerCase().replace("_", " ")));
 		}
 
 		ConfigurationSection levels = section.getConfigurationSection("levels");
@@ -161,33 +158,6 @@ public class CustomEnchantment extends Enchantment {
 
 	}
 
-	public ItemStack getAsBook() {
-		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-		BookMeta meta = (BookMeta) book.getItemMeta();
-
-		meta.setTitle("Blank");
-		meta.setAuthor("Server");
-
-		StringBuilder firstPage = new StringBuilder();
-		firstPage.append(ChatColor.GOLD + "=".repeat(19) + "\n");
-		firstPage.append(ChatUtils.centerMessage(this.displayName, BOOK_PAGE_CENTER) + "\n\n");
-		firstPage.append(ChatColor.BLACK + ChatColor.stripColor(this.longDescription) + "\n\n");
-		firstPage.append(this.plugin.getMessage("max-level") + ChatColor.DARK_GREEN + this.maxLevel + "\n");
-		firstPage.append(ChatColor.GOLD + "=".repeat(19));
-
-		StringBuilder secondPage = new StringBuilder();
-		secondPage.append(ChatColor.GOLD + "=".repeat(19) + "\n");
-		secondPage.append(this.plugin.getMessage("valid-items") + "\n");
-		this.validItemsRaw.forEach(raw -> secondPage.append(ChatColor.BLACK + " - "
-				+ org.apache.commons.lang.StringUtils.capitalize(raw.toLowerCase().replace("_", " ")) + "\n"));
-		secondPage.append(ChatColor.GOLD + "=".repeat(19));
-
-		meta.addPage(firstPage.toString(), secondPage.toString());
-		book.setItemMeta(meta);
-
-		return book;
-	}
-
 	public boolean listensFor(ActionType type) {
 		return this.actions.contains(type);
 	}
@@ -205,6 +175,10 @@ public class CustomEnchantment extends Enchantment {
 		return description;
 	}
 
+	public String getLongDescription() {
+		return longDescription;
+	}
+
 	@Override
 	public int getMaxLevel() {
 		return this.maxLevel;
@@ -217,6 +191,10 @@ public class CustomEnchantment extends Enchantment {
 
 	public double getEnchantingWeight() {
 		return enchantingWeight;
+	}
+
+	public List<String> getValidItemsRaw() {
+		return validItemsRaw;
 	}
 
 	public Map<Integer, EnchantmentLevel> getLevels() {

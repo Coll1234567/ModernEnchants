@@ -2,6 +2,7 @@ name: 'liftoff'
 display-name: '<#b3fffe>Liftoff</#b3fffe>'
 
 description: '&7» Look straight down and right click to take off.'
+description-long: '&7Look straight down and right click while on the ground to launch yourself up into the air. This effect has a 15 second cooldown.'
 
 weights:
   enchanting: 10

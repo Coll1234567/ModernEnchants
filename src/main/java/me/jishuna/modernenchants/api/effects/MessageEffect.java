@@ -3,6 +3,7 @@ package me.jishuna.modernenchants.api.effects;
 import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
+import me.jishuna.modernenchants.api.ParseUtils;
 import me.jishuna.modernenchants.api.annotations.RegisterEffect;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
@@ -24,7 +25,7 @@ public class MessageEffect extends EnchantmentEffect {
 		checkLength(data, 2);
 		
 		this.target = readTarget(data[0]);
-		this.message = ChatColor.translateAlternateColorCodes('&', data[1]);
+		this.message = ParseUtils.colorString(data[1]);
 	}
 
 	@Override

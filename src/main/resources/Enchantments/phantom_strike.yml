@@ -2,6 +2,7 @@ name: 'phantom_strike'
 display-name: '<#52204e>Phantom Strike</#52204e>'
 
 description: '&7» Chance to spawn a phantom to attack your target.'
+description-long: '&7Each level provides a 2% increased chance to spawn a phantom overhead to attack your target. This effect has a 10 second cooldown.'
 
 weights:
   enchanting: 80

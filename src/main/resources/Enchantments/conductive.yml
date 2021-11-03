@@ -2,6 +2,7 @@ name: 'conductive'
 display-name: '<#bfb152>Conductive</#bfb152>'
 
 description: '&7» Chance to strike your target with lightning.'
+description-long: '&7Each level provides a 3% increased chance to strike your target with lightning.'
 
 weights:
   enchanting: 80

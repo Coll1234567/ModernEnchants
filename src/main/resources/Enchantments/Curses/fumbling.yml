@@ -2,6 +2,7 @@ name: 'fumbling_curse'
 display-name: '&cCurse of Fumbling'
 
 description: '&7» Makes your aim with this item worse.'
+description-long: '&7Causes your projectiles to fire in a wider arc than normal.'
 
 weights:
   enchanting: 0

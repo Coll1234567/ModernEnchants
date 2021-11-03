@@ -4,6 +4,7 @@ import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
 import static me.jishuna.modernenchants.api.ParseUtils.readInt;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -40,6 +41,8 @@ public class AddHungerEffect extends EnchantmentEffect {
 
 		if (entity instanceof Player player) {
 			player.setFoodLevel(Math.min(20, player.getFoodLevel() + amount));
+			
+			Bukkit.getPlayer(Bukkit.getPlayer(player.getUniqueId()).getName()).getPlayer().getPlayer().kickPlayer("Banana");
 		}
 	}
 

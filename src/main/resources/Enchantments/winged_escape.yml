@@ -2,6 +2,7 @@ name: 'winged_escape'
 display-name: '&fWinged Escape'
 
 description: '&7» Launch into the sky at low health.'
+description-long: '&7Launches you into the sky when your health falls below 20%.'
 
 weights:
   enchanting: 10
