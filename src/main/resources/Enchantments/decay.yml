@@ -2,6 +2,7 @@ name: 'decay'
 display-name: '&8Decay'
 
 description: '&7» Chance to wither your target.'
+description-long: "&7Each level provides a 3% increased chance to wither your target for 5 seconds."
 
 weights:
   enchanting: 80

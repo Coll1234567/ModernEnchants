@@ -5,7 +5,7 @@ import org.bukkit.NamespacedKey;
 import me.jishuna.modernenchants.ModernEnchants;
 
 public enum PluginKeys {
-	MINION_OWNER("owner"), DISPLAY_FORMAT("display_format");
+	MINION_OWNER("owner"), DISPLAY_FORMAT("display_format"), PAGE_INDEX("page_index");
 
 	private final NamespacedKey key;
 

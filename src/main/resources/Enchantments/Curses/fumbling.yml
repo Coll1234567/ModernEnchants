@@ -17,6 +17,7 @@ actions:
 valid-items:
   - BOW
   - CROSSBOW
+  - TRIDENT
 
 levels:
   1:

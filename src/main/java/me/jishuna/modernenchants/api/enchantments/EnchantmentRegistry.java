@@ -1,9 +1,9 @@
 package me.jishuna.modernenchants.api.enchantments;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.NamespacedKey;
@@ -14,7 +14,7 @@ import me.jishuna.commonlib.random.WeightedRandom;
 public class EnchantmentRegistry {
 
 	private final WeightedRandom<CustomEnchantment> enchantRandom = new WeightedRandom<>();
-	private final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new HashMap<>();
+	private final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new TreeMap<>();
 
 	public void registerAndInjectEnchantment(CustomEnchantment enchantment) {
 		Enchantment.registerEnchantment(enchantment);
@@ -26,7 +26,11 @@ public class EnchantmentRegistry {
 	}
 
 	public CustomEnchantment getEnchantment(String name) {
-		return this.enchantmentMap.get(NamespacedKey.fromString(name));
+		return getEnchantment(NamespacedKey.fromString(name));
+	}
+
+	public CustomEnchantment getEnchantment(NamespacedKey key) {
+		return this.enchantmentMap.get(key);
 	}
 
 	public Set<String> getNames() {

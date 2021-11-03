@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -60,6 +61,9 @@ public class OutgoingItemListener extends PacketAdapter {
 		if (item == null || item.getType().isAir())
 			return;
 		ItemMeta meta = item.getItemMeta();
+
+		if (meta.hasItemFlag(ItemFlag.HIDE_ENCHANTS))
+			return;
 
 		Map<Enchantment, Integer> enchantMap;
 		if (item.getType() == Material.ENCHANTED_BOOK) {

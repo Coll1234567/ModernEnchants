@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
+import me.jishuna.commonlib.inventory.CustomInventoryManager;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
 import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
@@ -48,6 +49,8 @@ public class ModernEnchants extends JavaPlugin {
 	private EnchantmentRegistry enchantmentRegistry;
 	private MessageConfig messageConfig;
 
+	private CustomInventoryManager inventoryManager = new CustomInventoryManager();
+
 	@Override
 	public void onEnable() {
 		this.loadConfiguration();
@@ -65,6 +68,8 @@ public class ModernEnchants extends JavaPlugin {
 
 		pm.registerEvents(new EnchantingListener(this), this);
 		pm.registerEvents(new AnvilListener(), this);
+
+		pm.registerEvents(this.inventoryManager, this);
 
 		this.registerPackets();
 
@@ -138,8 +143,7 @@ public class ModernEnchants extends JavaPlugin {
 
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 			try {
-				CustomEnchantment enchantment = new CustomEnchantment(this, this.effectRegistry, this.conditionRegistry,
-						config);
+				CustomEnchantment enchantment = new CustomEnchantment(this, config);
 				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
 			} catch (InvalidEnchantmentException e) {
 				this.getLogger().warning("An error occured loading enchantment \"" + config.getString("name", "Unknown")
@@ -193,8 +197,16 @@ public class ModernEnchants extends JavaPlugin {
 		return effectRegistry;
 	}
 
+	public ConditionRegistry getConditionRegistry() {
+		return conditionRegistry;
+	}
+
 	public EnchantmentRegistry getEnchantmentRegistry() {
 		return enchantmentRegistry;
+	}
+
+	public CustomInventoryManager getInventoryManager() {
+		return inventoryManager;
 	}
 
 	public MessageConfig getMessageConfig() {

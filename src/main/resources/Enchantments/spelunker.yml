@@ -2,6 +2,7 @@ name: 'spelunker'
 display-name: '<#fff6ba>Spelunker</#fff6ba>'
 
 description: '&7» Gives night vision while underground.'
+description-long: '&7Gives permanent night vision as long as you are under y 63.'
 
 weights:
   enchanting: 20
@@ -21,6 +22,6 @@ levels:
   1:
     min-enchanting-level: 0
     conditions:
-      - underground(user,true)
+      - y_level(user,<63)
     effects:
       - potion_effect(user,night_vision,220,1)

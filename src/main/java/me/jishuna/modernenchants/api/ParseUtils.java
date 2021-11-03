@@ -81,7 +81,7 @@ public class ParseUtils {
 		case "PANTS", "LEGGINGS":
 			return MaterialSets.PANTS;
 		case "BOOTS":
-			return MaterialSets.CHESTPLATE;
+			return MaterialSets.BOOTS;
 		default:
 			return Collections.emptySet();
 		}

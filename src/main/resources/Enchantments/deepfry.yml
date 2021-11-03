@@ -2,6 +2,7 @@ name: 'deepfry'
 display-name: '&6Deepfry'
 
 description: '&7» Chance to cook caught fish.'
+description-long: '&7Each level gives a 33% chance to automatically cook caught fish.'
 
 weights:
   enchanting: 50

@@ -2,3 +2,10 @@ no-permission: '&4&l[&c&l!&4&l] &cYou do not have permission to use this command
 command-usage: '&4&l[&c&l!&4&l] &cInvalid argument: &7%arg%. &cValid arguments are: &7%args%.'
 
 description-format-change: '&aEnchantment description format changed to: &6%type%'
+
+enchantment-gui-name: 'Enchantments'
+more-information: '&7[Click for more information]'
+max-level: '&0Max Level: '
+valid-items: '&0Valid Items: '
+previous-page: '&6&lPrevious'
+next-page: '&6&lNext'

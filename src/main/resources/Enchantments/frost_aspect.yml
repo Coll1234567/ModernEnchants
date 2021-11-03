@@ -2,6 +2,7 @@ name: 'frost_aspect'
 display-name: '&3Frost Aspect'
 
 description: '&7» Slows the movement speed of your target.'
+description-long: '&7Slows the movement speed of your target for 2 seconds per level, their movement speed will slowly return to normal over this time.'
 
 weights:
   enchanting: 100

@@ -1,9 +1,9 @@
 package me.jishuna.modernenchants.api.conditions;
 
 import static me.jishuna.modernenchants.api.ParseUtils.checkLength;
+import static me.jishuna.modernenchants.api.ParseUtils.readDouble;
 import static me.jishuna.modernenchants.api.ParseUtils.readTarget;
 
-import org.bukkit.HeightMap;
 import org.bukkit.entity.LivingEntity;
 
 import me.jishuna.modernenchants.api.annotations.RegisterCondition;
@@ -12,18 +12,22 @@ import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
-@RegisterCondition(name = "underground")
-public class UndergroundCondition extends EnchantmentCondition {
+@RegisterCondition(name = "y_level")
+public class YLevelCondition extends EnchantmentCondition {
 
 	private final ActionTarget target;
-	private final boolean bool;
+	private final ConditionOperation operation;
+	private final double level;
 
-	public UndergroundCondition(String[] data) throws InvalidEnchantmentException {
+	public YLevelCondition(String[] data) throws InvalidEnchantmentException {
 		super(data);
 		checkLength(data, 2);
 
 		this.target = readTarget(data[0]);
-		this.bool = Boolean.parseBoolean(data[1]);
+		String raw = data[1];
+
+		this.operation = ConditionOperation.parseCondition(raw.substring(0, 1));
+		this.level = readDouble(raw.substring(1));
 	}
 
 	@Override
@@ -32,7 +36,18 @@ public class UndergroundCondition extends EnchantmentCondition {
 
 		if (entity == null)
 			return false;
-		return entity.getWorld().getHighestBlockYAt(entity.getLocation(), HeightMap.MOTION_BLOCKING_NO_LEAVES) > entity
-				.getLocation().getBlockY() == bool;
+
+		double current = entity.getEyeLocation().getY();
+
+		switch (operation) {
+		case EQUAL:
+			return current == level;
+		case GREATER_THAN:
+			return current > level;
+		case LESS_THAN:
+			return current < level;
+		default:
+			return false;
+		}
 	}
 }

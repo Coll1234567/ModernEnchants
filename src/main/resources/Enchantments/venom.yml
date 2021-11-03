@@ -2,6 +2,7 @@ name: 'venom'
 display-name: '&2Venom'
 
 description: '&7» Chance to poison your target.'
+description-long: "&7Each level provides a 4% increased chance to poison your target for 5 seconds."
 
 weights:
   enchanting: 100

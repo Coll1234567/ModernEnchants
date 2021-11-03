@@ -16,41 +16,49 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.jishuna.commonlib.utils.ChatUtils;
+import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.ParseUtils;
-import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
 import me.jishuna.modernenchants.api.conditions.CooldownCondition;
 import me.jishuna.modernenchants.api.conditions.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effects.DelayEffect;
-import me.jishuna.modernenchants.api.effects.EffectRegistry;
 import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
+import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment {
-	private final JavaPlugin plugin;
+	private static final int BOOK_PAGE_CENTER = 55; // Woo magic numbers
+
+	private final ModernEnchants plugin;
+	
 	private final String name;
 	private final String description;
+	private final String longDescription;
 	private final String displayName;
+	
 	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
 	private final boolean cursed;
+	
+	private List<String> validItemsRaw;
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<ActionType> actions = new HashSet<>();
 
 	private final Map<Integer, EnchantmentLevel> levels = new HashMap<>();
 
-	public CustomEnchantment(JavaPlugin plugin, EffectRegistry effectRegistry, ConditionRegistry conditionRegistry,
-			ConfigurationSection section) throws InvalidEnchantmentException {
+	public CustomEnchantment(ModernEnchants plugin, ConfigurationSection section) throws InvalidEnchantmentException {
 		super(new NamespacedKey(plugin, section.getString("name")));
 		this.plugin = plugin;
 
 		this.name = section.getString("name").toLowerCase();
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
 		this.description = ParseUtils.colorString(section.getString("description"));
+		this.longDescription = ParseUtils.colorString(section.getString("description-long", this.description));
 
 		ConfigurationSection weights = section.getConfigurationSection("weights");
 
@@ -70,7 +78,8 @@ public class CustomEnchantment extends Enchantment {
 			this.actions.add(ActionType.valueOf(action));
 		}
 
-		for (String item : section.getStringList("valid-items")) {
+		this.validItemsRaw = section.getStringList("valid-items");
+		for (String item : this.validItemsRaw) {
 			this.validItems.addAll(readMaterial(item.toUpperCase()));
 		}
 
@@ -83,7 +92,8 @@ public class CustomEnchantment extends Enchantment {
 				continue;
 
 			int level = Integer.parseInt(levelString);
-			this.levels.put(level, new EnchantmentLevel(levelSection, effectRegistry, conditionRegistry));
+			this.levels.put(level,
+					new EnchantmentLevel(levelSection, plugin.getEffectRegistry(), plugin.getConditionRegistry()));
 		}
 	}
 
@@ -106,20 +116,20 @@ public class CustomEnchantment extends Enchantment {
 			cooldown.setCooldown(context, this);
 
 		if (!encahntmentLevel.hasDelay()) {
-			processActionsDirect(level, context, encahntmentLevel);
+			processActionsDirect(context, encahntmentLevel);
 		} else {
-			processActionsDelay(level, context, encahntmentLevel);
+			processActionsDelay(context, encahntmentLevel);
 		}
 	}
 
-	private void processActionsDirect(int level, EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
+	private void processActionsDirect(EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
 		for (EnchantmentEffect effect : encahntmentLevel.getEffects()) {
 			effect.handle(context);
 		}
 
 	}
 
-	private void processActionsDelay(int level, EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
+	private void processActionsDelay(EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
 		List<EnchantmentEffect> effectList = new ArrayList<>(encahntmentLevel.getEffects());
 		final int size = effectList.size();
 
@@ -151,6 +161,33 @@ public class CustomEnchantment extends Enchantment {
 
 	}
 
+	public ItemStack getAsBook() {
+		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+		BookMeta meta = (BookMeta) book.getItemMeta();
+
+		meta.setTitle("Blank");
+		meta.setAuthor("Server");
+
+		StringBuilder firstPage = new StringBuilder();
+		firstPage.append(ChatColor.GOLD + "=".repeat(19) + "\n");
+		firstPage.append(ChatUtils.centerMessage(this.displayName, BOOK_PAGE_CENTER) + "\n\n");
+		firstPage.append(ChatColor.BLACK + ChatColor.stripColor(this.longDescription) + "\n\n");
+		firstPage.append(this.plugin.getMessage("max-level") + ChatColor.DARK_GREEN + this.maxLevel + "\n");
+		firstPage.append(ChatColor.GOLD + "=".repeat(19));
+
+		StringBuilder secondPage = new StringBuilder();
+		secondPage.append(ChatColor.GOLD + "=".repeat(19) + "\n");
+		secondPage.append(this.plugin.getMessage("valid-items") + "\n");
+		this.validItemsRaw.forEach(raw -> secondPage.append(ChatColor.BLACK + " - "
+				+ org.apache.commons.lang.StringUtils.capitalize(raw.toLowerCase().replace("_", " ")) + "\n"));
+		secondPage.append(ChatColor.GOLD + "=".repeat(19));
+
+		meta.addPage(firstPage.toString(), secondPage.toString());
+		book.setItemMeta(meta);
+
+		return book;
+	}
+
 	public boolean listensFor(ActionType type) {
 		return this.actions.contains(type);
 	}
@@ -178,9 +215,6 @@ public class CustomEnchantment extends Enchantment {
 		return this.minLevel;
 	}
 
-	/**
-	 * @return the weight
-	 */
 	public double getEnchantingWeight() {
 		return enchantingWeight;
 	}
@@ -215,5 +249,4 @@ public class CustomEnchantment extends Enchantment {
 	public boolean canEnchantItem(ItemStack item) {
 		return this.validItems.contains(item.getType());
 	}
-
 }
