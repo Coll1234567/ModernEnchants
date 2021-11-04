@@ -34,6 +34,7 @@ public class BlockListener implements Listener {
 		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.BREAK_BLOCK).withItem(item)
 				.withTargetBlock(block).withUser(player).build();
 
+		ignore = true;
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
 
@@ -42,10 +43,9 @@ public class BlockListener implements Listener {
 
 			int level = enchants.getValue();
 
-			ignore = true;
 			enchantment.processActions(level, context);
-			ignore = false;
 		}
+		ignore = false;
 	}
 
 	@EventHandler(ignoreCancelled = true)

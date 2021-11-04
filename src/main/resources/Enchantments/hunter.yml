@@ -1,0 +1,52 @@
+name: 'hunter'
+display-name: '<#576B4E>Hunter</#576B4E>'
+
+description: '&7» Increases damage to animals.'
+description-long: "&7Each level adds half a heart of extra damage to animals."
+
+weights:
+  enchanting: 100
+  trading: 100
+  loot: 100
+
+min-level: 1
+max-level: 5
+
+actions:
+  - ATTACK_MOB
+  
+valid-items:
+  - SWORDS
+  - AXES
+
+levels:
+  1:
+    min-enchanting-level: 0
+    conditions:
+      - is_animal(opponent,true)
+    effects:
+      - add_damage(1)
+  2:
+    min-enchanting-level: 6
+    conditions:
+      - is_animal(opponent,true)
+    effects:
+      - add_damage(2)
+  3:
+    min-enchanting-level: 12
+    conditions:
+      - is_animal(opponent,true)
+    effects:
+      - add_damage(3)
+  4:
+    min-enchanting-level: 18
+    conditions:
+      - is_animal(opponent,true)
+    effects:
+      - add_damage(4)
+  5:
+    min-enchanting-level: 24
+    conditions:
+      - is_animal(opponent,true)
+    effects:
+      - add_damage(5)

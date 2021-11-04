@@ -21,6 +21,7 @@ import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
 
 public class MiscListener implements Listener {
+	boolean ignore = false;
 
 	@EventHandler(ignoreCancelled = true)
 	public void onFish(PlayerFishEvent event) {
@@ -49,13 +50,14 @@ public class MiscListener implements Listener {
 
 	@EventHandler
 	public void onBowShoot(ProjectileLaunchEvent event) {
-		if (!(event.getEntity().getShooter()instanceof LivingEntity entity))
+		if (ignore || !(event.getEntity().getShooter()instanceof LivingEntity entity))
 			return;
 
 		Set<ItemStack> items = new HashSet<>();
 		items.add(entity.getEquipment().getItemInMainHand());
 		items.add(entity.getEquipment().getItemInOffHand());
 
+		ignore = true;
 		for (ItemStack item : items) {
 			if (item == null || item.getType().isAir())
 				continue;
@@ -73,6 +75,7 @@ public class MiscListener implements Listener {
 				enchantment.processActions(level, context);
 			}
 		}
+		ignore = false;
 	}
 
 	@EventHandler

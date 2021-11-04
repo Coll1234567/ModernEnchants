@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,8 +34,14 @@ public class EnchantCommand extends SimpleCommandHandler {
 		if (sender instanceof Player player) {
 			CustomEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
 
+			int level = 1;
+
+			if (args.length >= 3 && StringUtils.isNumeric(args[1])) {
+				level = Integer.parseInt(args[1]);
+			}
+
 			if (enchant != null) {
-				player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant, 1);
+				player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant, level);
 			}
 		}
 		return true;
@@ -45,6 +52,17 @@ public class EnchantCommand extends SimpleCommandHandler {
 		if (args.length == 2) {
 			Set<String> modules = this.plugin.getEnchantmentRegistry().getNames();
 			return StringUtil.copyPartialMatches(args[0], modules, new ArrayList<>());
+		}
+
+		if (args.length == 3) {
+			CustomEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
+			if (enchant != null) {
+				List<String> levels = new ArrayList<>();
+				for (int i = enchant.getStartLevel(); i <= enchant.getMaxLevel(); i++) {
+					levels.add(Integer.toString(i));
+				}
+				return levels;
+			}
 		}
 		return Collections.emptyList();
 	}

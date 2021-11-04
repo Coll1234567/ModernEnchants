@@ -1,7 +1,7 @@
 package me.jishuna.modernenchants.api.enchantments;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -13,8 +13,8 @@ import me.jishuna.modernenchants.api.effects.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
 
 public class EnchantmentLevel {
-	private final Set<EnchantmentEffect> effects = new HashSet<>();
-	private final Set<EnchantmentCondition> conditions = new HashSet<>();
+	private final List<EnchantmentEffect> effects = new ArrayList<>();
+	private final List<EnchantmentCondition> conditions = new ArrayList<>();
 	private boolean hasDelay;
 	private final int minExperienceLevel;
 
@@ -43,11 +43,11 @@ public class EnchantmentLevel {
 		}
 	}
 
-	public Set<EnchantmentEffect> getEffects() {
+	public List<EnchantmentEffect> getEffects() {
 		return effects;
 	}
 
-	public Set<EnchantmentCondition> getConditions() {
+	public List<EnchantmentCondition> getConditions() {
 		return conditions;
 	}
 

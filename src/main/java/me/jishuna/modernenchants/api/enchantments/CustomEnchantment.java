@@ -40,6 +40,7 @@ public class CustomEnchantment extends Enchantment {
 	private final int minLevel;
 	private final int maxLevel;
 	private final boolean cursed;
+	private final boolean treasure;
 
 	private final List<String> validItemsRaw = new ArrayList<>();
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
@@ -64,6 +65,7 @@ public class CustomEnchantment extends Enchantment {
 		this.maxLevel = section.getInt("max-level", 5);
 
 		this.cursed = section.getBoolean("cursed", false);
+		this.treasure = section.getBoolean("treasure", false);
 
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();
@@ -80,10 +82,10 @@ public class CustomEnchantment extends Enchantment {
 			this.validItemsRaw.add(StringUtils.capitalize(item.toLowerCase().replace("_", " ")));
 		}
 
-		ConfigurationSection levels = section.getConfigurationSection("levels");
+		ConfigurationSection levelsSection = section.getConfigurationSection("levels");
 
-		for (String levelString : levels.getKeys(false)) {
-			ConfigurationSection levelSection = levels.getConfigurationSection(levelString);
+		for (String levelString : levelsSection.getKeys(false)) {
+			ConfigurationSection levelSection = levelsSection.getConfigurationSection(levelString);
 
 			if (levelSection == null)
 				continue;
@@ -208,8 +210,7 @@ public class CustomEnchantment extends Enchantment {
 
 	@Override
 	public boolean isTreasure() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.treasure;
 	}
 
 	@Override
