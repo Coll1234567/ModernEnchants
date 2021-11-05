@@ -24,21 +24,21 @@ import com.comphenix.protocol.ProtocolManager;
 import me.jishuna.commonlib.inventory.CustomInventoryManager;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
-import me.jishuna.modernenchants.api.conditions.ConditionRegistry;
-import me.jishuna.modernenchants.api.effects.EffectRegistry;
-import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantments.EnchantmentRegistry;
-import me.jishuna.modernenchants.api.exceptions.InvalidEnchantmentException;
-import me.jishuna.modernenchants.commands.ModernEnchantsCommandHandler;
-import me.jishuna.modernenchants.listeners.AnvilListener;
-import me.jishuna.modernenchants.listeners.BlockListener;
-import me.jishuna.modernenchants.listeners.CombatListener;
-import me.jishuna.modernenchants.listeners.EnchantingListener;
-import me.jishuna.modernenchants.listeners.InteractListener;
-import me.jishuna.modernenchants.listeners.MinionListener;
-import me.jishuna.modernenchants.listeners.MiscListener;
-import me.jishuna.modernenchants.packets.IncomingItemListener;
-import me.jishuna.modernenchants.packets.OutgoingItemListener;
+import me.jishuna.modernenchants.api.condition.ConditionRegistry;
+import me.jishuna.modernenchants.api.effect.EffectRegistry;
+import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
+import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
+import me.jishuna.modernenchants.command.ModernEnchantsCommandHandler;
+import me.jishuna.modernenchants.listener.AnvilListener;
+import me.jishuna.modernenchants.listener.BlockListener;
+import me.jishuna.modernenchants.listener.CombatListener;
+import me.jishuna.modernenchants.listener.EnchantingListener;
+import me.jishuna.modernenchants.listener.InteractListener;
+import me.jishuna.modernenchants.listener.MinionListener;
+import me.jishuna.modernenchants.listener.MiscListener;
+import me.jishuna.modernenchants.packet.IncomingItemListener;
+import me.jishuna.modernenchants.packet.OutgoingItemListener;
 
 public class ModernEnchants extends JavaPlugin {
 	private static final String PATH = "Enchantments";
@@ -145,9 +145,10 @@ public class ModernEnchants extends JavaPlugin {
 			try {
 				CustomEnchantment enchantment = new CustomEnchantment(this, config);
 				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
-			} catch (InvalidEnchantmentException e) {
-				this.getLogger().warning("An error occured loading enchantment \"" + config.getString("name", "Unknown")
-						+ "\" - " + e.getLocalizedMessage());
+			} catch (InvalidEnchantmentException ex) {
+				String enchantName = config.getString("name", "Unknown");
+				ex.addAdditionalInfo("Error while parsing enchantment \"" + enchantName + "\":");
+				ex.log(getLogger());
 			}
 		}
 	}

@@ -2,7 +2,7 @@ name: 'illager_bane'
 display-name: '<#491A26>Illager Bane</#491A26>'
 
 description: '&7» Increases damage to illagers.'
-description-long: "&7Each level adds half a heart of extra damage to Pillagers, Vindicators, Evokers, Ravagers, and Illusioners."
+description-long: "&7Each level adds one heart of extra damage to Pillagers, Vindicators, Evokers, Ravagers, and Illusioners."
 
 weights:
   enchanting: 100
@@ -18,6 +18,11 @@ actions:
 valid-items:
   - SWORDS
   - AXES
+  
+conflicts:
+  - 'minecraft:sharpness'
+  - 'minecraft:smite'
+  - 'minecraft:bane_of_arthropods'
 
 levels:
   1:
@@ -25,28 +30,28 @@ levels:
     conditions:
       - entity_type(pillager,vindicator,evoker,ravager,illusioner)
     effects:
-      - add_damage(1)
+      - add_damage(2)
   2:
     min-enchanting-level: 6
     conditions:
       - entity_type(pillager,vindicator,evoker,ravager,illusioner)
     effects:
-      - add_damage(2)
+      - add_damage(4)
   3:
     min-enchanting-level: 12
     conditions:
       - entity_type(pillager,vindicator,evoker,ravager,illusioner)
     effects:
-      - add_damage(3)
+      - add_damage(6)
   4:
     min-enchanting-level: 18
     conditions:
       - entity_type(pillager,vindicator,evoker,ravager,illusioner)
     effects:
-      - add_damage(4)
+      - add_damage(8)
   5:
     min-enchanting-level: 24
     conditions:
       - entity_type(pillager,vindicator,evoker,ravager,illusioner)
     effects:
-      - add_damage(5)
+      - add_damage(10)

@@ -9,9 +9,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.jishuna.modernenchants.api.ActionType;
-import me.jishuna.modernenchants.api.WornEnchantmentCheckEvent;
-import me.jishuna.modernenchants.api.enchantments.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantments.EnchantmentContext;
+import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
+import me.jishuna.modernenchants.api.event.WornEnchantmentCheckEvent;
 
 public class WornEnchantmentRunnable extends BukkitRunnable {
 
