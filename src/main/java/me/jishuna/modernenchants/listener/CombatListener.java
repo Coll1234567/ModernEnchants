@@ -1,11 +1,13 @@
 package me.jishuna.modernenchants.listener;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -23,6 +25,7 @@ import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 import me.jishuna.modernenchants.api.utils.Utils;
 
 public class CombatListener implements Listener {
+	private static final EnumSet<Material> BOWS = EnumSet.of(Material.BOW, Material.CROSSBOW);
 
 	@EventHandler(ignoreCancelled = true)
 	public void onDamage(EntityDamageEvent event) {
@@ -93,6 +96,9 @@ public class CombatListener implements Listener {
 
 		for (ItemStack item : items) {
 			if (item == null || item.getType().isAir())
+				continue;
+
+			if (!bow && BOWS.contains(item.getType()))
 				continue;
 
 			EnchantmentContext playerContext = EnchantmentContext.Builder

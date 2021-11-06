@@ -4,7 +4,7 @@ command-usage: '&4&l[&c&l!&4&l] &cInvalid argument: &7%arg%. &cValid arguments a
 description-format-change: '&aEnchantment description format changed to: &6%type%'
 
 enchantment-gui-name: 'Enchantments'
-max-level: '&6Max Level: '
+max-level: '&6Max Level: &2'
 applicable-items: '&6Applicable Items: '
 close-inventory: '&c&lClose'
 previous-page: '&6&lPrevious'

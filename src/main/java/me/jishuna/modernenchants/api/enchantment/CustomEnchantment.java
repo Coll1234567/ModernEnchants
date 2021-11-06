@@ -3,6 +3,7 @@ package me.jishuna.modernenchants.api.enchantment;
 import static me.jishuna.modernenchants.api.utils.ParseUtils.readMaterial;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import com.google.common.collect.Sets;
 
 import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.modernenchants.api.ObtainMethod;
 import me.jishuna.modernenchants.api.condition.CooldownCondition;
 import me.jishuna.modernenchants.api.condition.EnchantmentCondition;
 import me.jishuna.modernenchants.api.effect.DelayEffect;
@@ -30,7 +32,7 @@ import me.jishuna.modernenchants.api.effect.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.utils.ParseUtils;
 
-public class CustomEnchantment extends Enchantment {
+public class CustomEnchantment extends Enchantment implements IEnchantment {
 	private final ModernEnchants plugin;
 
 	private final String name;
@@ -39,7 +41,6 @@ public class CustomEnchantment extends Enchantment {
 	private final String displayName;
 	private final String group;
 
-	private final double enchantingWeight;
 	private final int minLevel;
 	private final int maxLevel;
 	private final boolean cursed;
@@ -50,6 +51,7 @@ public class CustomEnchantment extends Enchantment {
 	private final Set<ActionType> actions = new HashSet<>();
 	private final Set<String> conflicts;
 
+	private final Map<ObtainMethod, Double> weights = new EnumMap<>(ObtainMethod.class);
 	private final Map<Integer, EnchantmentLevel> levels = new HashMap<>();
 
 	public CustomEnchantment(ModernEnchants plugin, ConfigurationSection section) throws InvalidEnchantmentException {
@@ -63,9 +65,9 @@ public class CustomEnchantment extends Enchantment {
 
 		this.group = section.getString("group", null);
 
-		ConfigurationSection weights = section.getConfigurationSection("weights");
+		ConfigurationSection weightSection = section.getConfigurationSection("weights");
 
-		this.enchantingWeight = weights.getDouble("enchanting", 100d);
+		this.weights.put(ObtainMethod.ENCHANTING, weightSection.getDouble("enchanting", 100d));
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
@@ -180,10 +182,16 @@ public class CustomEnchantment extends Enchantment {
 	}
 
 	@Override
+	public Enchantment getEnchantment() {
+		return this;
+	}
+
+	@Override
 	public String getName() {
 		return this.name;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return displayName;
 	}
@@ -192,8 +200,14 @@ public class CustomEnchantment extends Enchantment {
 		return description;
 	}
 
+	@Override
 	public String getLongDescription() {
 		return longDescription;
+	}
+
+	@Override
+	public String getGroup() {
+		return this.group;
 	}
 
 	@Override
@@ -206,10 +220,12 @@ public class CustomEnchantment extends Enchantment {
 		return this.minLevel;
 	}
 
-	public double getEnchantingWeight() {
-		return enchantingWeight;
+	@Override
+	public double getWeight(ObtainMethod method) {
+		return this.weights.getOrDefault(method, 0d);
 	}
 
+	@Override
 	public List<String> getValidItemsRaw() {
 		return validItemsRaw;
 	}
@@ -235,11 +251,11 @@ public class CustomEnchantment extends Enchantment {
 
 	@Override
 	public boolean conflictsWith(Enchantment other) {
-		if (!(other instanceof CustomEnchantment enchant)) {
+		if (!(other instanceof IEnchantment enchant)) {
 			return this.conflicts.contains(other.getKey().toString());
 		}
 
-		if (this.group != null && enchant.group != null && this.group.equals(enchant.group)) {
+		if (this.group != null && enchant.getGroup() != null && this.group.equals(enchant.getGroup())) {
 			return true;
 		}
 
@@ -248,13 +264,6 @@ public class CustomEnchantment extends Enchantment {
 
 	@Override
 	public boolean canEnchantItem(ItemStack item) {
-		if (!this.validItems.contains(item.getType()))
-			return false;
-
-		for (Enchantment enchant : item.getEnchantments().keySet()) {
-			if (this.conflictsWith(enchant))
-				return false;
-		}
-		return true;
+		return this.validItems.contains(item.getType());
 	}
 }

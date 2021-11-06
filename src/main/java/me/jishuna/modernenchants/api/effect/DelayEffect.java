@@ -26,7 +26,7 @@ public class DelayEffect extends EnchantmentEffect {
 	}
 
 	public void handle(EnchantmentContext context) {
-		// Should never actually be used
+		// The delay effect is handled differently due to the nature of its function
 	}
 	
 	public int getDelay() {

@@ -11,7 +11,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,7 +21,7 @@ import me.jishuna.commonlib.items.ItemBuilder;
 import me.jishuna.commonlib.utils.StringUtils;
 import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.PluginKeys;
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 import net.md_5.bungee.api.ChatColor;
 
 public class ListEnchantsCommand extends SimpleCommandHandler {
@@ -53,20 +52,18 @@ public class ListEnchantsCommand extends SimpleCommandHandler {
 		CustomInventory inventory = new CustomInventory(null, 54, this.plugin.getMessage("enchantment-gui-name"));
 		inventory.addClickConsumer(event -> event.setCancelled(true));
 
-		final List<CustomEnchantment> enchants = new ArrayList<>(plugin.getEnchantmentRegistry().getAllEnchantments());
+		final List<IEnchantment> enchants = new ArrayList<>(plugin.getEnchantmentRegistry().getAllEnchantments());
 
 		for (int i = 0; i < Math.min(45, enchants.size() - start); i++) {
-			CustomEnchantment enchantment = enchants.get(start + i);
+			IEnchantment enchantment = enchants.get(start + i);
 
 			ItemStack item = new ItemBuilder(Material.ENCHANTED_BOOK)
 					.withName(enchantment.getDisplayName())
 					.withLore(StringUtils.splitString(enchantment.getLongDescription(), 40))
 					.addLore("")
-					.addLore(this.plugin.getMessage("max-level") + ChatColor.DARK_GREEN + enchantment.getMaxLevel())
+					.addLore(this.plugin.getMessage("max-level") + enchantment.getMaxLevel())
 					.addLore("")
 					.addLore(StringUtils.splitString(this.plugin.getMessage("applicable-items") + ChatColor.GRAY + String.join(", ", enchantment.getValidItemsRaw()) + ".", 40))
-					.withStoredEnchantment(enchantment, 1)
-					.withFlags(ItemFlag.HIDE_ENCHANTS)
 					.build();
 
 			inventory.addItem(item);

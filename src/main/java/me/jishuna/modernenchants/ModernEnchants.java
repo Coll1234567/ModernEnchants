@@ -1,14 +1,10 @@
 package me.jishuna.modernenchants;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.bukkit.Bukkit;
@@ -28,11 +24,13 @@ import me.jishuna.modernenchants.api.condition.ConditionRegistry;
 import me.jishuna.modernenchants.api.effect.EffectRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
+import me.jishuna.modernenchants.api.enchantment.VanillaEnchantment;
 import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import me.jishuna.modernenchants.command.ModernEnchantsCommandHandler;
 import me.jishuna.modernenchants.listener.AnvilListener;
 import me.jishuna.modernenchants.listener.BlockListener;
 import me.jishuna.modernenchants.listener.CombatListener;
+import me.jishuna.modernenchants.listener.DeathListener;
 import me.jishuna.modernenchants.listener.EnchantingListener;
 import me.jishuna.modernenchants.listener.InteractListener;
 import me.jishuna.modernenchants.listener.MinionListener;
@@ -41,7 +39,8 @@ import me.jishuna.modernenchants.packet.IncomingItemListener;
 import me.jishuna.modernenchants.packet.OutgoingItemListener;
 
 public class ModernEnchants extends JavaPlugin {
-	private static final String PATH = "Enchantments";
+	private static final String CUSTOM_PATH = "Enchantments/Custom";
+	private static final String VANILLA_PATH = "Enchantments/Vanilla";
 
 	private EffectRegistry effectRegistry;
 	private ConditionRegistry conditionRegistry;
@@ -62,6 +61,7 @@ public class ModernEnchants extends JavaPlugin {
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(new BlockListener(), this);
 		pm.registerEvents(new CombatListener(), this);
+		pm.registerEvents(new DeathListener(), this);
 		pm.registerEvents(new MiscListener(), this);
 		pm.registerEvents(new InteractListener(), this);
 		pm.registerEvents(new MinionListener(), this);
@@ -121,22 +121,30 @@ public class ModernEnchants extends JavaPlugin {
 			return;
 		}
 
-		File enchantFolder = new File(this.getDataFolder(), PATH);
-		if (!enchantFolder.exists()) {
-			enchantFolder.mkdirs();
-			this.copyDefaults();
+		File customEnchantFolder = new File(this.getDataFolder(), CUSTOM_PATH);
+		if (!customEnchantFolder.exists()) {
+			customEnchantFolder.mkdirs();
+			FileUtils.copyDefaults(this, CUSTOM_PATH, name -> FileUtils.loadResourceFile(this, name));
 		}
 
-		this.loadFromFolder(enchantFolder);
+		this.loadCustom(customEnchantFolder);
+
+		File vanillaEnchantFolder = new File(this.getDataFolder(), VANILLA_PATH);
+		if (!vanillaEnchantFolder.exists()) {
+			vanillaEnchantFolder.mkdirs();
+			FileUtils.copyDefaults(this, VANILLA_PATH, name -> FileUtils.loadResourceFile(this, name));
+		}
+
+		this.loadVanilla(vanillaEnchantFolder);
 		Enchantment.stopAcceptingRegistrations();
 	}
 
-	private void loadFromFolder(File folder) {
+	private void loadCustom(File folder) {
 		for (File file : folder.listFiles()) {
 			String name = file.getName();
 
 			if (file.isDirectory())
-				loadFromFolder(file);
+				loadCustom(file);
 
 			if (!name.endsWith(".yml"))
 				continue;
@@ -153,24 +161,24 @@ public class ModernEnchants extends JavaPlugin {
 		}
 	}
 
-	private void copyDefaults() {
-		final File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().getPath());
+	private void loadVanilla(File folder) {
+		for (File file : folder.listFiles()) {
+			String name = file.getName();
 
-		if (jarFile.isFile()) {
-			try (final JarFile jar = new JarFile(jarFile);) {
-				final Enumeration<JarEntry> entries = jar.entries();
-				while (entries.hasMoreElements()) {
-					final JarEntry entry = entries.nextElement();
-					if (entry.isDirectory())
-						continue;
+			if (file.isDirectory())
+				loadVanilla(file);
 
-					final String name = entry.getName();
-					if (name.startsWith(PATH + "/")) {
-						FileUtils.loadResourceFile(this, name);
-					}
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (!name.endsWith(".yml"))
+				continue;
+
+			YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+			try {
+				VanillaEnchantment enchantment = new VanillaEnchantment(this, config);
+				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
+			} catch (InvalidEnchantmentException ex) {
+				String enchantName = config.getString("name", "Unknown");
+				ex.addAdditionalInfo("Error while parsing vanilla enchantment \"" + enchantName + "\":");
+				ex.log(getLogger());
 			}
 		}
 	}

@@ -13,7 +13,7 @@ import org.bukkit.util.StringUtil;
 
 import me.jishuna.commonlib.commands.SimpleCommandHandler;
 import me.jishuna.modernenchants.ModernEnchants;
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 
 public class EnchantCommand extends SimpleCommandHandler {
 
@@ -32,7 +32,7 @@ public class EnchantCommand extends SimpleCommandHandler {
 		}
 
 		if (sender instanceof Player player) {
-			CustomEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
+			IEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
 
 			int level = 1;
 
@@ -41,7 +41,7 @@ public class EnchantCommand extends SimpleCommandHandler {
 			}
 
 			if (enchant != null) {
-				player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant, level);
+				player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant.getEnchantment(), level);
 			}
 		}
 		return true;
@@ -55,7 +55,7 @@ public class EnchantCommand extends SimpleCommandHandler {
 		}
 
 		if (args.length == 3) {
-			CustomEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
+			IEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantment(args[0]);
 			if (enchant != null) {
 				List<String> levels = new ArrayList<>();
 				for (int i = enchant.getStartLevel(); i <= enchant.getMaxLevel(); i++) {

@@ -19,10 +19,7 @@ valid-items:
   - SWORDS
   - AXES
   
-conflicts:
-  - 'minecraft:sharpness'
-  - 'minecraft:smite'
-  - 'minecraft:bane_of_arthropods'
+group: 'melee_damage_increase'
 
 levels:
   1:

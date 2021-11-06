@@ -10,26 +10,29 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 
 import me.jishuna.commonlib.random.WeightedRandom;
+import me.jishuna.modernenchants.api.ObtainMethod;
 
 public class EnchantmentRegistry {
 
-	private final WeightedRandom<CustomEnchantment> enchantRandom = new WeightedRandom<>();
-	private final Map<NamespacedKey, CustomEnchantment> enchantmentMap = new TreeMap<>();
+	private final WeightedRandom<IEnchantment> enchantRandom = new WeightedRandom<>();
+	private final Map<NamespacedKey, IEnchantment> enchantmentMap = new TreeMap<>();
 
-	public void registerAndInjectEnchantment(CustomEnchantment enchantment) {
-		Enchantment.registerEnchantment(enchantment);
+	public void registerAndInjectEnchantment(IEnchantment enchantment) {
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
 
-		double enchantWeight = enchantment.getEnchantingWeight();
+		double enchantWeight = enchantment.getWeight(ObtainMethod.ENCHANTING);
 		if (enchantWeight > 0)
 			this.enchantRandom.add(enchantWeight, enchantment);
+
+		if (enchantment instanceof CustomEnchantment enchant)
+			Enchantment.registerEnchantment(enchant);
 	}
 
-	public CustomEnchantment getEnchantment(String name) {
+	public IEnchantment getEnchantment(String name) {
 		return getEnchantment(NamespacedKey.fromString(name));
 	}
 
-	public CustomEnchantment getEnchantment(NamespacedKey key) {
+	public IEnchantment getEnchantment(NamespacedKey key) {
 		return this.enchantmentMap.get(key);
 	}
 
@@ -37,11 +40,11 @@ public class EnchantmentRegistry {
 		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
 	}
 
-	public Collection<CustomEnchantment> getAllEnchantments() {
+	public Collection<IEnchantment> getAllEnchantments() {
 		return this.enchantmentMap.values();
 	}
 
-	public CustomEnchantment getRandomEnchantment() {
+	public IEnchantment getRandomEnchantment() {
 		return this.enchantRandom.poll();
 	}
 

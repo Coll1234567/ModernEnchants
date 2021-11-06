@@ -1,0 +1,18 @@
+name: 'minecraft:sharpness'
+display-name: '&7Sharpness'
+
+description-long: '&7dfgafdfgdfg.'
+
+weights:
+  enchanting: 80
+  trading: 80
+  loot: 80
+
+min-level: 1
+max-level: 5
+  
+valid-items:
+  - SWORDS
+  - AXES
+  
+group: 'melee_damage_increase'

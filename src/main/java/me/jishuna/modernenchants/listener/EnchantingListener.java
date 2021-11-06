@@ -1,5 +1,6 @@
 package me.jishuna.modernenchants.listener;
 
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentLevel;
+import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 
 public class EnchantingListener implements Listener {
 
@@ -28,19 +30,22 @@ public class EnchantingListener implements Listener {
 	@EventHandler
 	public void onEnchant(EnchantItemEvent event) {
 		int cost = event.getExpLevelCost();
+		Map<Enchantment, Integer> toAdd = event.getEnchantsToAdd();
 		ItemStack target = event.getItem();
 		ThreadLocalRandom random = ThreadLocalRandom.current();
-		int count = random.nextInt(1, 4);
+		int count = random.nextInt(toAdd.size(), 5);
 		boolean book = target.getType() == Material.BOOK;
+
+		toAdd.clear();
 
 		for (int i = 0; i < count; i++) {
 			int tries = 10;
 			boolean valid = false;
 
-			CustomEnchantment enchantment;
+			IEnchantment enchantment;
 			do {
 				enchantment = plugin.getEnchantmentRegistry().getRandomEnchantment();
-				valid = book || checkConflicts(target, enchantment, event.getEnchantsToAdd().keySet());
+				valid = book || checkConflicts(target, enchantment, toAdd.keySet());
 				tries--;
 			} while (!valid && tries > 0);
 
@@ -48,7 +53,7 @@ public class EnchantingListener implements Listener {
 				continue;
 
 			int[] levels = getLevelRange(enchantment, cost);
-			event.getEnchantsToAdd().put(enchantment, random.nextInt(levels[0], levels[1] + 1));
+			toAdd.put(enchantment.getEnchantment(), random.nextInt(levels[0], levels[1] + 1));
 		}
 
 		if (book) {
@@ -56,13 +61,21 @@ public class EnchantingListener implements Listener {
 		}
 	}
 
-	private boolean checkConflicts(ItemStack item, CustomEnchantment enchantment, Set<Enchantment> enchantments) {
-		if (!enchantment.canEnchantItem(item) || enchantments.contains(enchantment))
+	private boolean checkConflicts(ItemStack item, IEnchantment enchantment, Set<Enchantment> enchantments) {
+		if (!enchantment.canEnchantItem(item) || enchantments.contains(enchantment.getEnchantment()))
 			return false;
 
 		for (Enchantment enchant : enchantments) {
-			if (enchant.conflictsWith(enchantment) || enchantment.conflictsWith(enchant))
-				return false;
+			IEnchantment custom = this.plugin.getEnchantmentRegistry().getEnchantment(enchant.getKey());
+
+			if (custom != null) {
+				if (custom.conflictsWith(enchantment.getEnchantment())
+						|| enchantment.conflictsWith(custom.getEnchantment()))
+					return false;
+			} else {
+				if (enchant.conflictsWith(enchantment.getEnchantment()) || enchantment.conflictsWith(enchant))
+					return false;
+			}
 		}
 		return true;
 
@@ -88,11 +101,15 @@ public class EnchantingListener implements Listener {
 		});
 	}
 
-	private int[] getLevelRange(CustomEnchantment enchantment, int cost) {
+	private int[] getLevelRange(IEnchantment enchantment, int cost) {
 		int lowerCost = cost / 2;
 		int[] levels = new int[] { enchantment.getStartLevel(), enchantment.getStartLevel() };
 
-		for (Entry<Integer, EnchantmentLevel> levelEntry : enchantment.getLevels().entrySet()) {
+		if (!(enchantment instanceof CustomEnchantment enchant))
+			return new int[] { Math.max(enchantment.getMaxLevel() - 2, enchantment.getStartLevel()),
+					enchantment.getMaxLevel() };
+
+		for (Entry<Integer, EnchantmentLevel> levelEntry : enchant.getLevels().entrySet()) {
 			EnchantmentLevel enchantmentLevel = levelEntry.getValue();
 			int level = levelEntry.getKey();
 
