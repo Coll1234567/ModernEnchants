@@ -134,6 +134,15 @@ public class VanillaEnchantment implements IEnchantment {
 	}
 
 	@Override
+	public boolean conflictsWith(IEnchantment other) {
+		if (this.group != null && other.getGroup() != null && this.group.equals(other.getGroup())) {
+			return true;
+		}
+
+		return this.conflicts.contains(other.getName());
+	}
+
+	@Override
 	public boolean canEnchantItem(ItemStack item) {
 		return this.validItems.contains(item.getType());
 	}

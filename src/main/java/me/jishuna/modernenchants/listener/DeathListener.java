@@ -36,7 +36,7 @@ public class DeathListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.KILL_ENTITY).withItem(item)
+			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.KILL_MOB).withItem(item)
 					.withUser(killer).withOpponent(entity).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {

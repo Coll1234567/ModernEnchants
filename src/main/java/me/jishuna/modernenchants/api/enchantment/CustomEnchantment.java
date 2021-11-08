@@ -261,6 +261,15 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 
 		return this.conflicts.contains(enchant.getName());
 	}
+	
+	@Override
+	public boolean conflictsWith(IEnchantment other) {
+		if (this.group != null && other.getGroup() != null && this.group.equals(other.getGroup())) {
+			return true;
+		}
+
+		return this.conflicts.contains(other.getName());
+	}
 
 	@Override
 	public boolean canEnchantItem(ItemStack item) {

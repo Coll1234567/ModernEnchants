@@ -26,6 +26,8 @@ public interface IEnchantment {
 	
 	public boolean conflictsWith(Enchantment enchantment);
 	
+	public boolean conflictsWith(IEnchantment enchantment);
+	
 	public boolean canEnchantItem(ItemStack item);
 	
 	public int getStartLevel();

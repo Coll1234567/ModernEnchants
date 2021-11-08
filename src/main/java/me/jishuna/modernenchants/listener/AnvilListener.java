@@ -1,102 +1,188 @@
 package me.jishuna.modernenchants.listener;
 
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
+import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.Repairable;
 
-import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
+import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
+import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 
 public class AnvilListener implements Listener {
 
+	private final EnchantmentRegistry registry;
+
+	public AnvilListener(EnchantmentRegistry registry) {
+		this.registry = registry;
+	}
+
+	// TODO Adapted from vanilla, clean-up
 	@EventHandler
 	public void onAnvil(PrepareAnvilEvent event) {
 		ItemStack first = event.getInventory().getItem(0);
-		ItemStack result = event.getResult();
 
-		if (first == null || result == null)
+		if (first == null)
 			return;
 
-		ItemStack second = event.getInventory().getItem(1);
+		AnvilInventory inventory = event.getInventory();
+		ItemMeta firstMeta = first.getItemMeta();
 
-		ItemMeta meta = first.getItemMeta();
-		ItemMeta resultMeta = result.getItemMeta();
+		ItemStack copy = first.clone();
+		ItemMeta copyMeta = copy.getItemMeta();
 
-		if (second == null || (second.getType() != first.getType() && second.getType() != Material.ENCHANTED_BOOK)) {
+		ItemStack second = inventory.getItem(1);
 
-			for (Entry<Enchantment, Integer> toAdd : meta.getEnchants().entrySet()) {
-				Enchantment enchant = toAdd.getKey();
+		Map<Enchantment, Integer> firstEnchantments = new HashMap<>(first.getEnchantments());
+		int baseCost = getRepairCost(first) + (second == null ? 0 : getRepairCost(second));
+		int cost = 0;
+		byte b2 = 0;
 
-				if (!(enchant instanceof CustomEnchantment))
+		if (second != null) {
+			ItemMeta secondMeta = second.getItemMeta();
+			boolean book = second.getType() == Material.ENCHANTED_BOOK
+					&& !((EnchantmentStorageMeta) secondMeta).getStoredEnchants().isEmpty();
+
+			Map<Enchantment, Integer> secondEnchantments = second.getEnchantments();
+
+			boolean lastValid = false;
+			boolean lastInvalid = false;
+
+			for (Enchantment enchantment : secondEnchantments.keySet()) {
+				// Can this even be null?
+				if (enchantment == null)
+					continue;
+				IEnchantment customEnchantment = getCustomEnchantment(enchantment);
+
+				if (customEnchantment == null)
 					continue;
 
-				addEnchant(result, resultMeta, enchant, toAdd.getValue());
-			}
+				int firstLevel = firstEnchantments.getOrDefault(enchantment, 0);
+				int secondLevel = secondEnchantments.get(enchantment);
 
-			result.setItemMeta(resultMeta);
-			event.setResult(result);
-		} else {
-			ItemMeta secondMeta = second.getItemMeta();
+				secondLevel = ((firstLevel == secondLevel) ? (secondLevel + 1) : Math.max(secondLevel, firstLevel));
 
-			if (secondMeta instanceof EnchantmentStorageMeta storageMeta) {
-				resultMeta = handleCombine(result, meta.getEnchants(), storageMeta.getStoredEnchants(), resultMeta);
-			} else {
-				resultMeta = handleCombine(result, meta.getEnchants(), secondMeta.getEnchants(), resultMeta);
+				boolean valid = customEnchantment.canEnchantItem(first);
+				if (first.getType() == Material.ENCHANTED_BOOK)
+					valid = true;
+
+				for (final Enchantment enchantment2 : firstEnchantments.keySet()) {
+					IEnchantment customEnchantment2 = getCustomEnchantment(enchantment2);
+
+					if (customEnchantment2 != customEnchantment
+							&& customEnchantment.conflictsWith(customEnchantment2)) {
+						valid = false;
+						++cost;
+					}
+				}
+
+				if (!valid) {
+					lastInvalid = true;
+				} else {
+					lastValid = true;
+
+					if (secondLevel > customEnchantment.getMaxLevel())
+						secondLevel = customEnchantment.getMaxLevel();
+
+					firstEnchantments.put(enchantment, secondLevel);
+					int enchantCost = 1;
+
+					if (book)
+						enchantCost = Math.max(1, enchantCost / 2);
+					cost += enchantCost * secondLevel;
+
+					if (first.getAmount() <= 1) {
+						continue;
+					}
+					cost = 40;
+				}
 			}
-			result.setItemMeta(resultMeta);
-			event.setResult(result);
+			if (lastInvalid && !lastValid) {
+				event.setResult(null);
+				inventory.setRepairCost(0);
+				return;
+			}
 		}
+
+		String name = event.getInventory().getRenameText();
+
+		if (StringUtils.isBlank(name)) {
+			if (firstMeta.hasDisplayName()) {
+				b2 = 1;
+				cost += b2;
+				copyMeta.setDisplayName(null);
+			}
+		} else if (!name.equals(firstMeta.getDisplayName())) {
+			b2 = 1;
+			cost += b2;
+			copyMeta.setDisplayName(name);
+		}
+
+		if (cost <= 0) {
+			copy = null;
+		}
+
+		inventory.setRepairCost(baseCost + cost);
+
+		if (b2 == cost && b2 > 0 && inventory.getRepairCost() > inventory.getMaximumRepairCost()) {
+			inventory.setRepairCost(inventory.getMaximumRepairCost() - 1);
+		}
+
+		if (inventory.getRepairCost() >= inventory.getMaximumRepairCost())
+			copy = null;
+
+		if (copy != null) {
+			int repairCost = getRepairCost(copy);
+			if (second != null && repairCost < getRepairCost(second))
+				repairCost = getRepairCost(second);
+
+			if (b2 != cost || b2 == 0) {
+				repairCost = repairCost * 2 + 1;
+			}
+			if (copyMeta instanceof Repairable repair) {
+				repair.setRepairCost(repairCost);
+			}
+			setEnchants(copyMeta, firstEnchantments);
+			copy.setItemMeta(copyMeta);
+		}
+		event.setResult(copy);
 	}
 
-	private ItemMeta handleCombine(ItemStack result, Map<Enchantment, Integer> first, Map<Enchantment, Integer> second,
-			ItemMeta resultMeta) {
-		Set<Enchantment> enchants = new HashSet<>();
-		enchants.addAll(first.keySet());
-		enchants.addAll(second.keySet());
-
-		for (Enchantment enchant : enchants) {
-			if (!(enchant instanceof CustomEnchantment))
-				continue;
-
-			Integer firstLevel = first.get(enchant);
-			Integer secondLevel = second.get(enchant);
-
-			if (firstLevel == null && secondLevel == null)
-				continue;
-
-			if (firstLevel == null) {
-				addEnchant(result, resultMeta, enchant, secondLevel);
-				continue;
-			} else if (secondLevel == null) {
-				addEnchant(result, resultMeta, enchant, firstLevel);
-				continue;
-			}
-
-			int higher = Math.max(firstLevel, secondLevel);
-
-			if (higher == enchant.getMaxLevel() || !firstLevel.equals(secondLevel)) {
-				addEnchant(result, resultMeta, enchant, higher);
-				continue;
-			}
-			addEnchant(result, resultMeta, enchant, firstLevel + 1);
+	private IEnchantment getCustomEnchantment(Enchantment enchantment) {
+		if (enchantment instanceof IEnchantment enchant) {
+			return enchant;
 		}
-		return resultMeta;
+
+		return this.registry.getEnchantment(enchantment.getKey());
 	}
 
-	private void addEnchant(ItemStack result, ItemMeta meta, Enchantment enchant, int level) {
-		if (meta.hasEnchant(enchant))
-			meta.removeEnchant(enchant);
+	private boolean isValidRepairItem(ItemStack target, ItemStack first, ItemStack second) {
+		net.minecraft.world.item.ItemStack nmsFirst = CraftItemStack.asNMSCopy(first);
+		net.minecraft.world.item.ItemStack nmsSecond = CraftItemStack.asNMSCopy(second);
 
-		if (enchant.canEnchantItem(result) && !meta.hasConflictingEnchant(enchant))
-			meta.addEnchant(enchant, level, true);
+		return CraftItemStack.asNMSCopy(target).getItem().a(nmsFirst, nmsSecond);
+	}
+
+	private int getRepairCost(ItemStack item) {
+		ItemMeta meta = item.getItemMeta();
+		if (meta instanceof Repairable repair)
+			return repair.getRepairCost();
+		return 0;
+	}
+
+	private void setEnchants(ItemMeta meta, Map<Enchantment, Integer> enchantMap) {
+		meta.getEnchants().forEach((enchantment, level) -> meta.removeEnchant(enchantment));
+
+		enchantMap.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
 	}
 }

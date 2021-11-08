@@ -41,7 +41,11 @@ public class EnchantCommand extends SimpleCommandHandler {
 			}
 
 			if (enchant != null) {
-				player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant.getEnchantment(), level);
+				if (level > 0) {
+					player.getEquipment().getItemInMainHand().addUnsafeEnchantment(enchant.getEnchantment(), level);
+				} else {
+					player.getEquipment().getItemInMainHand().removeEnchantment(enchant.getEnchantment());
+				}
 			}
 		}
 		return true;

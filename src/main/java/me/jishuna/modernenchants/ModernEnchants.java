@@ -67,7 +67,7 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new MinionListener(), this);
 
 		pm.registerEvents(new EnchantingListener(this), this);
-		pm.registerEvents(new AnvilListener(), this);
+		pm.registerEvents(new AnvilListener(this.enchantmentRegistry), this);
 
 		pm.registerEvents(this.inventoryManager, this);
 
