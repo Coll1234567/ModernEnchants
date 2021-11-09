@@ -12,12 +12,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 
 import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
 import me.jishuna.modernenchants.api.enchantment.IEnchantment;
+import me.jishuna.modernenchants.api.utils.EnchantmentHelper;
 
 public class AnvilListener implements Listener {
 
@@ -43,74 +45,113 @@ public class AnvilListener implements Listener {
 
 		ItemStack second = inventory.getItem(1);
 
-		Map<Enchantment, Integer> firstEnchantments = new HashMap<>(first.getEnchantments());
+		Map<Enchantment, Integer> firstEnchantments = new HashMap<>(EnchantmentHelper.getEnchants(firstMeta));
 		int baseCost = getRepairCost(first) + (second == null ? 0 : getRepairCost(second));
 		int cost = 0;
-		byte b2 = 0;
+		byte extraCost = 0;
 
 		if (second != null) {
 			ItemMeta secondMeta = second.getItemMeta();
 			boolean book = second.getType() == Material.ENCHANTED_BOOK
 					&& !((EnchantmentStorageMeta) secondMeta).getStoredEnchants().isEmpty();
 
-			Map<Enchantment, Integer> secondEnchantments = second.getEnchantments();
+			if (copyMeta instanceof Damageable damageable && isValidRepairItem(copy, first, second)) {
+				int repairItemCountCost = Math.min(damageable.getDamage(), copy.getType().getMaxDurability() / 4);
+				if (repairItemCountCost <= 0) {
+					event.setResult(null);
+					inventory.setRepairCost(0);
+					return;
+				}
 
-			boolean lastValid = false;
-			boolean lastInvalid = false;
+				for (int i2 = 0; repairItemCountCost > 0 && i2 < second.getAmount(); ++i2) {
+					repairItemCountCost = Math.min(damageable.getDamage(), copy.getType().getMaxDurability() / 4);
+					final int l = damageable.getDamage() - repairItemCountCost;
+					damageable.setDamage(l);
+					++cost;
+				}
+			} else {
+				if (!book && (copy.getType() != second.getType() || !(copyMeta instanceof Damageable))) {
+					event.setResult(null);
+					inventory.setRepairCost(0);
+					return;
+				}
 
-			for (Enchantment enchantment : secondEnchantments.keySet()) {
-				// Can this even be null?
-				if (enchantment == null)
-					continue;
-				IEnchantment customEnchantment = getCustomEnchantment(enchantment);
+				if (copyMeta instanceof Damageable damageable && !book) {
+					final int firstDiff = first.getType().getMaxDurability() - getDamage(firstMeta);
+					final int secondDiff = second.getType().getMaxDurability() - getDamage(secondMeta);
+					final int l = secondDiff + copy.getType().getMaxDurability() * 12 / 100;
+					final int j2 = firstDiff + l;
 
-				if (customEnchantment == null)
-					continue;
+					int k2 = copy.getType().getMaxDurability() - j2;
+					if (k2 < 0) {
+						k2 = 0;
+					}
 
-				int firstLevel = firstEnchantments.getOrDefault(enchantment, 0);
-				int secondLevel = secondEnchantments.get(enchantment);
-
-				secondLevel = ((firstLevel == secondLevel) ? (secondLevel + 1) : Math.max(secondLevel, firstLevel));
-
-				boolean valid = customEnchantment.canEnchantItem(first);
-				if (first.getType() == Material.ENCHANTED_BOOK)
-					valid = true;
-
-				for (final Enchantment enchantment2 : firstEnchantments.keySet()) {
-					IEnchantment customEnchantment2 = getCustomEnchantment(enchantment2);
-
-					if (customEnchantment2 != customEnchantment
-							&& customEnchantment.conflictsWith(customEnchantment2)) {
-						valid = false;
-						++cost;
+					if (k2 < damageable.getDamage()) {
+						damageable.setDamage(k2);
+						cost += 2;
 					}
 				}
 
-				if (!valid) {
-					lastInvalid = true;
-				} else {
-					lastValid = true;
+				Map<Enchantment, Integer> secondEnchantments = EnchantmentHelper.getEnchants(secondMeta);
+				boolean lastValid = false;
+				boolean lastInvalid = false;
 
-					if (secondLevel > customEnchantment.getMaxLevel())
-						secondLevel = customEnchantment.getMaxLevel();
-
-					firstEnchantments.put(enchantment, secondLevel);
-					int enchantCost = 1;
-
-					if (book)
-						enchantCost = Math.max(1, enchantCost / 2);
-					cost += enchantCost * secondLevel;
-
-					if (first.getAmount() <= 1) {
+				for (Enchantment enchantment : secondEnchantments.keySet()) {
+					// Can this even be null?
+					if (enchantment == null)
 						continue;
+					IEnchantment customEnchantment = EnchantmentHelper.getCustomEnchantment(enchantment, this.registry);
+
+					if (customEnchantment == null)
+						continue;
+
+					int firstLevel = firstEnchantments.getOrDefault(enchantment, 0);
+					int secondLevel = secondEnchantments.get(enchantment);
+
+					secondLevel = ((firstLevel == secondLevel) ? (secondLevel + 1) : Math.max(secondLevel, firstLevel));
+
+					boolean valid = customEnchantment.canEnchantItem(first);
+					if (first.getType() == Material.ENCHANTED_BOOK)
+						valid = true;
+
+					for (final Enchantment enchantment2 : firstEnchantments.keySet()) {
+						IEnchantment customEnchantment2 = EnchantmentHelper.getCustomEnchantment(enchantment2,
+								this.registry);
+
+						if (customEnchantment2 != customEnchantment
+								&& customEnchantment.conflictsWith(customEnchantment2)) {
+							valid = false;
+							++cost;
+						}
 					}
-					cost = 40;
+
+					if (!valid) {
+						lastInvalid = true;
+					} else {
+						lastValid = true;
+
+						if (secondLevel > customEnchantment.getMaxLevel())
+							secondLevel = customEnchantment.getMaxLevel();
+
+						firstEnchantments.put(enchantment, secondLevel);
+						int enchantCost = 1;
+
+						if (book)
+							enchantCost = Math.max(1, enchantCost / 2);
+						cost += enchantCost * secondLevel;
+
+						if (first.getAmount() <= 1) {
+							continue;
+						}
+						cost = 40;
+					}
 				}
-			}
-			if (lastInvalid && !lastValid) {
-				event.setResult(null);
-				inventory.setRepairCost(0);
-				return;
+				if (lastInvalid && !lastValid) {
+					event.setResult(null);
+					inventory.setRepairCost(0);
+					return;
+				}
 			}
 		}
 
@@ -118,13 +159,13 @@ public class AnvilListener implements Listener {
 
 		if (StringUtils.isBlank(name)) {
 			if (firstMeta.hasDisplayName()) {
-				b2 = 1;
-				cost += b2;
+				extraCost = 1;
+				cost += extraCost;
 				copyMeta.setDisplayName(null);
 			}
 		} else if (!name.equals(firstMeta.getDisplayName())) {
-			b2 = 1;
-			cost += b2;
+			extraCost = 1;
+			cost += extraCost;
 			copyMeta.setDisplayName(name);
 		}
 
@@ -134,7 +175,7 @@ public class AnvilListener implements Listener {
 
 		inventory.setRepairCost(baseCost + cost);
 
-		if (b2 == cost && b2 > 0 && inventory.getRepairCost() > inventory.getMaximumRepairCost()) {
+		if (extraCost == cost && extraCost > 0 && inventory.getRepairCost() > inventory.getMaximumRepairCost()) {
 			inventory.setRepairCost(inventory.getMaximumRepairCost() - 1);
 		}
 
@@ -146,24 +187,17 @@ public class AnvilListener implements Listener {
 			if (second != null && repairCost < getRepairCost(second))
 				repairCost = getRepairCost(second);
 
-			if (b2 != cost || b2 == 0) {
+			if (extraCost != cost || extraCost == 0) {
 				repairCost = repairCost * 2 + 1;
 			}
 			if (copyMeta instanceof Repairable repair) {
 				repair.setRepairCost(repairCost);
 			}
-			setEnchants(copyMeta, firstEnchantments);
+
+			EnchantmentHelper.setEnchants(copyMeta, firstEnchantments);
 			copy.setItemMeta(copyMeta);
 		}
 		event.setResult(copy);
-	}
-
-	private IEnchantment getCustomEnchantment(Enchantment enchantment) {
-		if (enchantment instanceof IEnchantment enchant) {
-			return enchant;
-		}
-
-		return this.registry.getEnchantment(enchantment.getKey());
 	}
 
 	private boolean isValidRepairItem(ItemStack target, ItemStack first, ItemStack second) {
@@ -180,9 +214,9 @@ public class AnvilListener implements Listener {
 		return 0;
 	}
 
-	private void setEnchants(ItemMeta meta, Map<Enchantment, Integer> enchantMap) {
-		meta.getEnchants().forEach((enchantment, level) -> meta.removeEnchant(enchantment));
-
-		enchantMap.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+	private int getDamage(ItemMeta meta) {
+		if (meta instanceof Damageable damage)
+			return damage.getDamage();
+		return 0;
 	}
 }

@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentLevel;
@@ -36,15 +38,31 @@ public class EnchantmentHelper {
 		}
 	}
 
-	public static boolean addEnchant(ItemStack result, Map<Enchantment, Integer> enchantMap,
-			EnchantmentRegistry registry, IEnchantment enchant, int level) {
-		enchantMap.remove(enchant.getEnchantment());
-
-		if (enchant.canEnchantItem(result) && canEnchant(registry, result, enchant, enchantMap.keySet())) {
-			enchantMap.put(enchant.getEnchantment(), level);
-			return true;
+	public static IEnchantment getCustomEnchantment(Enchantment enchantment, EnchantmentRegistry registry) {
+		if (enchantment instanceof IEnchantment enchant) {
+			return enchant;
 		}
-		return false;
+
+		return registry.getEnchantment(enchantment.getKey());
+	}
+	
+	public static Map<Enchantment, Integer> getEnchants(ItemMeta meta) {
+		if (meta instanceof EnchantmentStorageMeta storage)
+			return storage.getStoredEnchants();
+		return meta.getEnchants();
+	}
+
+	public static void setEnchants(ItemMeta meta, Map<Enchantment, Integer> enchantMap) {
+		if (meta instanceof EnchantmentStorageMeta storageMeta) {
+			storageMeta.getStoredEnchants()
+					.forEach((enchantment, level) -> storageMeta.removeStoredEnchant(enchantment));
+
+			enchantMap.forEach((enchantment, level) -> storageMeta.addStoredEnchant(enchantment, level, true));
+		} else {
+			meta.getEnchants().forEach((enchantment, level) -> meta.removeEnchant(enchantment));
+
+			enchantMap.forEach((enchantment, level) -> meta.addEnchant(enchantment, level, true));
+		}
 	}
 
 	public static int[] getLevelRange(IEnchantment enchantment, int cost) {
@@ -68,7 +86,7 @@ public class EnchantmentHelper {
 		return levels;
 	}
 
-	private static boolean canEnchant(EnchantmentRegistry registry, ItemStack item, IEnchantment enchantment,
+	public static boolean canEnchant(EnchantmentRegistry registry, ItemStack item, IEnchantment enchantment,
 			Set<Enchantment> enchantments) {
 		if (!enchantment.canEnchantItem(item) || enchantments.contains(enchantment.getEnchantment()))
 			return false;
