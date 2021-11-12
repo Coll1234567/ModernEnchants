@@ -17,4 +17,5 @@ conflicts:
   
 valid-items:
   - SWORDS
+valid-items-anvil:
   - AXES

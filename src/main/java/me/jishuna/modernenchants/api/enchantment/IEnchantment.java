@@ -1,7 +1,8 @@
 package me.jishuna.modernenchants.api.enchantment;
 
-import java.util.List;
+import java.util.Set;
 
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -30,12 +31,14 @@ public interface IEnchantment {
 	
 	public boolean conflictsWith(IEnchantment enchantment);
 	
-	public boolean canEnchantItem(ItemStack item);
+	public boolean canEnchantItem(ItemStack item, boolean table);
 	
 	public int getStartLevel();
 	
 	public int getMaxLevel();
+
+	Set<Material> getValidItems();
 	
-	public List<String> getValidItemsRaw();
+	public Set<String> getValidItemsRaw();
 
 }

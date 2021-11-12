@@ -1,5 +1,5 @@
 name: 'minecraft:binding_curse'
-display-name: '&aCurse of Binding'
+display-name: '&cCurse of Binding'
 
 description: '&7» The item cannot be removed when worn.'
 description-long: '&7Prevents removing of an equipped item until it breaks or the user dies.'

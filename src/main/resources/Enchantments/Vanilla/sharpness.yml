@@ -14,6 +14,7 @@ max-level: 5
   
 valid-items:
   - SWORDS
+valid-items-anvil:
   - AXES
   
 group: 'melee_damage_increase'

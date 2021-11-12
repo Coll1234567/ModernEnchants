@@ -2,6 +2,7 @@ package me.jishuna.modernenchants.api.enchantment;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -20,6 +21,7 @@ import me.jishuna.modernenchants.api.ObtainMethod;
 
 public class EnchantmentRegistry {
 
+	private final EnumSet<Material> validItemTable = EnumSet.noneOf(Material.class);
 	private CustomEnchantment placeholderEnchant = null;
 	private final Map<Material, WeightedRandom<IEnchantment>> itemCache = new FixedSizeLinkedHashMap<>(50);
 	private final Map<NamespacedKey, IEnchantment> enchantmentMap = new TreeMap<>();
@@ -27,13 +29,16 @@ public class EnchantmentRegistry {
 	public void registerAndInjectEnchantment(IEnchantment enchantment) {
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
 
+		if (enchantment.getWeight(ObtainMethod.ENCHANTING) > 0)
+			validItemTable.addAll(enchantment.getValidItems());
+
 		if (enchantment instanceof CustomEnchantment enchant) {
-			if (placeholderEnchant == null) 
+			if (placeholderEnchant == null)
 				placeholderEnchant = enchant;
 			Enchantment.registerEnchantment(enchant);
 		}
 	}
-	
+
 	public void unregisterAll() {
 		try {
 			Field byIdField = Enchantment.class.getDeclaredField("byKey");
@@ -66,6 +71,10 @@ public class EnchantmentRegistry {
 		}
 	}
 
+	public boolean isEnchantable(Material type) {
+		return this.validItemTable.contains(type);
+	}
+
 	public IEnchantment getEnchantment(String name) {
 		return getEnchantment(NamespacedKey.fromString(name));
 	}
@@ -90,7 +99,7 @@ public class EnchantmentRegistry {
 			random = new WeightedRandom<>();
 
 			for (IEnchantment enchantment : getAllEnchantments()) {
-				if (enchantment.canEnchantItem(item) || book) {
+				if (book || enchantment.canEnchantItem(item, method == ObtainMethod.ENCHANTING)) {
 					double weight = enchantment.getWeight(method);
 
 					if (weight > 0)

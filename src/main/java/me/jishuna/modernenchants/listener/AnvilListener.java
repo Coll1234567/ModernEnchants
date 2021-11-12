@@ -113,7 +113,7 @@ public class AnvilListener implements Listener {
 
 					secondLevel = ((firstLevel == secondLevel) ? (secondLevel + 1) : Math.max(secondLevel, firstLevel));
 
-					boolean valid = customEnchantment.canEnchantItem(first);
+					boolean valid = customEnchantment.canEnchantItem(first, false);
 					if (first.getType() == Material.ENCHANTED_BOOK)
 						valid = true;
 

@@ -2,9 +2,9 @@ package me.jishuna.modernenchants.api.enchantment;
 
 import static me.jishuna.modernenchants.api.utils.ParseUtils.readMaterial;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +37,9 @@ public class VanillaEnchantment implements IEnchantment {
 	private final int maxLevel;
 	private final boolean cursed;
 
-	private final List<String> validItemsRaw = new ArrayList<>();
+	private final Set<String> validItemsRaw = new HashSet<>();
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
+	private final Set<Material> validItemsAnvil = EnumSet.noneOf(Material.class);
 	private final Set<String> conflicts;
 
 	private final Map<ObtainMethod, Double> weights = new EnumMap<>(ObtainMethod.class);
@@ -51,7 +52,7 @@ public class VanillaEnchantment implements IEnchantment {
 			throw new InvalidEnchantmentException("Invalid enchantment key: " + this.name);
 
 		this.delegate = enchantment;
-		
+
 		this.cursed = section.getBoolean("cursed", false);
 
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
@@ -73,9 +74,14 @@ public class VanillaEnchantment implements IEnchantment {
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
 
-		List<String> validItemStrings = section.getStringList("valid-items");
-		for (String item : validItemStrings) {
+		for (String item : section.getStringList("valid-items")) {
 			this.validItems.addAll(readMaterial(item.toUpperCase()));
+			this.validItemsRaw.add(StringUtils.capitalize(item.toLowerCase().replace("_", " ")));
+		}
+
+		this.validItemsAnvil.addAll(this.validItems);
+		for (String item : section.getStringList("valid-items-anvil")) {
+			this.validItemsAnvil.addAll(readMaterial(item.toUpperCase()));
 			this.validItemsRaw.add(StringUtils.capitalize(item.toLowerCase().replace("_", " ")));
 		}
 
@@ -133,7 +139,12 @@ public class VanillaEnchantment implements IEnchantment {
 	}
 
 	@Override
-	public List<String> getValidItemsRaw() {
+	public Set<Material> getValidItems() {
+		return validItems;
+	}
+
+	@Override
+	public Set<String> getValidItemsRaw() {
 		return validItemsRaw;
 	}
 
@@ -160,7 +171,9 @@ public class VanillaEnchantment implements IEnchantment {
 	}
 
 	@Override
-	public boolean canEnchantItem(ItemStack item) {
-		return this.validItems.contains(item.getType());
+	public boolean canEnchantItem(ItemStack item, boolean table) {
+		if (table)
+			return this.validItems.contains(item.getType());
+		return this.validItemsAnvil.contains(item.getType());
 	}
 }

@@ -20,8 +20,9 @@ actions:
   
 valid-items:
   - SWORDS
-  - AXES
   - BOW
+valid-items-anvil:
+  - AXES
 
 levels:
   1:

@@ -1,5 +1,5 @@
 name: 'minecraft:vanishing_curse'
-display-name: '&aCurse of Vanishing'
+display-name: '&cCurse of Vanishing'
 
 description: '&7» The item is lost when the user dies.'
 description-long: '&7The affected item permanently disappears if the user dies with it in their inventory.'

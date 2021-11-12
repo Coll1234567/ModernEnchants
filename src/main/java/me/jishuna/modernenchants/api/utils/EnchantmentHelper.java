@@ -3,6 +3,7 @@ package me.jishuna.modernenchants.api.utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -106,4 +107,22 @@ public class EnchantmentHelper {
 		}
 		return true;
 	}
+	
+	 public static int getEnchantmentCost(Random random, int index, int level, int enchantability) {
+	      if (enchantability <= 0) {
+	         return 0;
+	      } else {
+	         if (level > 15) {
+	            level = 15;
+	         }
+
+	         int value = random.nextInt(8) + 1 + (level >> 1) + random.nextInt(level + 1);
+	         if (index == 0) {
+	            return Math.max(value / 3, 1);
+	         } else {
+	            return index == 1 ? value * 2 / 3 + 1 : Math.max(value, level * 2);
+	         }
+	      }
+	   }
+
 }

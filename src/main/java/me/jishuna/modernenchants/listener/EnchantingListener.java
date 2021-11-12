@@ -30,13 +30,26 @@ public class EnchantingListener implements Listener {
 
 	@EventHandler
 	public void onPrepare(PrepareItemEnchantEvent event) {
-		for (EnchantmentOffer offer : event.getOffers()) {
-			if (offer == null)
+		if (event.getItem().getEnchantments().size() > 0)
+			return;
+		boolean valid = this.plugin.getEnchantmentRegistry().isEnchantable(event.getItem().getType());
+		if (event.isCancelled() && valid)
+			event.setCancelled(false);
+
+		CustomEnchantment def = this.plugin.getEnchantmentRegistry().getPlaceholderEnchant();
+		if (def == null)
+			return;
+
+		for (int i = 0; i < 3; i++) {
+			EnchantmentOffer offer = event.getOffers()[i];
+			if (offer == null && valid) {
+				event.getOffers()[i] = new EnchantmentOffer(def, 1, EnchantmentHelper
+						.getEnchantmentCost(ThreadLocalRandom.current(), i, event.getEnchantmentBonus(), 1));
 				continue;
-			
-			CustomEnchantment enchant = this.plugin.getEnchantmentRegistry().getPlaceholderEnchant();
-			if (enchant != null)
-				offer.setEnchantment(enchant.getEnchantment());
+			}
+
+			if (offer != null)
+				offer.setEnchantment(def.getEnchantment());
 		}
 	}
 

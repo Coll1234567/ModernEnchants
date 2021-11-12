@@ -18,6 +18,7 @@ actions:
   
 valid-items:
   - SWORDS
+valid-items-anvil:
   - AXES
 
 levels:

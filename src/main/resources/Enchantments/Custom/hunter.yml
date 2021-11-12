@@ -17,6 +17,7 @@ actions:
   
 valid-items:
   - SWORDS
+valid-items-anvil:
   - AXES
 
 group: 'melee_damage_increase'
