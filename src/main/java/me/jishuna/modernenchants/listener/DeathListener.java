@@ -25,6 +25,8 @@ public class DeathListener implements Listener {
 		if (entity.getKiller() == null)
 			return;
 
+		boolean isPlayer = (entity instanceof Player);
+
 		Player killer = entity.getKiller();
 		Set<ItemStack> items = new HashSet<>();
 
@@ -36,7 +38,8 @@ public class DeathListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.KILL_MOB).withItem(item)
+			EnchantmentContext context = EnchantmentContext.Builder
+					.create(event, isPlayer ? ActionType.KILL_PLAYER : ActionType.KILL_MOB).withItem(item)
 					.withUser(killer).withOpponent(entity).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {

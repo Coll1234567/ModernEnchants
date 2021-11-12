@@ -5,7 +5,6 @@ import static me.jishuna.modernenchants.api.utils.ParseUtils.readMaterial;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,11 +44,13 @@ public class VanillaEnchantment implements IEnchantment {
 	private final Map<ObtainMethod, Double> weights = new EnumMap<>(ObtainMethod.class);
 
 	public VanillaEnchantment(ModernEnchants plugin, ConfigurationSection section) throws InvalidEnchantmentException {
-		this.name = section.getString("name").toLowerCase();
+		String name = section.getString("name").toLowerCase();
 
-		Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(this.name));
+		Enchantment enchantment = Enchantment.getByKey(NamespacedKey.fromString(name));
 		if (enchantment == null)
-			throw new InvalidEnchantmentException("Invalid enchantment key: " + this.name);
+			throw new InvalidEnchantmentException("Invalid enchantment key: " + name);
+		
+		this.name = name.replace("minecraft:", "");
 
 		this.delegate = enchantment;
 
@@ -131,6 +132,11 @@ public class VanillaEnchantment implements IEnchantment {
 	@Override
 	public int getStartLevel() {
 		return this.minLevel;
+	}
+	
+	@Override
+	public int getMinLevelCost() {
+		return 0;
 	}
 
 	@Override

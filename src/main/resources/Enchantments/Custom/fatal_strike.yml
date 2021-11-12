@@ -1,0 +1,47 @@
+name: 'fatal_strike'
+display-name: '&cFatal Strike'
+
+description: '&7» Chance to instantly kill mobs.'
+description-long: "&7Each level provides a 1% increased chance to kill non-boss mobs instantly."
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 3
+
+actions:
+  - ATTACK_MOB
+  
+valid-items:
+  - SWORDS
+valid-items-anvil:
+  - AXES
+
+levels:
+  1:
+    min-enchanting-level: 20
+    conditions:
+      - chance(1)
+      - is_boss(opponent,false)
+    effects:
+      - kill(opponent)
+      - action_bar(user,&cFatal Stike!)
+  2:
+    min-enchanting-level: 25
+    conditions:
+      - chance(2)
+      - is_boss(opponent,false)
+    effects:
+      - kill(opponent)
+      - action_bar(user,&cFatal Stike!)
+  3:
+    min-enchanting-level: 30
+    conditions:
+      - chance(3)
+      - is_boss(opponent,false)
+    effects:
+      - kill(opponent)
+      - action_bar(user,&cFatal Stike!)

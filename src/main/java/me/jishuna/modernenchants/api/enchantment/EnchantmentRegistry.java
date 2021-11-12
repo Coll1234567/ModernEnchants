@@ -21,7 +21,7 @@ import me.jishuna.modernenchants.api.ObtainMethod;
 
 public class EnchantmentRegistry {
 
-	private final EnumSet<Material> validItemTable = EnumSet.noneOf(Material.class);
+	private final EnumSet<Material> validItemSet = EnumSet.noneOf(Material.class);
 	private CustomEnchantment placeholderEnchant = null;
 	private final Map<Material, WeightedRandom<IEnchantment>> itemCache = new FixedSizeLinkedHashMap<>(50);
 	private final Map<NamespacedKey, IEnchantment> enchantmentMap = new TreeMap<>();
@@ -30,7 +30,7 @@ public class EnchantmentRegistry {
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
 
 		if (enchantment.getWeight(ObtainMethod.ENCHANTING) > 0)
-			validItemTable.addAll(enchantment.getValidItems());
+			validItemSet.addAll(enchantment.getValidItems());
 
 		if (enchantment instanceof CustomEnchantment enchant) {
 			if (placeholderEnchant == null)
@@ -70,27 +70,7 @@ public class EnchantmentRegistry {
 			e.printStackTrace();
 		}
 	}
-
-	public boolean isEnchantable(Material type) {
-		return this.validItemTable.contains(type);
-	}
-
-	public IEnchantment getEnchantment(String name) {
-		return getEnchantment(NamespacedKey.fromString(name));
-	}
-
-	public IEnchantment getEnchantment(NamespacedKey key) {
-		return this.enchantmentMap.get(key);
-	}
-
-	public Set<String> getNames() {
-		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
-	}
-
-	public Collection<IEnchantment> getAllEnchantments() {
-		return this.enchantmentMap.values();
-	}
-
+	
 	public IEnchantment getRandomEnchantment(ItemStack item, ObtainMethod method, boolean book) {
 		Material type = item.getType();
 		WeightedRandom<IEnchantment> random = this.itemCache.get(type);
@@ -109,6 +89,40 @@ public class EnchantmentRegistry {
 			this.itemCache.put(type, random);
 		}
 		return random.poll();
+	}
+
+	public boolean isEnchantable(Material type) {
+		return this.validItemSet.contains(type);
+	}
+
+	public IEnchantment getEnchantment(String name) {
+		NamespacedKey key = NamespacedKey.fromString(name);
+		if (key == null)
+			return null;
+		return getEnchantment(key);
+	}
+
+	public IEnchantment getEnchantment(NamespacedKey key) {
+		return this.enchantmentMap.get(key);
+	}
+
+	public IEnchantment getByName(String name) {
+		IEnchantment enchantment = getEnchantment("modernenchants:" + name);
+		if (enchantment == null)
+			return getEnchantment("minecraft:" + name);
+		return enchantment;
+	}
+
+	public Set<String> getKeys() {
+		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
+	}
+
+	public Set<String> getNames() {
+		return this.enchantmentMap.keySet().stream().map(NamespacedKey::getKey).collect(Collectors.toSet());
+	}
+
+	public Collection<IEnchantment> getAllEnchantments() {
+		return this.enchantmentMap.values();
 	}
 
 	public CustomEnchantment getPlaceholderEnchant() {

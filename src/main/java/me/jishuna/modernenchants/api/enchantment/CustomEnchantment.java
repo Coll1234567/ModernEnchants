@@ -235,6 +235,15 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 	}
 
 	@Override
+	public int getMinLevelCost() {
+		EnchantmentLevel level = this.levels.get(this.minLevel);
+
+		if (level == null)
+			return 0;
+		return level.getMinExperienceLevel();
+	}
+
+	@Override
 	public double getWeight(ObtainMethod method) {
 		return this.weights.getOrDefault(method, 0d);
 	}

@@ -30,7 +30,8 @@ public class EnchantmentHelper {
 			IEnchantment enchantment;
 			do {
 				enchantment = registry.getRandomEnchantment(item, method, book);
-				valid = book || canEnchant(registry, item, enchantment, enchantmentMap.keySet());
+				valid = book || (canEnchant(registry, enchantment, enchantmentMap.keySet())
+						&& enchantment.getMinLevelCost() <= cost);
 				tries--;
 			} while (!valid && tries > 0);
 
@@ -89,7 +90,7 @@ public class EnchantmentHelper {
 		return levels;
 	}
 
-	public static boolean canEnchant(EnchantmentRegistry registry, ItemStack item, IEnchantment enchantment,
+	public static boolean canEnchant(EnchantmentRegistry registry, IEnchantment enchantment,
 			Set<Enchantment> enchantments) {
 		if (enchantments.contains(enchantment.getEnchantment()))
 			return false;
@@ -107,22 +108,22 @@ public class EnchantmentHelper {
 		}
 		return true;
 	}
-	
-	 public static int getEnchantmentCost(Random random, int index, int level, int enchantability) {
-	      if (enchantability <= 0) {
-	         return 0;
-	      } else {
-	         if (level > 15) {
-	            level = 15;
-	         }
 
-	         int value = random.nextInt(8) + 1 + (level >> 1) + random.nextInt(level + 1);
-	         if (index == 0) {
-	            return Math.max(value / 3, 1);
-	         } else {
-	            return index == 1 ? value * 2 / 3 + 1 : Math.max(value, level * 2);
-	         }
-	      }
-	   }
+	public static int getEnchantmentCost(Random random, int index, int level, int enchantability) {
+		if (enchantability <= 0) {
+			return 0;
+		} else {
+			if (level > 15) {
+				level = 15;
+			}
+
+			int value = random.nextInt(8) + 1 + (level >> 1) + random.nextInt(level + 1);
+			if (index == 0) {
+				return Math.max(value / 3, 1);
+			} else {
+				return index == 1 ? value * 2 / 3 + 1 : Math.max(value, level * 2);
+			}
+		}
+	}
 
 }

@@ -36,6 +36,8 @@ public interface IEnchantment {
 	public int getStartLevel();
 	
 	public int getMaxLevel();
+	
+	public int getMinLevelCost();
 
 	Set<Material> getValidItems();
 	

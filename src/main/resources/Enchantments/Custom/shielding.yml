@@ -1,0 +1,27 @@
+name: 'shielding'
+display-name: '<#2552A5>Shielding</#2552A5>'
+
+description: '&7» Grants a regenerating 2 heart shield.'
+description-long: '&7Grants a regenerating 2 heart shield, the shield regenerates every 60 seconds.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 1
+
+actions:
+  - WORN
+  
+valid-items:
+  - CHESTPLATES
+
+levels:
+  1:
+    min-enchanting-level: 10
+    conditions:
+      - cooldown(60)
+    effects:
+      - potion_effect(user,absorption,1250,1)

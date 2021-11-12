@@ -20,7 +20,7 @@ valid-items:
 
 levels:
   1:
-    min-enchanting-level: 0
+    min-enchanting-level: 20
     conditions:
       - y_level(user,<63)
     effects:

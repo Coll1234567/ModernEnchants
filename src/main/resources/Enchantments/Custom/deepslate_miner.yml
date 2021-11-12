@@ -1,0 +1,27 @@
+name: 'deepslate_miner'
+display-name: '<#505050>Deepslate Miner</#505050>'
+
+description: '&7» Gives permanent resistance deep underground.'
+description-long: '&7Gives permanent resistance as long as you are under y 0.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 1
+
+actions:
+  - WORN
+  
+valid-items:
+  - CHESTPLATES
+
+levels:
+  1:
+    min-enchanting-level: 20
+    conditions:
+      - y_level(user,<0)
+    effects:
+      - potion_effect(user,damage_resistance,20,1)

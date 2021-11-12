@@ -2,7 +2,7 @@ name: 'winged_escape'
 display-name: '&fWinged Escape'
 
 description: '&7» Launch into the sky at low health.'
-description-long: '&7Launches you into the sky when your health falls below 20%.'
+description-long: '&7Launches you into the sky when your health falls below 20%. This effect has a 20 second cooldown.'
 
 weights:
   enchanting: 10
@@ -28,6 +28,7 @@ levels:
     conditions:
       - gliding(user,false)
       - health_percent(user,<20)
+      - cooldown(20)
     effects:
       - delay(1)
       - launch(user,0,2,0)
