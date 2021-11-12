@@ -1,12 +1,13 @@
 name: 'minecraft:smite'
 display-name: '&7Smite'
 
+description: '&7» Increases attack damage against undead mobs.'
 description-long: '&7Each level adds 1.25 hearts of extra damage to undead mobs.'
 
 weights:
-  enchanting: 100
-  trading: 100
-  loot: 100
+  enchanting: 50
+  trading: 50
+  loot: 50
 
 min-level: 1
 max-level: 5

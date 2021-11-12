@@ -1,0 +1,21 @@
+name: 'minecraft:protection'
+display-name: '&7Protection'
+
+description: '&7» Reduces damage from all sources.'
+description-long: '&7Each level reduces incoming damage by 4%.'
+
+weights:
+  enchanting: 100
+  trading: 100
+  loot: 100
+
+min-level: 1
+max-level: 4
+  
+valid-items:
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  
+group: 'damage_reduction'

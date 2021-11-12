@@ -5,9 +5,9 @@ description: '&7» Slows the movement speed of your target.'
 description-long: '&7Slows the movement speed of your target for 2 seconds per level, their movement speed will slowly return to normal over this time.'
 
 weights:
-  enchanting: 100
-  trading: 100
-  loot: 100
+  enchanting: 30
+  trading: 30
+  loot: 30
 
 min-level: 1
 max-level: 2
@@ -19,6 +19,9 @@ actions:
 valid-items:
   - SWORDS
   - AXES
+  
+conflicts:
+  - 'minecraft:fire_aspect'
 
 levels:
   1:

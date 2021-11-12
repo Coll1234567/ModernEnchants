@@ -1,0 +1,17 @@
+name: 'minecraft:knockback'
+display-name: '&7Knockback'
+
+description: '&7» Knocks your target backwards.'
+description-long: '&7Each level increases the knockback dealt by the item.'
+
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
+
+min-level: 1
+max-level: 2
+  
+valid-items:
+  - SWORDS
+  - AXES

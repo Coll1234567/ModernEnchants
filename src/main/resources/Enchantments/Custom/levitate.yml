@@ -5,9 +5,9 @@ description: '&7» Chance to levitate your target.'
 description-long: '&7Each level provides a 3% increased chance to levitate your target for 5 seconds. This effect has a 15 second cooldown.'
 
 weights:
-  enchanting: 80
-  trading: 80
-  loot: 80
+  enchanting: 50
+  trading: 50
+  loot: 50
 
 min-level: 1
 max-level: 5

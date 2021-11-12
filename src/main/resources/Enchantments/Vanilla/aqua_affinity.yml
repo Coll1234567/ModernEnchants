@@ -1,0 +1,16 @@
+name: 'minecraft:aqua_affinity'
+display-name: '&7Aqua Affinity'
+
+description: '&7» Increases under water mining speed.'
+description-long: '&7Removes the 5x mining speed penalty that is normally applied underwater.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 1
+  
+valid-items:
+  - HELMETS

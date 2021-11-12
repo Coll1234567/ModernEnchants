@@ -1,0 +1,22 @@
+name: 'minecraft:binding_curse'
+display-name: '&aCurse of Binding'
+
+description: '&7» The item cannot be removed when worn.'
+description-long: '&7Prevents removing of an equipped item until it breaks or the user dies.'
+
+cursed: true
+
+weights:
+  enchanting: 0
+  trading: 10
+  loot: 10
+
+min-level: 1
+max-level: 1
+  
+valid-items:
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  - CARVED_PUMPKIN

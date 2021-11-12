@@ -1,14 +1,9 @@
 package me.jishuna.modernenchants;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.logging.log4j.core.util.ReflectionUtil;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.plugin.PluginManager;
@@ -33,6 +28,7 @@ import me.jishuna.modernenchants.listener.CombatListener;
 import me.jishuna.modernenchants.listener.DeathListener;
 import me.jishuna.modernenchants.listener.EnchantingListener;
 import me.jishuna.modernenchants.listener.InteractListener;
+import me.jishuna.modernenchants.listener.LootListener;
 import me.jishuna.modernenchants.listener.MinionListener;
 import me.jishuna.modernenchants.listener.MiscListener;
 import me.jishuna.modernenchants.packet.IncomingItemListener;
@@ -44,9 +40,10 @@ public class ModernEnchants extends JavaPlugin {
 
 	private EffectRegistry effectRegistry;
 	private ConditionRegistry conditionRegistry;
-
 	private EnchantmentRegistry enchantmentRegistry;
+
 	private MessageConfig messageConfig;
+	private YamlConfiguration configuration;
 
 	private CustomInventoryManager inventoryManager = new CustomInventoryManager();
 
@@ -67,6 +64,7 @@ public class ModernEnchants extends JavaPlugin {
 		pm.registerEvents(new MinionListener(), this);
 
 		pm.registerEvents(new EnchantingListener(this), this);
+		pm.registerEvents(new LootListener(this), this);
 		pm.registerEvents(new AnvilListener(this.enchantmentRegistry), this);
 
 		pm.registerEvents(this.inventoryManager, this);
@@ -82,35 +80,7 @@ public class ModernEnchants extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		try {
-			Field byIdField = Enchantment.class.getDeclaredField("byKey");
-			Field byNameField = Enchantment.class.getDeclaredField("byName");
-			byIdField.setAccessible(true);
-			byNameField.setAccessible(true);
-			@SuppressWarnings("unchecked")
-			Map<NamespacedKey, Enchantment> keyMap = (Map<NamespacedKey, Enchantment>) byIdField.get(null);
-			@SuppressWarnings("unchecked")
-			Map<String, Enchantment> nameMap = (Map<String, Enchantment>) byNameField.get(null);
-
-			Iterator<Entry<NamespacedKey, Enchantment>> keyIterator = keyMap.entrySet().iterator();
-			while (keyIterator.hasNext()) {
-				Enchantment enchant = keyIterator.next().getValue();
-
-				if (enchant instanceof CustomEnchantment)
-					keyIterator.remove();
-			}
-
-			Iterator<Entry<String, Enchantment>> nameIterator = nameMap.entrySet().iterator();
-			while (nameIterator.hasNext()) {
-				Enchantment enchant = nameIterator.next().getValue();
-
-				if (enchant instanceof CustomEnchantment)
-					nameIterator.remove();
-			}
-
-		} catch (ReflectiveOperationException e) {
-			e.printStackTrace();
-		}
+		this.enchantmentRegistry.unregisterAll();
 	}
 
 	private void loadEnchantments() {
@@ -196,6 +166,7 @@ public class ModernEnchants extends JavaPlugin {
 
 		FileUtils.loadResourceFile(this, "messages.yml")
 				.ifPresent(file -> this.messageConfig = new MessageConfig(file));
+		FileUtils.loadResource(this, "config.yml").ifPresent(config -> this.configuration = config);
 	}
 
 	public String getMessage(String key) {
@@ -220,6 +191,10 @@ public class ModernEnchants extends JavaPlugin {
 
 	public MessageConfig getMessageConfig() {
 		return this.messageConfig;
+	}
+
+	public YamlConfiguration getConfiguration() {
+		return configuration;
 	}
 
 }

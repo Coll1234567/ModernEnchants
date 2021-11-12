@@ -12,8 +12,8 @@ import net.md_5.bungee.api.ChatColor;
 public class KillEffect extends EnchantmentEffect {
 	private static final String[] DESCRIPTION = new String[] {
 			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Instantly kill the target.",
-			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "damage(target)", ChatColor.GOLD + "  - Target: "
-					+ ChatColor.GREEN + "The entity to damage, either \"user\" or \"opponent\"." };
+			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "kill(target)", ChatColor.GOLD + "  - Target: "
+					+ ChatColor.GREEN + "The entity to kill, either \"user\" or \"opponent\"." };
 
 	private final ActionTarget target;
 

@@ -1,0 +1,19 @@
+name: 'minecraft:bane_of_arthropods'
+display-name: '&7Bane of Arthropods'
+
+description: '&7» Increases attack damage against arthropod mobs.'
+description-long: '&7Each level adds 1.25 hearts of extra damage to Spiders, Cave Spiders, Bees, Silverfish, and Endermites.'
+
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
+
+min-level: 1
+max-level: 5
+  
+valid-items:
+  - SWORDS
+  - AXES
+  
+group: 'melee_damage_increase'

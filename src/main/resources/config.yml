@@ -1,0 +1,2 @@
+# Forces the display name of all enchantments to be gray (except curses), matching vanilla.
+force-vanilla-enchantment-colors: false

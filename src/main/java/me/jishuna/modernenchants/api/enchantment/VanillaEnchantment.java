@@ -22,17 +22,20 @@ import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.ObtainMethod;
 import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.utils.ParseUtils;
+import net.md_5.bungee.api.ChatColor;
 
 public class VanillaEnchantment implements IEnchantment {
 	private final Enchantment delegate;
 
 	private final String name;
+	private String displayName;
+	private final String description;
 	private final String longDescription;
-	private final String displayName;
 	private final String group;
 
 	private final int minLevel;
 	private final int maxLevel;
+	private final boolean cursed;
 
 	private final List<String> validItemsRaw = new ArrayList<>();
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
@@ -48,15 +51,24 @@ public class VanillaEnchantment implements IEnchantment {
 			throw new InvalidEnchantmentException("Invalid enchantment key: " + this.name);
 
 		this.delegate = enchantment;
+		
+		this.cursed = section.getBoolean("cursed", false);
 
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
-		this.longDescription = ParseUtils.colorString(section.getString("description-long", ""));
+		if (plugin.getConfiguration().getBoolean("force-vanilla-enchantment-colors", false)) {
+			this.displayName = (cursed ? ChatColor.RED : ChatColor.GRAY) + ChatColor.stripColor(this.displayName);
+		}
+
+		this.description = ParseUtils.colorString(section.getString("description"));
+		this.longDescription = ParseUtils.colorString(section.getString("description-long", this.description));
 
 		this.group = section.getString("group", null);
 
 		ConfigurationSection weightSection = section.getConfigurationSection("weights");
 
 		this.weights.put(ObtainMethod.ENCHANTING, weightSection.getDouble("enchanting", 100d));
+		this.weights.put(ObtainMethod.VILLAGER, weightSection.getDouble("trading", 100d));
+		this.weights.put(ObtainMethod.LOOT, weightSection.getDouble("loot", 100d));
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
@@ -88,6 +100,11 @@ public class VanillaEnchantment implements IEnchantment {
 	@Override
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
 	}
 
 	@Override

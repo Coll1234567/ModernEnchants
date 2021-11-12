@@ -4,10 +4,12 @@ display-name: '&cCurse of Fragility'
 description: '&7» Causes the item to lose durability faster.'
 description-long: '&7Causes the item to lose 3 times as much durability when used.'
 
+cursed: true
+
 weights:
   enchanting: 0
-  trading: 100
-  loot: 100
+  trading: 20
+  loot: 20
 
 min-level: 1
 max-level: 1

@@ -1,0 +1,19 @@
+name: 'minecraft:depth_strider'
+display-name: '&7Depth Strider'
+
+description: '&7» Increases movement speed in water.'
+description-long: '&7Each level reduces the movement speed penalty of water by 33%.'
+
+weights:
+  enchanting: 0
+  trading: 30
+  loot: 30
+
+min-level: 1
+max-level: 3
+
+conflicts:
+  - 'minecraft:frost_walker'
+  
+valid-items:
+  - BOOTS

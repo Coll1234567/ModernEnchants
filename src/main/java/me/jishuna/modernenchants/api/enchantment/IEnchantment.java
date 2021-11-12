@@ -18,6 +18,8 @@ public interface IEnchantment {
 	
 	public String getDisplayName();
 	
+	public String getDescription();
+	
 	public String getLongDescription();
 	
 	public String getGroup();

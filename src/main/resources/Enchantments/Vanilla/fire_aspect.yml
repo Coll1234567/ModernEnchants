@@ -1,0 +1,20 @@
+name: 'minecraft:fire_aspect'
+display-name: '&7Fire Aspect'
+
+description: '&7» Lights your target on fire.'
+description-long: '&7Ignites your target, each level adds 4 seconds to the burn duration.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 2
+
+conflicts:
+  - 'frost_aspect'
+  
+valid-items:
+  - SWORDS
+  - AXES

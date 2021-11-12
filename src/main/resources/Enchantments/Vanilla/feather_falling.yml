@@ -1,0 +1,16 @@
+name: 'minecraft:feather_falling'
+display-name: '&7Feather Falling'
+
+description: '&7» Reduces fall damage taken.'
+description-long: '&7Each level reduces fall damage by 12%.'
+
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
+
+min-level: 1
+max-level: 4
+  
+valid-items:
+  - BOOTS

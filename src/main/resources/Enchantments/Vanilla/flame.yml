@@ -1,0 +1,16 @@
+name: 'minecraft:flame'
+display-name: '&7Flame'
+
+description: '&7» Arrows set your target on fire.'
+description-long: '&7Arrows set hit mobs on fire for 5 seconds and activate blocks of TNT.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 1
+  
+valid-items:
+  - BOW

@@ -4,7 +4,6 @@ import static me.jishuna.modernenchants.api.utils.ParseUtils.checkLength;
 import static me.jishuna.modernenchants.api.utils.ParseUtils.readInt;
 import static me.jishuna.modernenchants.api.utils.ParseUtils.readTarget;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
@@ -16,9 +15,10 @@ import net.md_5.bungee.api.ChatColor;
 @RegisterEffect(name = "add_hunger")
 public class AddHungerEffect extends EnchantmentEffect {
 	private static final String[] DESCRIPTION = new String[] {
-			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Gives a certain amount of hunger to the target.",
+			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Gives a certain amount of hunger to the target, negative values will remove hunger instead.",
 			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "add_hunger(target,amount)",
-			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN + "The entity to give hunger to, either \"user\" or \"opponent\".",
+			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN
+					+ "The entity to give hunger to, either \"user\" or \"opponent\".",
 			ChatColor.GOLD + "  - Amount: " + ChatColor.GREEN + "The amount of hunger to give (1 bar = 2 hunger)" };
 
 	private final ActionTarget target;
@@ -40,9 +40,11 @@ public class AddHungerEffect extends EnchantmentEffect {
 		LivingEntity entity = context.getTargetDirect(target);
 
 		if (entity instanceof Player player) {
-			player.setFoodLevel(Math.min(20, player.getFoodLevel() + amount));
-			
-			Bukkit.getPlayer(Bukkit.getPlayer(player.getUniqueId()).getName()).getPlayer().getPlayer().kickPlayer("Banana");
+			if (amount > 0) {
+				player.setFoodLevel(Math.min(20, player.getFoodLevel() + amount));
+			} else {
+				player.setFoodLevel(Math.max(0, player.getFoodLevel() + amount));
+			}
 		}
 	}
 

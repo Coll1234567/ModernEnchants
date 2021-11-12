@@ -15,9 +15,11 @@ import net.md_5.bungee.api.ChatColor;
 @RegisterEffect(name = "add_levels")
 public class AddLevelEffect extends EnchantmentEffect {
 	private static final String[] DESCRIPTION = new String[] {
-			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Gives the target a certain number of experience levels.",
+			ChatColor.GOLD + "Description: " + ChatColor.GREEN
+					+ "Gives the target a certain number of experience levels, negative values will remove levels instead.",
 			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "add_levels(target,amount)",
-			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN + "The entity to give levels to, either \"user\" or \"opponent\".",
+			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN
+					+ "The entity to give levels to, either \"user\" or \"opponent\".",
 			ChatColor.GOLD + "  - Amount: " + ChatColor.GREEN + "The number of levels to give." };
 
 	private final ActionTarget target;
@@ -29,9 +31,6 @@ public class AddLevelEffect extends EnchantmentEffect {
 
 		this.target = readTarget(data[0]);
 		this.amount = readInt(data[1], "amount");
-
-		if (this.amount <= 0)
-			throw new InvalidEnchantmentException("Amount must be greater than 0");
 	}
 
 	@Override
@@ -39,10 +38,14 @@ public class AddLevelEffect extends EnchantmentEffect {
 		LivingEntity entity = context.getTargetDirect(target);
 
 		if (entity instanceof Player player) {
-			player.giveExpLevels(amount);
+			if (amount > 0) {
+				player.giveExpLevels(amount);
+			} else {
+				player.setLevel(Math.max(0, player.getLevel() + amount));
+			}
 		}
 	}
-	
+
 	public static String[] getDescription() {
 		return DESCRIPTION;
 	}

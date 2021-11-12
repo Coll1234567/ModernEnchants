@@ -1,0 +1,21 @@
+name: 'minecraft:projectile_protection'
+display-name: '&7Projectile Protection'
+
+description: '&7» Reduces damage from projectiles.'
+description-long: '&7Each level reduces incoming damage from arrows, tridents, and fireballs by 8%.'
+
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
+
+min-level: 1
+max-level: 4
+  
+valid-items:
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  
+group: 'damage_reduction'

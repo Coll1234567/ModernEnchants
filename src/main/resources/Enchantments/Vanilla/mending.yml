@@ -1,0 +1,34 @@
+name: 'minecraft:mending'
+display-name: '&7Mending'
+
+description: '&7» Repairs the item using collected experience.'
+description-long: '&7Collected experience will be consumed to repair durability loss on the item.'
+
+weights:
+  enchanting: 0
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 1
+
+conflicts:
+  - 'minecraft:infinity'
+  
+valid-items:
+  - SWORDS
+  - AXES
+  - PICKAXES
+  - SHOVELS
+  - HOES
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  - BOW
+  - CROSSBOW
+  - SHIELD
+  - ELYTRA
+  - TRIDENT
+  - FISHING_ROD
+  - SHEARS

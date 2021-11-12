@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.AnvilInventory;
@@ -30,7 +31,7 @@ public class AnvilListener implements Listener {
 	}
 
 	// TODO Adapted from vanilla, clean-up
-	@EventHandler
+	@EventHandler(priority = EventPriority.LOW)
 	public void onAnvil(PrepareAnvilEvent event) {
 		ItemStack first = event.getInventory().getItem(0);
 
@@ -57,6 +58,7 @@ public class AnvilListener implements Listener {
 
 			if (copyMeta instanceof Damageable damageable && isValidRepairItem(copy, first, second)) {
 				int repairItemCountCost = Math.min(damageable.getDamage(), copy.getType().getMaxDurability() / 4);
+				
 				if (repairItemCountCost <= 0) {
 					event.setResult(null);
 					inventory.setRepairCost(0);

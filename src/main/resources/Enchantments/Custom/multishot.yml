@@ -5,9 +5,9 @@ description: '&7» Increases the number of arrows fired.'
 description-long: '&7Each level will cause you to shoot 1 extra arrow.'
 
 weights:
-  enchanting: 50
-  trading: 50
-  loot: 50
+  enchanting: 20
+  trading: 20
+  loot: 20
 
 min-level: 1
 max-level: 2

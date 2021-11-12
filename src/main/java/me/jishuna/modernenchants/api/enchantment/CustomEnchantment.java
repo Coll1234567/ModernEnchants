@@ -31,6 +31,7 @@ import me.jishuna.modernenchants.api.effect.DelayEffect;
 import me.jishuna.modernenchants.api.effect.EnchantmentEffect;
 import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.utils.ParseUtils;
+import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment implements IEnchantment {
 	private final ModernEnchants plugin;
@@ -38,7 +39,7 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 	private final String name;
 	private final String description;
 	private final String longDescription;
-	private final String displayName;
+	private String displayName;
 	private final String group;
 
 	private final int minLevel;
@@ -59,7 +60,15 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 		this.plugin = plugin;
 
 		this.name = section.getString("name").toLowerCase();
+		
+		this.cursed = section.getBoolean("cursed", false);
+		this.treasure = section.getBoolean("treasure", false);
+		
 		this.displayName = ParseUtils.colorString(section.getString("display-name", name));
+		if (plugin.getConfiguration().getBoolean("force-vanilla-enchantment-colors", false)) {
+			this.displayName = (cursed ? ChatColor.RED : ChatColor.GRAY) + ChatColor.stripColor(this.displayName);
+		}
+		
 		this.description = ParseUtils.colorString(section.getString("description"));
 		this.longDescription = ParseUtils.colorString(section.getString("description-long", this.description));
 
@@ -68,12 +77,11 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 		ConfigurationSection weightSection = section.getConfigurationSection("weights");
 
 		this.weights.put(ObtainMethod.ENCHANTING, weightSection.getDouble("enchanting", 100d));
+		this.weights.put(ObtainMethod.VILLAGER, weightSection.getDouble("trading", 100d));
+		this.weights.put(ObtainMethod.LOOT, weightSection.getDouble("loot", 100d));
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
-
-		this.cursed = section.getBoolean("cursed", false);
-		this.treasure = section.getBoolean("treasure", false);
 
 		for (String action : section.getStringList("actions")) {
 			action = action.toUpperCase();

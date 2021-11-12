@@ -1,0 +1,21 @@
+name: 'minecraft:blast_protection'
+display-name: '&7Blast Protection'
+
+description: '&7» Reduces damage from explosions.'
+description-long: '&7Each level reduces incoming damage from explosions by 8%.'
+
+weights:
+  enchanting: 20
+  trading: 20
+  loot: 20
+
+min-level: 1
+max-level: 4
+  
+valid-items:
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  
+group: 'damage_reduction'

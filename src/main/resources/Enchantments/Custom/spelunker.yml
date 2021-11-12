@@ -5,9 +5,9 @@ description: '&7» Gives night vision while underground.'
 description-long: '&7Gives permanent night vision as long as you are under y 63.'
 
 weights:
-  enchanting: 20
-  trading: 20
-  loot: 20
+  enchanting: 10
+  trading: 10
+  loot: 10
 
 min-level: 1
 max-level: 1

@@ -5,9 +5,9 @@ description: '&7» Chance to spawn a silverfish to attack your target.'
 description-long: '&7Each level provides a 2% increased chance to spawn a silverfish to attack your target. This effect has a 10 second cooldown.'
 
 weights:
-  enchanting: 80
-  trading: 80
-  loot: 80
+  enchanting: 30
+  trading: 30
+  loot: 30
 
 min-level: 1
 max-level: 5

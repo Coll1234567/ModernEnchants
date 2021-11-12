@@ -1,15 +1,17 @@
 package me.jishuna.modernenchants.api.utils;
 
-import java.util.Map.Entry;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import me.jishuna.modernenchants.api.ObtainMethod;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentLevel;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
@@ -17,15 +19,16 @@ import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 
 public class EnchantmentHelper {
 
-	public static void populateEnchantments(ItemStack item, Map<Enchantment, Integer> enchantmentMap,
-			EnchantmentRegistry registry, ThreadLocalRandom random, int count, int cost, boolean book) {
+	public static Map<Enchantment, Integer> populateEnchantments(ItemStack item, EnchantmentRegistry registry,
+			ThreadLocalRandom random, int count, int cost, ObtainMethod method, boolean book) {
+		Map<Enchantment, Integer> enchantmentMap = new HashMap<>();
 		for (int i = 0; i < count; i++) {
 			int tries = 10;
 			boolean valid = false;
 
 			IEnchantment enchantment;
 			do {
-				enchantment = registry.getRandomEnchantment();
+				enchantment = registry.getRandomEnchantment(item, method, book);
 				valid = book || canEnchant(registry, item, enchantment, enchantmentMap.keySet());
 				tries--;
 			} while (!valid && tries > 0);
@@ -36,6 +39,7 @@ public class EnchantmentHelper {
 			int[] levels = getLevelRange(enchantment, cost);
 			enchantmentMap.put(enchantment.getEnchantment(), random.nextInt(levels[0], levels[1] + 1));
 		}
+		return enchantmentMap;
 	}
 
 	public static IEnchantment getCustomEnchantment(Enchantment enchantment, EnchantmentRegistry registry) {
@@ -45,7 +49,7 @@ public class EnchantmentHelper {
 
 		return registry.getEnchantment(enchantment.getKey());
 	}
-	
+
 	public static Map<Enchantment, Integer> getEnchants(ItemMeta meta) {
 		if (meta instanceof EnchantmentStorageMeta storage)
 			return storage.getStoredEnchants();
@@ -66,29 +70,27 @@ public class EnchantmentHelper {
 	}
 
 	public static int[] getLevelRange(IEnchantment enchantment, int cost) {
-		int lowerCost = cost / 2;
 		int[] levels = new int[] { enchantment.getStartLevel(), enchantment.getStartLevel() };
 
 		if (!(enchantment instanceof CustomEnchantment enchant))
-			return new int[] { Math.max(enchantment.getMaxLevel() - 2, enchantment.getStartLevel()),
+			return new int[] { Math.max((int) Math.ceil(enchantment.getMaxLevel() * 0.8d), enchantment.getStartLevel()),
 					enchantment.getMaxLevel() };
 
 		for (Entry<Integer, EnchantmentLevel> levelEntry : enchant.getLevels().entrySet()) {
 			EnchantmentLevel enchantmentLevel = levelEntry.getValue();
 			int level = levelEntry.getKey();
 
-			if (enchantmentLevel.getMinExperienceLevel() <= lowerCost && level > levels[0])
-				levels[0] = level;
-
-			if (enchantmentLevel.getMinExperienceLevel() <= cost && level > levels[1])
+			if (enchantmentLevel.getMinExperienceLevel() <= cost && level > levels[1]) {
+				levels[0] = Math.max(enchantment.getStartLevel(), (int) Math.ceil(level * 0.8d));
 				levels[1] = level;
+			}
 		}
 		return levels;
 	}
 
 	public static boolean canEnchant(EnchantmentRegistry registry, ItemStack item, IEnchantment enchantment,
 			Set<Enchantment> enchantments) {
-		if (!enchantment.canEnchantItem(item) || enchantments.contains(enchantment.getEnchantment()))
+		if (enchantments.contains(enchantment.getEnchantment()))
 			return false;
 
 		for (Enchantment enchant : enchantments) {

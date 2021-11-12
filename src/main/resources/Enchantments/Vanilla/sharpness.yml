@@ -1,12 +1,13 @@
 name: 'minecraft:sharpness'
 display-name: '&7Sharpness'
 
-description-long: '&7dfgafdfgdfg.'
+description: '&7» Increases attack damage.'
+description-long: '&7Increases attack damage by 1/4 heart plus an additional 1/4 heart per level.'
 
 weights:
-  enchanting: 80
-  trading: 80
-  loot: 80
+  enchanting: 100
+  trading: 100
+  loot: 100
 
 min-level: 1
 max-level: 5

@@ -1,0 +1,19 @@
+name: 'minecraft:efficiency'
+display-name: '&7Efficiency'
+
+description: '&7» Increases block breaking speed.'
+description-long: '&7Increases the speed at which tools break the appropriate blocks.'
+
+weights:
+  enchanting: 100
+  trading: 100
+  loot: 100
+
+min-level: 1
+max-level: 5
+  
+valid-items:
+  - AXES
+  - PICKAXES
+  - SHOVELS
+  - HOES

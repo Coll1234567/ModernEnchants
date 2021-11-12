@@ -1,0 +1,21 @@
+name: 'minecraft:fire_protection'
+display-name: '&7Fire Protection'
+
+description: '&7» Reduces damage from fire and lava.'
+description-long: '&7Each level reduces incoming damage from fire by 8% and reduces the time you stay on fire.'
+
+weights:
+  enchanting: 50
+  trading: 50
+  loot: 50
+
+min-level: 1
+max-level: 4
+  
+valid-items:
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  
+group: 'damage_reduction'

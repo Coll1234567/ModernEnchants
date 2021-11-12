@@ -1,0 +1,19 @@
+name: 'minecraft:channeling'
+display-name: '&7Channeling'
+
+description: '&7» Allows your trident to channel lightning.'
+description-long: '&7Throwing a trident at an enemy will stike them with lightning if there is currently a thunderstorm and they are exposed to the sky.'
+
+weights:
+  enchanting: 10
+  trading: 10
+  loot: 10
+
+min-level: 1
+max-level: 1
+
+conflicts:
+  - 'minecraft:riptide'
+  
+valid-items:
+  - TRIDENT
