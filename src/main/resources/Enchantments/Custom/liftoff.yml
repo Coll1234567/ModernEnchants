@@ -6,7 +6,7 @@ description-long: '&7Look straight down and right click while on the ground to l
 
 weights:
   enchanting: 10
-  trading: 10
+  trading: 100
   loot: 10
 
 min-level: 1

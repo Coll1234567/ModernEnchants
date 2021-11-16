@@ -27,6 +27,8 @@ public interface IEnchantment {
 	
 	public double getWeight(ObtainMethod method);
 	
+	public boolean isTreasure();
+	
 	public boolean conflictsWith(Enchantment enchantment);
 	
 	public boolean conflictsWith(IEnchantment enchantment);

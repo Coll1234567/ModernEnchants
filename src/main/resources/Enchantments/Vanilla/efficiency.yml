@@ -17,3 +17,5 @@ valid-items:
   - PICKAXES
   - SHOVELS
   - HOES
+valid-items-anvil:
+  - SHEARS

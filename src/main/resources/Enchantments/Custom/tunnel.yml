@@ -1,0 +1,31 @@
+name: 'tunnel'
+display-name: '&6Tunnel'
+
+description: '&7» Mines a 3 block tall tunnel.'
+description-long: '&7Mines the block above and below your target, creating a 3 block tall tunnel.'
+
+weights:
+  enchanting: 10
+  trading: 100
+  loot: 10
+
+min-level: 1
+max-level: 1
+
+actions:
+  - BREAK_BLOCK
+  
+valid-items:
+  - PICKAXES
+  - SHOVELS
+  
+group: 'unique'
+
+levels:
+  1:
+    min-enchanting-level: 25
+    conditions:
+      - correct_tool(true)
+    effects:
+      - break_block(0,1,0)
+      - break_block(0,-1,0)

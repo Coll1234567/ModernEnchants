@@ -6,7 +6,7 @@ description-long: '&7Slows the movement speed of your target for 2 seconds per l
 
 weights:
   enchanting: 30
-  trading: 30
+  trading: 100
   loot: 30
 
 min-level: 1

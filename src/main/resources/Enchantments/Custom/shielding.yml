@@ -6,7 +6,7 @@ description-long: '&7Grants a regenerating 2 heart shield, the shield regenerate
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

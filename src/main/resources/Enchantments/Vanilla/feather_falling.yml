@@ -6,7 +6,7 @@ description-long: '&7Each level reduces fall damage by 12%.'
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1

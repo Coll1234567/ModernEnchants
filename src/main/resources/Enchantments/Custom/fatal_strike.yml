@@ -6,7 +6,7 @@ description-long: "&7Each level provides a 1% increased chance to kill non-boss 
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

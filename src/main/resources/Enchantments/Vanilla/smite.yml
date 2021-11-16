@@ -6,7 +6,7 @@ description-long: '&7Each level adds 1.25 hearts of extra damage to undead mobs.
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1

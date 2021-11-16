@@ -6,7 +6,7 @@ description-long: '&7Arrows set hit mobs on fire for 5 seconds and activate bloc
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

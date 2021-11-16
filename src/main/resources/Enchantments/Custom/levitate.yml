@@ -6,7 +6,7 @@ description-long: '&7Each level provides a 3% increased chance to levitate your 
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1
@@ -15,12 +15,9 @@ max-level: 5
 actions:
   - ATTACK_MOB
   - ATTACK_PLAYER
-  - ATTACK_MOB_PROJECTILE
-  - ATTACK_PLAYER_PROJECTILE
   
 valid-items:
   - SWORDS
-  - BOW
 valid-items-anvil:
   - AXES
 

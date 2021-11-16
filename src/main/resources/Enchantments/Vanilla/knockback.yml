@@ -6,7 +6,7 @@ description-long: '&7Each level increases the knockback dealt by the item.'
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1

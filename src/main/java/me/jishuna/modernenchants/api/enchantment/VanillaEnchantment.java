@@ -138,6 +138,11 @@ public class VanillaEnchantment implements IEnchantment {
 	public int getMinLevelCost() {
 		return 0;
 	}
+	
+	@Override
+	public boolean isTreasure() {
+		return this.delegate.isTreasure();
+	}
 
 	@Override
 	public double getWeight(ObtainMethod method) {

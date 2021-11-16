@@ -14,6 +14,7 @@ import org.bukkit.util.StringUtil;
 import me.jishuna.commonlib.commands.SimpleCommandHandler;
 import me.jishuna.modernenchants.ModernEnchants;
 import me.jishuna.modernenchants.api.enchantment.IEnchantment;
+import net.minecraft.world.level.block.Blocks;
 
 public class EnchantCommand extends SimpleCommandHandler {
 

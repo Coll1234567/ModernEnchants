@@ -6,7 +6,7 @@ description-long: '&7Each level reduces incoming damage from fire by 8% and redu
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1

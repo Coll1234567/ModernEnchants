@@ -8,7 +8,7 @@ cursed: true
 
 weights:
   enchanting: 0
-  trading: 10
+  trading: 100
   loot: 10
 
 min-level: 1

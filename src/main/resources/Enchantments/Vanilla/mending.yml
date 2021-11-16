@@ -6,7 +6,7 @@ description-long: '&7Collected experience will be consumed to repair durability 
 
 weights:
   enchanting: 0
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

@@ -6,7 +6,7 @@ description-long: '&7Each level provides a 2% increased chance to spawn a silver
 
 weights:
   enchanting: 30
-  trading: 30
+  trading: 100
   loot: 30
 
 min-level: 1

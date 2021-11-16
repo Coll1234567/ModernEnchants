@@ -31,8 +31,10 @@ import me.jishuna.modernenchants.listener.InteractListener;
 import me.jishuna.modernenchants.listener.LootListener;
 import me.jishuna.modernenchants.listener.MinionListener;
 import me.jishuna.modernenchants.listener.MiscListener;
+import me.jishuna.modernenchants.listener.VillagerListener;
 import me.jishuna.modernenchants.packet.IncomingItemListener;
 import me.jishuna.modernenchants.packet.OutgoingItemListener;
+import me.jishuna.modernenchants.packet.OutgoingTradeListener;
 
 public class ModernEnchants extends JavaPlugin {
 	private static final String CUSTOM_PATH = "Enchantments/Custom";
@@ -65,6 +67,7 @@ public class ModernEnchants extends JavaPlugin {
 
 		pm.registerEvents(new EnchantingListener(this), this);
 		pm.registerEvents(new LootListener(this), this);
+		pm.registerEvents(new VillagerListener(this.enchantmentRegistry), this);
 		pm.registerEvents(new AnvilListener(this.enchantmentRegistry), this);
 
 		pm.registerEvents(this.inventoryManager, this);
@@ -158,6 +161,7 @@ public class ModernEnchants extends JavaPlugin {
 
 		manager.addPacketListener(new OutgoingItemListener(this));
 		manager.addPacketListener(new IncomingItemListener(this));
+		manager.addPacketListener(new OutgoingTradeListener(this));
 	}
 
 	public void loadConfiguration() {

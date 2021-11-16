@@ -6,7 +6,7 @@ description-long: '&7Launches you into the sky when your health falls below 20%.
 
 weights:
   enchanting: 10
-  trading: 10
+  trading: 100
   loot: 10
 
 min-level: 1

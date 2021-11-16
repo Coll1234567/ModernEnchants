@@ -1,5 +1,5 @@
-name: 'decay'
-display-name: '&8Decay'
+name: 'withering'
+display-name: '&8Withering'
 
 description: '&7» Chance to wither your target.'
 description-long: "&7Each level provides a 3% increased chance to wither your target for 5 seconds."
@@ -13,13 +13,12 @@ min-level: 1
 max-level: 5
 
 actions:
-  - ATTACK_MOB
-  - ATTACK_PLAYER
+  - ATTACK_MOB_PROJECTILE
+  - ATTACK_PLAYER_PROJECTILE
   
 valid-items:
-  - SWORDS
-valid-items-anvil:
-  - AXES
+  - BOW
+  - CROSSBOW
 
 levels:
   1:

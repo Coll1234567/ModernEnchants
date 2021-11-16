@@ -6,7 +6,7 @@ description-long: "&7Each level adds one heart of extra damage to animals."
 
 weights:
   enchanting: 50
-  trading: 50
+  trading: 100
   loot: 50
 
 min-level: 1

@@ -1,8 +1,8 @@
-name: 'phantom_strike'
-display-name: '<#52204e>Phantom Strike</#52204e>'
+name: 'explosive'
+display-name: '&cExplosive'
 
-description: '&7» Chance to spawn a phantom to attack your target.'
-description-long: '&7Each level provides a 2% increased chance to spawn a phantom overhead to attack your target. This effect has a 10 second cooldown.'
+description: '&7» Chance to explode your target.'
+description-long: '&7Each level provides a 2% increased chance to create an explosion on your target. This effect has a 10 second cooldown.'
 
 weights:
   enchanting: 20
@@ -26,32 +26,32 @@ levels:
       - chance(2)
       - cooldown(10)
     effects:
-      - minions(phantom,1,%owner%'s Phantom,0,10,0)
+      - explosion(opponent,2,false,false)
   2:
     min-enchanting-level: 6
     conditions:
       - chance(4)
       - cooldown(10)
     effects:
-      - minions(phantom,1,%owner%'s Phantom,0,10,0)
+      - explosion(opponent,2,false,false)
   3:
     min-enchanting-level: 12
     conditions:
       - chance(6)
       - cooldown(10)
     effects:
-      - minions(phantom,1,%owner%'s Phantom,0,10,0)
+      - explosion(opponent,2,false,false)
   4:
     min-enchanting-level: 18
     conditions:
       - chance(8)
       - cooldown(10)
     effects:
-      - minions(phantom,1,%owner%'s Phantom,0,10,0)
+      - explosion(opponent,2,false,false)
   5:
     min-enchanting-level: 24
     conditions:
       - chance(10)
       - cooldown(10)
     effects:
-      - minions(phantom,1,%owner%'s Phantom,0,10,0)
+      - explosion(opponent,2,false,false)

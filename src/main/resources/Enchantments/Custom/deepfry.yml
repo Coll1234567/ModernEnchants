@@ -6,7 +6,7 @@ description-long: '&7Each level gives a 33% chance to automatically cook caught 
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

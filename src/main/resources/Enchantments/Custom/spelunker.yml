@@ -6,7 +6,7 @@ description-long: '&7Gives permanent night vision as long as you are under y 63.
 
 weights:
   enchanting: 10
-  trading: 10
+  trading: 100
   loot: 10
 
 min-level: 1

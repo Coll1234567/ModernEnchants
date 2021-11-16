@@ -6,7 +6,7 @@ description-long: '&7Each level reduces the movement speed penalty of water by 3
 
 weights:
   enchanting: 0
-  trading: 30
+  trading: 100
   loot: 30
 
 min-level: 1

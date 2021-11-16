@@ -1,12 +1,12 @@
 name: 'deepslate_miner'
-display-name: '<#505050>Deepslate Miner</#505050>'
+display-name: '&8Deepslate Miner'
 
-description: '&7» Gives permanent resistance deep underground.'
-description-long: '&7Gives permanent resistance as long as you are under y 0.'
+description: '&7» Gives permanent resistance and haste deep underground.'
+description-long: '&7Gives permanent resistance 1 and haste 1 as long as you are under y 0.'
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1
@@ -24,4 +24,5 @@ levels:
     conditions:
       - y_level(user,<0)
     effects:
-      - potion_effect(user,damage_resistance,20,1)
+      - potion_effect(user,damage_resistance,19,1)
+      - potion_effect(user,fast_digging,19,1)

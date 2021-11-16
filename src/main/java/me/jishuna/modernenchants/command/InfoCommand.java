@@ -27,6 +27,9 @@ public class InfoCommand extends SimpleCommandHandler {
 		sender.sendMessage(ChatColor.GOLD + "=".repeat(40));
 		sender.sendMessage(ChatColor.GOLD + descriptionFile.getFullName() + ChatColor.GREEN + " by " + ChatColor.GOLD
 				+ String.join(", ", descriptionFile.getAuthors()));
+		sender.sendMessage("");
+		sender.sendMessage(ChatColor.GOLD + "Registered Enchantments: " + ChatColor.GREEN
+				+ this.plugin.getEnchantmentRegistry().getAllEnchantments().size());
 		sender.sendMessage(ChatColor.GOLD + "=".repeat(40));
 
 		return true;

@@ -6,7 +6,7 @@ description-long: '&7Removes the 5x mining speed penalty that is normally applie
 
 weights:
   enchanting: 20
-  trading: 20
+  trading: 100
   loot: 20
 
 min-level: 1

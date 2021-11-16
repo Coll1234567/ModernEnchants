@@ -6,7 +6,7 @@ description-long: '&7Each level provides a 3% increased chance to strike your ta
 
 weights:
   enchanting: 40
-  trading: 40
+  trading: 100
   loot: 40
 
 min-level: 1

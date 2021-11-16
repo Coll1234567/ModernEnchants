@@ -1,0 +1,35 @@
+name: 'intellect'
+display-name: '&aIntellect'
+
+description: '&7» Increases experience from killed mobs.'
+description-long: "&7Each level increases the experience dropped from killing mobs by 25%."
+
+weights:
+  enchanting: 20
+  trading: 100
+  loot: 20
+
+min-level: 1
+max-level: 3
+
+actions:
+  - KILL_MOB
+  
+valid-items:
+  - SWORDS
+valid-items-anvil:
+  - AXES
+
+levels:
+  1:
+    min-enchanting-level: 20
+    effects:
+      - multiply_experience(1.25)
+  2:
+    min-enchanting-level: 25
+    effects:
+      - multiply_experience(1.5)
+  3:
+    min-enchanting-level: 30
+    effects:
+      - multiply_experience(1.75)
