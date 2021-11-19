@@ -15,7 +15,7 @@ max-level: 1
 conflicts:
   - 'minecraft:infinity'
   
-valid-items:
+valid-items-anvil:
   - SWORDS
   - AXES
   - PICKAXES

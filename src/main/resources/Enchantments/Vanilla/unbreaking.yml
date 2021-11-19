@@ -1,0 +1,32 @@
+name: 'minecraft:unbreaking'
+display-name: '&7Unbreaking'
+
+description: '&7» Reduces durability damage taken.'
+description-long: '&7Each level increases the effective durability of the item by around 100%.'
+
+weights:
+  enchanting: 50
+  trading: 100
+  loot: 50
+
+min-level: 1
+max-level: 3
+  
+valid-items:
+  - SWORDS
+  - AXES
+  - PICKAXES
+  - SHOVELS
+  - HOES
+  - HELMETS
+  - CHESTPLATES
+  - LEGGINGS
+  - BOOTS
+  - BOW
+  - CROSSBOW
+  - SHIELD
+  - TRIDENT
+  - FISHING_ROD
+valid-items-anvil:
+  - SHEARS
+  - ELYTRA

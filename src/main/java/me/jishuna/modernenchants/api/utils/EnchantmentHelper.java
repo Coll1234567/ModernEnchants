@@ -72,11 +72,17 @@ public class EnchantmentHelper {
 	}
 
 	public static int[] getLevelRange(IEnchantment enchantment, int cost) {
-		int[] levels = new int[] { enchantment.getStartLevel(), enchantment.getStartLevel() };
+		float percent = cost / 30f;
 
-		if (!(enchantment instanceof CustomEnchantment enchant))
-			return new int[] { Math.max((int) Math.ceil(enchantment.getMaxLevel() * 0.8d), enchantment.getStartLevel()),
-					enchantment.getMaxLevel() };
+		if (!(enchantment instanceof CustomEnchantment enchant)) {
+			int lower = Math.max((int) Math.ceil((enchantment.getMaxLevel() * percent) * 0.8d),
+					enchantment.getStartLevel());
+			int upper = Math.min((int) Math.ceil(enchantment.getMaxLevel() * percent), enchantment.getMaxLevel());
+
+			return new int[] { lower, upper };
+		}
+
+		int[] levels = new int[] { enchantment.getStartLevel(), enchantment.getStartLevel() };
 
 		for (Entry<Integer, EnchantmentLevel> levelEntry : enchant.getLevels().entrySet()) {
 			EnchantmentLevel enchantmentLevel = levelEntry.getValue();

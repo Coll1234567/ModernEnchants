@@ -16,11 +16,9 @@ import net.md_5.bungee.api.ChatColor;
 @RegisterEffect(name = "curse_aim")
 public class BadAimEffect extends EnchantmentEffect {
 	private static final String[] DESCRIPTION = new String[] {
-			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Deal damage to the target.",
-			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "damage(target,amount)",
-			ChatColor.GOLD + "  - Target: " + ChatColor.GREEN
-					+ "The entity to damage, either \"user\" or \"opponent\".",
-			ChatColor.GOLD + "  - Amount: " + ChatColor.GREEN + "The amount of damage to deal, 2 damage = 1 heart." };
+			ChatColor.GOLD + "Description: " + ChatColor.GREEN + "Reduces the accuracy of projectiles.",
+			ChatColor.GOLD + "Usage: " + ChatColor.GREEN + "curse_aim(intensity)",
+			ChatColor.GOLD + "  - Intensity: " + ChatColor.GREEN + "The intensity of this effect, higher numbers will lead to less accuracy." };
 
 	private final double intensity;
 
@@ -44,5 +42,9 @@ public class BadAimEffect extends EnchantmentEffect {
 
 			event.getEntity().setVelocity(event.getEntity().getVelocity().add(new Vector(x, y, z)));
 		}
+	}
+	
+	public static String[] getDescription() {
+		return DESCRIPTION;
 	}
 }

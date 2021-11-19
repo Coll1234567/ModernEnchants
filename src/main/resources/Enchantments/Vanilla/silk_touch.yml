@@ -1,0 +1,22 @@
+name: 'minecraft:silk_touch'
+display-name: '&7Silk Touch'
+
+description: '&7» Causes blocks to drop themselves when mined.'
+description-long: '&7Mined blocks will drop themselves rather than their regular drops, with a few exceptions.'
+
+weights:
+  enchanting: 10
+  trading: 100
+  loot: 10
+
+min-level: 1
+max-level: 1
+
+conflicts:
+  - 'minecraft:fortune'
+  
+valid-items:
+  - AXES
+  - PICKAXES
+  - SHOVELS
+  - HOES

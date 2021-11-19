@@ -35,7 +35,7 @@ public class EnchantmentLevel {
 			}
 		}
 
-		// Parse actions
+		// Parse conditions
 		for (String conditionString : section.getStringList("conditions")) {
 			EnchantmentCondition condition = conditionRegistry.parseString(conditionString);
 
