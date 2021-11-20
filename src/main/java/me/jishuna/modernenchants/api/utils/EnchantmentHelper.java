@@ -20,9 +20,9 @@ import me.jishuna.modernenchants.api.enchantment.IEnchantment;
 
 public class EnchantmentHelper {
 
-	public static Map<Enchantment, Integer> populateEnchantments(ItemStack item, EnchantmentRegistry registry,
-			ThreadLocalRandom random, int count, int cost, ObtainMethod method, boolean book) {
-		Map<Enchantment, Integer> enchantmentMap = new HashMap<>();
+	public static Map<Enchantment, Integer> populateEnchantments(ItemStack item,
+			Map<Enchantment, Integer> enchantmentMap, EnchantmentRegistry registry, ThreadLocalRandom random, int count,
+			int cost, ObtainMethod method, boolean book) {
 		for (int i = 0; i < count; i++) {
 			int tries = 10;
 			boolean valid = false;
@@ -30,6 +30,9 @@ public class EnchantmentHelper {
 			IEnchantment enchantment;
 			do {
 				enchantment = registry.getRandomEnchantment(item, method, book);
+				if (enchantment == null)
+					return enchantmentMap;
+
 				valid = book || (canEnchant(registry, enchantment, enchantmentMap.keySet())
 						&& enchantment.getMinLevelCost() <= cost);
 				tries--;
@@ -42,6 +45,11 @@ public class EnchantmentHelper {
 			enchantmentMap.put(enchantment.getEnchantment(), random.nextInt(levels[0], levels[1] + 1));
 		}
 		return enchantmentMap;
+	}
+
+	public static Map<Enchantment, Integer> populateEnchantments(ItemStack item, EnchantmentRegistry registry,
+			ThreadLocalRandom random, int count, int cost, ObtainMethod method, boolean book) {
+		return populateEnchantments(item, new HashMap<>(), registry, random, count, cost, method, book);
 	}
 
 	public static IEnchantment getCustomEnchantment(Enchantment enchantment, EnchantmentRegistry registry) {
@@ -116,19 +124,18 @@ public class EnchantmentHelper {
 	}
 
 	public static int getEnchantmentCost(Random random, int index, int level, int enchantability) {
-		if (enchantability <= 0) {
+		if (enchantability <= 0)
 			return 0;
-		} else {
-			if (level > 15) {
-				level = 15;
-			}
 
-			int value = random.nextInt(8) + 1 + (level >> 1) + random.nextInt(level + 1);
-			if (index == 0) {
-				return Math.max(value / 3, 1);
-			} else {
-				return index == 1 ? value * 2 / 3 + 1 : Math.max(value, level * 2);
-			}
+		if (level > 15)
+			level = 15;
+
+		int value = random.nextInt(8) + 1 + (level >> 1) + random.nextInt(level + 1);
+		
+		if (index == 0) {
+			return Math.max(value / 3, 1);
+		} else {
+			return index == 1 ? value * 2 / 3 + 1 : Math.max(value, level * 2);
 		}
 	}
 

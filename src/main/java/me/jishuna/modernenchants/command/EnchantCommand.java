@@ -33,7 +33,7 @@ public class EnchantCommand extends SimpleCommandHandler {
 		}
 
 		if (sender instanceof Player player) {
-			IEnchantment enchant = plugin.getEnchantmentRegistry().getByName(args[0]);
+			IEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantmentByName(args[0]);
 
 			int level = 1;
 
@@ -60,7 +60,7 @@ public class EnchantCommand extends SimpleCommandHandler {
 		}
 
 		if (args.length == 3) {
-			IEnchantment enchant = plugin.getEnchantmentRegistry().getByName(args[0]);
+			IEnchantment enchant = plugin.getEnchantmentRegistry().getEnchantmentByName(args[0]);
 			if (enchant != null) {
 				List<String> levels = new ArrayList<>();
 				for (int i = enchant.getStartLevel(); i <= enchant.getMaxLevel(); i++) {

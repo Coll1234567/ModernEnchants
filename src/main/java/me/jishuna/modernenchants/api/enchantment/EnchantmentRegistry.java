@@ -3,11 +3,13 @@ package me.jishuna.modernenchants.api.enchantment;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
@@ -25,6 +27,7 @@ public class EnchantmentRegistry {
 	private CustomEnchantment placeholderEnchant = null;
 	private final Map<Material, WeightedRandom<IEnchantment>> itemCache = new FixedSizeLinkedHashMap<>(50);
 	private final Map<NamespacedKey, IEnchantment> enchantmentMap = new TreeMap<>();
+	private final Set<VanillaEnchantment> vanillaEnchants = new HashSet<>();
 
 	public void registerAndInjectEnchantment(IEnchantment enchantment) {
 		this.enchantmentMap.put(enchantment.getKey(), enchantment);
@@ -36,9 +39,86 @@ public class EnchantmentRegistry {
 			if (placeholderEnchant == null)
 				placeholderEnchant = enchant;
 			Enchantment.registerEnchantment(enchant);
+		} else if (enchantment instanceof VanillaEnchantment enchant
+				&& enchant.getWeight(ObtainMethod.ENCHANTING) > 0) {
+			this.vanillaEnchants.add(enchant);
 		}
 	}
 
+
+	public IEnchantment getRandomEnchantment(ItemStack item, ObtainMethod method, boolean book) {
+		Material type = item.getType();
+		WeightedRandom<IEnchantment> random = this.itemCache.get(type);
+
+		if (random == null) {
+			random = new WeightedRandom<>();
+
+			for (IEnchantment enchantment : getAllEnchantments()) {
+				if (book || enchantment.canEnchantItem(item, method == ObtainMethod.ENCHANTING)) {
+					double weight = enchantment.getWeight(method);
+
+					if (weight > 0)
+						random.add(weight, enchantment);
+				}
+			}
+			this.itemCache.put(type, random);
+		}
+		return random.isEmpty() ? null : random.poll();
+	}
+
+	public VanillaEnchantment getRandomVanillaEnchantment(Random rand, ItemStack item) {
+		WeightedRandom<VanillaEnchantment> random = new WeightedRandom<>(rand);
+
+		for (VanillaEnchantment enchantment : this.vanillaEnchants) {
+			if (enchantment.canEnchantItem(item, true)) {
+				double weight = enchantment.getWeight(ObtainMethod.ENCHANTING);
+
+				if (weight > 0)
+					random.add(weight, enchantment);
+			}
+		}
+
+		return random.isEmpty() ? null : random.poll();
+	}
+
+	public IEnchantment getEnchantment(String name) {
+		NamespacedKey key = NamespacedKey.fromString(name);
+		if (key == null)
+			return null;
+		return getEnchantment(key);
+	}
+
+	public IEnchantment getEnchantment(NamespacedKey key) {
+		return this.enchantmentMap.get(key);
+	}
+
+	public IEnchantment getEnchantmentByName(String name) {
+		IEnchantment enchantment = getEnchantment("modernenchants:" + name);
+		if (enchantment == null)
+			return getEnchantment("minecraft:" + name);
+		return enchantment;
+	}
+	
+	public boolean isEnchantable(Material type) {
+		return this.validItemSet.contains(type);
+	}
+
+	public Set<String> getKeys() {
+		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
+	}
+
+	public Set<String> getNames() {
+		return this.enchantmentMap.keySet().stream().map(NamespacedKey::getKey).collect(Collectors.toSet());
+	}
+
+	public Collection<IEnchantment> getAllEnchantments() {
+		return this.enchantmentMap.values();
+	}
+
+	public CustomEnchantment getPlaceholderEnchant() {
+		return placeholderEnchant;
+	}
+	
 	public void unregisterAll() {
 		try {
 			Field byIdField = Enchantment.class.getDeclaredField("byKey");
@@ -69,64 +149,6 @@ public class EnchantmentRegistry {
 		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public IEnchantment getRandomEnchantment(ItemStack item, ObtainMethod method, boolean book) {
-		Material type = item.getType();
-		WeightedRandom<IEnchantment> random = this.itemCache.get(type);
-
-		if (random == null) {
-			random = new WeightedRandom<>();
-
-			for (IEnchantment enchantment : getAllEnchantments()) {
-				if (book || enchantment.canEnchantItem(item, method == ObtainMethod.ENCHANTING)) {
-					double weight = enchantment.getWeight(method);
-
-					if (weight > 0)
-						random.add(weight, enchantment);
-				}
-			}
-			this.itemCache.put(type, random);
-		}
-		return random.poll();
-	}
-
-	public boolean isEnchantable(Material type) {
-		return this.validItemSet.contains(type);
-	}
-
-	public IEnchantment getEnchantment(String name) {
-		NamespacedKey key = NamespacedKey.fromString(name);
-		if (key == null)
-			return null;
-		return getEnchantment(key);
-	}
-
-	public IEnchantment getEnchantment(NamespacedKey key) {
-		return this.enchantmentMap.get(key);
-	}
-
-	public IEnchantment getByName(String name) {
-		IEnchantment enchantment = getEnchantment("modernenchants:" + name);
-		if (enchantment == null)
-			return getEnchantment("minecraft:" + name);
-		return enchantment;
-	}
-
-	public Set<String> getKeys() {
-		return this.enchantmentMap.keySet().stream().map(NamespacedKey::toString).collect(Collectors.toSet());
-	}
-
-	public Set<String> getNames() {
-		return this.enchantmentMap.keySet().stream().map(NamespacedKey::getKey).collect(Collectors.toSet());
-	}
-
-	public Collection<IEnchantment> getAllEnchantments() {
-		return this.enchantmentMap.values();
-	}
-
-	public CustomEnchantment getPlaceholderEnchant() {
-		return placeholderEnchant;
 	}
 
 }
