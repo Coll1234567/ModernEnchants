@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 3
-
-actions:
-  - KILL_MOB
   
 valid-items:
   - SWORDS
@@ -23,13 +20,25 @@ valid-items-anvil:
 levels:
   1:
     min-enchanting-level: 20
-    effects:
-      - multiply_experience(1.25)
+    actions:
+      - triggers: KILL_ENTITY
+        conditions:
+          - IS_PLAYER(opponent,false)
+        effects:
+          - SET_EXPERIENCE(%experience% * 1.25)
   2:
     min-enchanting-level: 25
-    effects:
-      - multiply_experience(1.5)
+    actions:
+      - triggers: KILL_ENTITY
+        conditions:
+          - IS_PLAYER(opponent,false)
+        effects:
+          - SET_EXPERIENCE(%experience% * 1.25)
   3:
     min-enchanting-level: 30
-    effects:
-      - multiply_experience(1.75)
+    actions:
+      - triggers: KILL_ENTITY
+        conditions:
+          - IS_PLAYER(opponent,false)
+        effects:
+          - SET_EXPERIENCE(%experience% * 1.25)

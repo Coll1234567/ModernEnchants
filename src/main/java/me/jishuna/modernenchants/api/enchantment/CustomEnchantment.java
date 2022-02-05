@@ -2,12 +2,10 @@ package me.jishuna.modernenchants.api.enchantment;
 
 import static me.jishuna.modernenchants.api.utils.ParseUtils.readMaterial;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,23 +16,17 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Sets;
 
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
 import me.jishuna.modernenchants.ModernEnchants;
-import me.jishuna.modernenchants.api.ActionType;
 import me.jishuna.modernenchants.api.ObtainMethod;
-import me.jishuna.modernenchants.api.condition.CooldownCondition;
-import me.jishuna.modernenchants.api.condition.EnchantmentCondition;
-import me.jishuna.modernenchants.api.effect.DelayEffect;
-import me.jishuna.modernenchants.api.effect.EnchantmentEffect;
-import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import me.jishuna.modernenchants.api.utils.ParseUtils;
 import net.md_5.bungee.api.ChatColor;
 
 public class CustomEnchantment extends Enchantment implements IEnchantment {
-	private final ModernEnchants plugin;
 
 	private final String name;
 	private final String description;
@@ -50,16 +42,14 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 	private final Set<String> validItemsRaw = new HashSet<>();
 	private final Set<Material> validItems = EnumSet.noneOf(Material.class);
 	private final Set<Material> validItemsAnvil = EnumSet.noneOf(Material.class);
-	private final Set<ActionType> actions = new HashSet<>();
 	private final Set<String> conflicts;
 
 	private final Map<ObtainMethod, Double> weights = new EnumMap<>(ObtainMethod.class);
 	private final Map<Integer, EnchantmentLevel> levels = new HashMap<>();
 
-	public CustomEnchantment(ModernEnchants plugin, ConfigurationSection section) throws InvalidEnchantmentException {
+	public CustomEnchantment(ModernEnchants plugin, ConfigurationSection section) throws ParsingException {
 		super(new NamespacedKey(plugin, section.getString("name")));
-		this.plugin = plugin;
-
+		
 		this.name = section.getString("name").toLowerCase();
 
 		this.cursed = section.getBoolean("cursed", false);
@@ -83,15 +73,6 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 
 		this.minLevel = section.getInt("min-level", 1);
 		this.maxLevel = section.getInt("max-level", 5);
-
-		for (String action : section.getStringList("actions")) {
-			action = action.toUpperCase();
-
-			if (!ActionType.ALL_ACTIONS.contains(action))
-				throw new InvalidEnchantmentException("Invalid enchantment action: " + action);
-
-			this.actions.add(ActionType.valueOf(action));
-		}
 
 		for (String item : section.getStringList("valid-items")) {
 			this.validItems.addAll(readMaterial(item.toUpperCase()));
@@ -118,81 +99,18 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 
 			// Parse a single level
 			try {
-				this.levels.put(level,
-						new EnchantmentLevel(levelSection, plugin.getEffectRegistry(), plugin.getConditionRegistry()));
-			} catch (InvalidEnchantmentException ex) {
-				ex.addAdditionalInfo("Error parsing level " + level + ":");
-				throw ex;
+				this.levels.put(level, new EnchantmentLevel(plugin.getActionLib(), levelSection));
+			} catch (ParsingException ex) {
+				throw new ParsingException("Error parsing enchantment level " + level, ex);
 			}
 		}
 	}
 
-	public void processActions(int level, EnchantmentContext context) {
-		if (!listensFor(context.getType()))
-			return;
-
-		EnchantmentLevel encahntmentLevel = this.levels.get(level);
-		CooldownCondition cooldown = null;
-
-		for (EnchantmentCondition condition : encahntmentLevel.getConditions()) {
-			if (!condition.check(context, this))
-				return;
-
-			if (condition instanceof CooldownCondition cool)
-				cooldown = cool;
+	public void processActions(int level, ActionContext context) {
+		EnchantmentLevel enchantmentLevel = this.levels.get(level);
+		if (enchantmentLevel != null) {
+			enchantmentLevel.processActions(context);
 		}
-
-		if (cooldown != null)
-			cooldown.setCooldown(context, this);
-
-		if (!encahntmentLevel.hasDelay()) {
-			processActionsDirect(context, encahntmentLevel);
-		} else {
-			processActionsDelay(context, encahntmentLevel);
-		}
-	}
-
-	private void processActionsDirect(EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
-		for (EnchantmentEffect effect : encahntmentLevel.getEffects()) {
-			effect.handle(context);
-		}
-
-	}
-
-	private void processActionsDelay(EnchantmentContext context, EnchantmentLevel encahntmentLevel) {
-		List<EnchantmentEffect> effectList = new ArrayList<>(encahntmentLevel.getEffects());
-		final int size = effectList.size();
-
-		new BukkitRunnable() {
-			int index;
-			int delay;
-
-			@Override
-			public void run() {
-				if (delay > 0) {
-					delay--;
-					return;
-				}
-
-				while (index < size) {
-					EnchantmentEffect effect = effectList.get(index);
-					index++;
-
-					if (effect instanceof DelayEffect delayEffect) {
-						delay = delayEffect.getDelay();
-						return;
-					} else {
-						effect.handle(context);
-					}
-				}
-				cancel();
-			}
-		}.runTaskTimer(plugin, 0, 1);
-
-	}
-
-	public boolean listensFor(ActionType type) {
-		return this.actions.contains(type);
 	}
 
 	@Override
@@ -306,8 +224,6 @@ public class CustomEnchantment extends Enchantment implements IEnchantment {
 
 	@Override
 	public boolean canEnchantItem(ItemStack item, boolean table) {
-		if (table)
-			return this.validItems.contains(item.getType());
-		return this.validItemsAnvil.contains(item.getType());
+		return table ? this.validItems.contains(item.getType()) : this.validItemsAnvil.contains(item.getType());
 	}
 }

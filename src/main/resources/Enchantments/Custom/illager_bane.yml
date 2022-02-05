@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 5
-
-actions:
-  - ATTACK_MOB
   
 valid-items:
   - SWORDS
@@ -25,31 +22,41 @@ group: 'melee_damage_increase'
 levels:
   1:
     min-enchanting-level: 0
-    conditions:
-      - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
-    effects:
-      - add_damage(2)
+    actions:
+      - triggers: ATTACK_ENTITY
+        conditions:
+          - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
+        effects:
+          - SET_DAMAGE(%damage% + 2)
   2:
     min-enchanting-level: 6
-    conditions:
-      - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
-    effects:
-      - add_damage(4)
+    actions:
+      - triggers: ATTACK_ENTITY
+        conditions:
+          - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
+        effects:
+          - SET_DAMAGE(%damage% + 4)
   3:
     min-enchanting-level: 12
-    conditions:
-      - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
-    effects:
-      - add_damage(6)
+    actions:
+      - triggers: ATTACK_ENTITY
+        conditions:
+          - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
+        effects:
+          - SET_DAMAGE(%damage% + 6)
   4:
     min-enchanting-level: 18
-    conditions:
-      - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
-    effects:
-      - add_damage(8)
+    actions:
+      - triggers: ATTACK_ENTITY
+        conditions:
+          - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
+        effects:
+          - SET_DAMAGE(%damage% + 8)
   5:
     min-enchanting-level: 24
-    conditions:
-      - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
-    effects:
-      - add_damage(10)
+    actions:
+      - triggers: ATTACK_ENTITY
+        conditions:
+          - entity_type(opponent,pillager,vindicator,evoker,ravager,illusioner)
+        effects:
+          - SET_DAMAGE(%damage% + 10)

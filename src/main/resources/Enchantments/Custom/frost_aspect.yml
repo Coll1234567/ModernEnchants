@@ -11,10 +11,6 @@ weights:
 
 min-level: 1
 max-level: 2
-
-actions:
-  - ATTACK_MOB
-  - ATTACK_PLAYER
   
 valid-items:
   - SWORDS
@@ -27,9 +23,13 @@ conflicts:
 levels:
   1:
     min-enchanting-level: 0
-    effects:
-      - freeze(opponent,40)
+    actions:
+      - triggers: ATTACK_ENTITY
+        effects:
+          - freeze(opponent,40)
   2:
     min-enchanting-level: 15
-    effects:
-      - freeze(opponent,80)
+    actions:
+      - triggers: ATTACK_ENTITY
+        effects:
+          - freeze(opponent,80)

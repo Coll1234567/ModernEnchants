@@ -1,4 +1,4 @@
-package me.jishuna.modernenchants.api.annotation;
+package me.jishuna.modernenchants.annotation;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -8,6 +8,6 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(TYPE)
-public @interface RegisterEffect {
+public @interface RegisterCondition {
 	String name();
 }

@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - WORN
   
 valid-items:
   - CHESTPLATES
@@ -21,7 +18,9 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 10
-    conditions:
-      - cooldown(60)
-    effects:
-      - potion_effect(user,absorption,1250,1)
+    actions:
+      - triggers: TICK
+        conditions:
+          - cooldown(60)
+        effects:
+          - ADD_EFFECT(user,absorption,1250,1)

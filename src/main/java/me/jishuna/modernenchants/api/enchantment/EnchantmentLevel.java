@@ -1,63 +1,30 @@
 package me.jishuna.modernenchants.api.enchantment;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 
-import me.jishuna.modernenchants.api.condition.ConditionRegistry;
-import me.jishuna.modernenchants.api.condition.EnchantmentCondition;
-import me.jishuna.modernenchants.api.effect.DelayEffect;
-import me.jishuna.modernenchants.api.effect.EffectRegistry;
-import me.jishuna.modernenchants.api.effect.EnchantmentEffect;
-import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
+import me.jishuna.actionconfiglib.ActionConfigLib;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.Component;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
 
 public class EnchantmentLevel {
-	private final List<EnchantmentEffect> effects = new ArrayList<>();
-	private final List<EnchantmentCondition> conditions = new ArrayList<>();
-	private boolean hasDelay;
+	private final List<Component> components;
 	private final int minExperienceLevel;
 
-	public EnchantmentLevel(ConfigurationSection section, EffectRegistry effectRegistry,
-			ConditionRegistry conditionRegistry) throws InvalidEnchantmentException {
-		this.minExperienceLevel = section.getInt("min-enchanting-level");
-		
-		// Parse effects
-		for (String actionString : section.getStringList("effects")) {
-			EnchantmentEffect effect = effectRegistry.parseString(actionString);
+	public EnchantmentLevel(ActionConfigLib actionLib, ConfigurationSection levelSection) throws ParsingException {
+		this.minExperienceLevel = levelSection.getInt("min-enchanting-level");
 
-			if (effect != null) {
-				effects.add(effect);
-			}
-
-			if (effect instanceof DelayEffect) {
-				this.hasDelay = true;
-			}
-		}
-
-		// Parse conditions
-		for (String conditionString : section.getStringList("conditions")) {
-			EnchantmentCondition condition = conditionRegistry.parseString(conditionString);
-
-			if (condition != null) {
-				conditions.add(condition);
-			}
-		}
+		this.components = Arrays.asList(actionLib.parseComponents(levelSection.getMapList("actions")));
 	}
 
-	public List<EnchantmentEffect> getEffects() {
-		return effects;
-	}
-
-	public List<EnchantmentCondition> getConditions() {
-		return conditions;
+	public void processActions(ActionContext context) {
+		this.components.forEach(action -> action.handleAction(context));
 	}
 
 	public int getMinExperienceLevel() {
 		return minExperienceLevel;
-	}
-
-	public boolean hasDelay() {
-		return hasDelay;
 	}
 }

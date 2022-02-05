@@ -3,9 +3,9 @@ package me.jishuna.modernenchants.listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.StringUtils;
-import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R1.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -58,7 +58,7 @@ public class AnvilListener implements Listener {
 
 			if (copyMeta instanceof Damageable damageable && isValidRepairItem(copy, first, second)) {
 				int repairItemCountCost = Math.min(damageable.getDamage(), copy.getType().getMaxDurability() / 4);
-				
+
 				if (repairItemCountCost <= 0) {
 					event.setResult(null);
 					inventory.setRepairCost(0);
@@ -69,7 +69,7 @@ public class AnvilListener implements Listener {
 					repairItemCountCost = Math.min(damageable.getDamage(), copy.getType().getMaxDurability() / 4);
 					final int l = damageable.getDamage() - repairItemCountCost;
 					damageable.setDamage(l);
-					++cost;
+					cost++;
 				}
 			} else {
 				if (!book && (copy.getType() != second.getType() || !(copyMeta instanceof Damageable))) {
@@ -100,9 +100,6 @@ public class AnvilListener implements Listener {
 				boolean lastInvalid = false;
 
 				for (Enchantment enchantment : secondEnchantments.keySet()) {
-					// Can this even be null?
-					if (enchantment == null)
-						continue;
 					IEnchantment customEnchantment = EnchantmentHelper.getCustomEnchantment(enchantment, this.registry);
 
 					if (customEnchantment == null)
@@ -124,7 +121,7 @@ public class AnvilListener implements Listener {
 						if (customEnchantment2 != customEnchantment
 								&& customEnchantment.conflictsWith(customEnchantment2)) {
 							valid = false;
-							++cost;
+							cost++;
 						}
 					}
 
@@ -206,19 +203,21 @@ public class AnvilListener implements Listener {
 		net.minecraft.world.item.ItemStack nmsFirst = CraftItemStack.asNMSCopy(first);
 		net.minecraft.world.item.ItemStack nmsSecond = CraftItemStack.asNMSCopy(second);
 
-		return CraftItemStack.asNMSCopy(target).getItem().a(nmsFirst, nmsSecond);
+		return CraftItemStack.asNMSCopy(target).c().a(nmsFirst, nmsSecond);
 	}
 
 	private int getRepairCost(ItemStack item) {
 		ItemMeta meta = item.getItemMeta();
-		if (meta instanceof Repairable repair)
+		if (meta instanceof Repairable repair) {
 			return repair.getRepairCost();
+		}
 		return 0;
 	}
 
 	private int getDamage(ItemMeta meta) {
-		if (meta instanceof Damageable damage)
+		if (meta instanceof Damageable damage) {
 			return damage.getDamage();
+		}
 		return 0;
 	}
 }

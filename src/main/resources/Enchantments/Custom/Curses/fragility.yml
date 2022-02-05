@@ -13,9 +13,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - DURABILITY_LOSS
   
 valid-items:
   - HELMETS
@@ -35,5 +32,7 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 0
-    effects:
-      - multiply_durability(3)
+    actions:
+      - triggers: DURABILITY_LOST
+        effects:
+          - set_durability_loss(%durability_loss% * 3)

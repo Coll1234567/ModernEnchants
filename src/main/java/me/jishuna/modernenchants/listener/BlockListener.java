@@ -11,9 +11,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 public class BlockListener implements Listener {
 
@@ -31,8 +31,8 @@ public class BlockListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.BREAK_BLOCK).withItem(item)
-				.withTargetBlock(block).withUser(player).build();
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.BREAK_BLOCK).event(event).item(item)
+				.targetLocation(block.getLocation()).user(player).build();
 
 		ignore = true;
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
@@ -57,8 +57,8 @@ public class BlockListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.BLOCK_DROP_ITEMS)
-				.withItem(item).withTargetBlock(block).withUser(player).build();
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.BLOCK_DROP_ITEM).event(event).item(item)
+				.targetLocation(block.getLocation()).user(player).build();
 
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();

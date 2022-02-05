@@ -1,71 +1,62 @@
 package me.jishuna.modernenchants.api.effect;
 
-import static me.jishuna.modernenchants.api.utils.ParseUtils.checkLength;
-import static me.jishuna.modernenchants.api.utils.ParseUtils.readInt;
-
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.persistence.PersistentDataType;
 
+import com.google.common.base.Enums;
+
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.ArgumentFormat;
+import me.jishuna.actionconfiglib.ConfigurationEntry;
+import me.jishuna.actionconfiglib.effects.Effect;
+import me.jishuna.actionconfiglib.effects.RegisterEffect;
+import me.jishuna.actionconfiglib.enums.EntityTarget;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
 import me.jishuna.modernenchants.api.PluginKeys;
-import me.jishuna.modernenchants.api.annotation.RegisterEffect;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
-import me.jishuna.modernenchants.api.exception.InvalidEnchantmentException;
 import net.md_5.bungee.api.ChatColor;
 
-@RegisterEffect(name = "minions")
-public class MinionEffect extends EnchantmentEffect {
-	private static final Set<String> ALL_TYPES = Arrays.stream(EntityType.values()).map(Enum::toString)
-			.collect(Collectors.toSet());
-
-	private static final String[] DESCRIPTION = new String[] { "test", "test2" };
-
+@ArgumentFormat(format = { "target", "type", "count", "name", "x-offset", "y-offset", "z-offset"})
+@RegisterEffect(name = "MINIONS")
+public class MinionEffect extends Effect {
+	private final EntityTarget target;
 	private final EntityType type;
-	private int count;
-	private String name;
-	private final int x;
-	private final int y;
-	private final int z;
+	private final int count;
+	private final String name;
 
-	public MinionEffect(String[] data) throws InvalidEnchantmentException {
-		super(data);
-		checkLength(data, 3);
+	private final double xOffset;
+	private final double yOffset;
+	private final double zOffset;
 
-		String typeString = data[0].toUpperCase();
-		if (!ALL_TYPES.contains(typeString))
-			throw new InvalidEnchantmentException("Invalid sound type: " + typeString);
+	public MinionEffect(ConfigurationEntry entry) throws ParsingException {
+		this.target = EntityTarget.fromString(entry.getString("target"));
 
-		this.type = EntityType.valueOf(typeString);
+		String type = entry.getStringOrThrow("type");
 
-		this.count = readInt(data[1], "amount");
-		this.name = ChatColor.translateAlternateColorCodes('&', data[2]);
+		this.type = Enums.getIfPresent(EntityType.class, type.toUpperCase()).toJavaUtil()
+				.orElseThrow(() -> new ParsingException("The entity type \"" + type + "\" could not be found."));
 
-		if (data.length >= 6) {
-			this.x = readInt(data[3], "x");
-			this.y = readInt(data[4], "y");
-			this.z = readInt(data[5], "z");
-		} else {
-			this.x = 0;
-			this.y = 0;
-			this.z = 0;
-		}
+		this.count = entry.getIntOrThrow("count");
+		this.name = ChatColor.translateAlternateColorCodes('&', entry.getString("name"));
+
+		this.xOffset = entry.getDouble("x-offset", 0);
+		this.yOffset = entry.getDouble("y-offset", 0);
+		this.zOffset = entry.getDouble("z-offset", 0);
 	}
 
 	@Override
-	public void handle(EnchantmentContext context) {
-		context.getUser().ifPresent(user -> {
-			LivingEntity target = context.getOpponentDirect();
-			for (int i = 0; i < count; i++) {
-				Entity entity = user.getWorld().spawn(user.getLocation().add(x, y, z), type.getEntityClass());
+	public void evaluate(ActionContext context) {
+		context.getTargetOptional(this.target).ifPresent(owner -> {
+			LivingEntity target = context.getLivingTarget(EntityTarget.getOpposite(this.target));
+			for (int i = 0; i < this.count; i++) {
+				Entity entity = owner.getWorld().spawn(owner.getLocation().add(xOffset, yOffset, zOffset),
+						type.getEntityClass());
+
 				entity.getPersistentDataContainer().set(PluginKeys.MINION_OWNER.getKey(), PersistentDataType.STRING,
-						user.getUniqueId().toString());
-				entity.setCustomName(name.replace("%owner%", user.getName()));
+						owner.getUniqueId().toString());
+				entity.setCustomName(name.replace("%owner%", owner.getName()));
 
 				if (entity instanceof Mob mob && target != null) {
 					mob.setTarget(target);

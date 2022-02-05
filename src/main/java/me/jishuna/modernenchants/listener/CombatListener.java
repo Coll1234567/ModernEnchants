@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -19,9 +18,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 
-import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 import me.jishuna.modernenchants.api.utils.Utils;
 
 public class CombatListener implements Listener {
@@ -33,7 +32,7 @@ public class CombatListener implements Listener {
 				|| event.getCause() == DamageCause.PROJECTILE)
 			return;
 
-		if (!(event.getEntity()instanceof LivingEntity target))
+		if (!(event.getEntity() instanceof LivingEntity target))
 			return;
 
 		Set<ItemStack> items = new HashSet<>();
@@ -46,8 +45,8 @@ public class CombatListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.HURTBY_OTHER)
-					.withItem(item).withUser(target).build();
+			ActionContext context = new ActionContext.Builder(TriggerRegistry.DAMAGED_BY_OTHER).event(event).item(item)
+					.user(target).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();
@@ -70,13 +69,13 @@ public class CombatListener implements Listener {
 			return;
 		}
 
-		if (!(event.getEntity()instanceof LivingEntity target))
+		if (!(event.getEntity() instanceof LivingEntity target))
 			return;
 
-		if (event.getDamager()instanceof LivingEntity damager) {
+		if (event.getDamager() instanceof LivingEntity damager) {
 			handleDamage(event, damager, target, false);
-		} else if (event.getDamager()instanceof Projectile projectile
-				&& projectile.getShooter()instanceof LivingEntity shooter) {
+		} else if (event.getDamager() instanceof Projectile projectile
+				&& projectile.getShooter() instanceof LivingEntity shooter) {
 			if (owner.isPresent() && owner.get().equals(shooter.getUniqueId().toString())) {
 				event.setCancelled(true);
 				return;
@@ -87,7 +86,6 @@ public class CombatListener implements Listener {
 
 	private void handleDamage(EntityDamageByEntityEvent event, LivingEntity damager, LivingEntity target, boolean bow) {
 		// Damager
-		boolean targetIsPlayer = target.getType() == EntityType.PLAYER;
 		Set<ItemStack> items = new HashSet<>();
 
 		items.add(damager.getEquipment().getItemInMainHand());
@@ -101,19 +99,14 @@ public class CombatListener implements Listener {
 			if (!bow && BOWS.contains(item.getType()))
 				continue;
 
-			EnchantmentContext playerContext = EnchantmentContext.Builder
-					.create(event, bow ? ActionType.ATTACK_PLAYER_PROJECTILE : ActionType.ATTACK_PLAYER).withItem(item)
-					.withUser(damager).withOpponent(target).build();
+			ActionContext context = new ActionContext.Builder(
+					bow ? TriggerRegistry.ATTACK_PROJECTILE : TriggerRegistry.ATTACK_ENTITY).event(event)
+							.item(item).user(damager).opponent(target).build();
 
-			EnchantmentContext mobContext = EnchantmentContext.Builder
-					.create(event, bow ? ActionType.ATTACK_MOB_PROJECTILE : ActionType.ATTACK_MOB).withItem(item)
-					.withUser(damager).withOpponent(target).build();
-
-			handleItem(item, targetIsPlayer, playerContext, mobContext);
+			handleItem(item, context);
 		}
 
 		// Target
-		boolean damagerIsPlayer = damager.getType() == EntityType.PLAYER;
 		items.clear();
 
 		items.add(target.getEquipment().getItemInMainHand());
@@ -124,20 +117,15 @@ public class CombatListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext playerContext = EnchantmentContext.Builder
-					.create(event, bow ? ActionType.HURTBY_PLAYER_PROJECTILE : ActionType.HURTBY_PLAYER).withItem(item)
-					.withUser(target).withOpponent(damager).build();
+			ActionContext context = new ActionContext.Builder(
+					bow ? TriggerRegistry.DAMAGED_BY_PROJECTILE : TriggerRegistry.DAMAGED_BY_ENTITY).event(event)
+							.item(item).user(target).opponent(damager).build();
 
-			EnchantmentContext mobContext = EnchantmentContext.Builder
-					.create(event, bow ? ActionType.HURTBY_MOB_PROJECTILE : ActionType.HURTBY_MOB).withItem(item)
-					.withUser(target).withOpponent(damager).build();
-
-			handleItem(item, damagerIsPlayer, playerContext, mobContext);
+			handleItem(item, context);
 		}
 	}
 
-	private void handleItem(ItemStack item, boolean player, EnchantmentContext playerContext,
-			EnchantmentContext mobContext) {
+	private void handleItem(ItemStack item, ActionContext context) {
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();
 
@@ -146,11 +134,7 @@ public class CombatListener implements Listener {
 
 			int level = enchants.getValue();
 
-			if (player) {
-				enchantment.processActions(level, playerContext);
-			} else {
-				enchantment.processActions(level, mobContext);
-			}
+			enchantment.processActions(level, context);
 		}
 	}
 }

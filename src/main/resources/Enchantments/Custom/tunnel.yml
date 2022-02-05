@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - BREAK_BLOCK
   
 valid-items:
   - PICKAXES
@@ -24,8 +21,10 @@ group: 'unique'
 levels:
   1:
     min-enchanting-level: 25
-    conditions:
-      - correct_tool(true)
-    effects:
-      - break_block(0,1,0)
-      - break_block(0,-1,0)
+    actions:
+      - triggers: BREAK_BLOCK
+        conditions:
+          - correct_tool(TARGET,true)
+        effects:
+          - break_block(USER,TARGET,0,1,0)
+          - break_block(USER,TARGET,0,-1,0)

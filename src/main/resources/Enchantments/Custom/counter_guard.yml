@@ -11,10 +11,6 @@ weights:
 
 min-level: 1
 max-level: 5
-
-actions:
-  - HURTBY_PLAYER
-  - HURTBY_MOB
   
 valid-items:
   - CHESTPLATES
@@ -24,29 +20,41 @@ group: 'unique'
 levels:
   1:
     min-enchanting-level: 14
-    conditions:
-      - cooldown(120)
-    effects:
-      - potion_effect(opponent,weakness,40,5)
+    actions:
+      - triggers: DAMAGED_BY_ENTITY
+        conditions:
+          - cooldown(120)
+        effects:
+          - ADD_EFFECT(opponent,weakness,40,5)
   2:
     min-enchanting-level: 18
-    conditions:
-      - cooldown(120)
-    effects:
-      - potion_effect(opponent,weakness,80,5)
+    actions:
+      - triggers: DAMAGED_BY_ENTITY
+        conditions:
+          - cooldown(120)
+        effects:
+          - ADD_EFFECT(opponent,weakness,80,5)
   3:
-    conditions:
-      - cooldown(120)
-    effects:
-      - potion_effect(opponent,weakness,120,5)
+    min-enchanting-level: 22
+    actions:
+      - triggers: DAMAGED_BY_ENTITY
+        conditions:
+          - cooldown(120)
+        effects:
+          - ADD_EFFECT(opponent,weakness,120,5)
   4:
-    conditions:
-      - cooldown(120)
-    effects:
-      - potion_effect(opponent,weakness,160,5)
+    min-enchanting-level: 26
+    actions:
+      - triggers: DAMAGED_BY_ENTITY
+        conditions:
+          - cooldown(120)
+        effects:
+          - ADD_EFFECT(opponent,weakness,160,5)
   5:
     min-enchanting-level: 30
-    conditions:
-      - cooldown(120)
-    effects:
-      - potion_effect(opponent,weakness,200,5)
+    actions:
+      - triggers: DAMAGED_BY_ENTITY
+        conditions:
+          - cooldown(120)
+        effects:
+          - ADD_EFFECT(opponent,weakness,200,5)

@@ -11,13 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - HURTBY_MOB
-  - HURTBY_PLAYER
-  - HURTBY_MOB_PROJECTILE
-  - HURTBY_PLAYER_PROJECTILE
-  - HURTBY_OTHER
   
 valid-items:
   - ELYTRA
@@ -25,11 +18,13 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 25
-    conditions:
-      - gliding(user,false)
-      - health_percent(user,<20)
-      - cooldown(20)
-    effects:
-      - delay(1)
-      - launch(user,0,2,0)
-      - sound(user,ENTITY_FIREWORK_ROCKET_LAUNCH,1,1)
+    actions:
+      - triggers: DAMAGED_BY_ENTITY,DAMAGED_BY_PROJECTILE
+        conditions:
+          - is_gliding(user,false)
+          - health(user, %health% < (%max% * 0.2))
+          - cooldown(20)
+        effects:
+          - delay(1)
+          - velocity(user,0,2,0)
+          - play_sound(user,ENTITY_FIREWORK_ROCKET_LAUNCH,1,1)

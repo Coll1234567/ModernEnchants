@@ -15,9 +15,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 public class InteractListener implements Listener {
 
@@ -41,13 +41,13 @@ public class InteractListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext.Builder builder = EnchantmentContext.Builder.create(event, ActionType.RIGHT_CLICK)
-					.withItem(item).withUser(player);
+			ActionContext.Builder builder = new ActionContext.Builder(TriggerRegistry.RIGHT_CLICK).event(event)
+					.item(item).user(player);
 
 			if (block != null)
-				builder.withTargetBlock(block);
+				builder.targetLocation(block.getLocation());
 
-			EnchantmentContext context = builder.build();
+			ActionContext context = builder.build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();

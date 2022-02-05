@@ -45,7 +45,6 @@ public class EnchantmentRegistry {
 		}
 	}
 
-
 	public IEnchantment getRandomEnchantment(ItemStack item, ObtainMethod method, boolean book) {
 		Material type = item.getType();
 		WeightedRandom<IEnchantment> random = this.itemCache.get(type);
@@ -98,7 +97,7 @@ public class EnchantmentRegistry {
 			return getEnchantment("minecraft:" + name);
 		return enchantment;
 	}
-	
+
 	public boolean isEnchantable(Material type) {
 		return this.validItemSet.contains(type);
 	}
@@ -118,13 +117,14 @@ public class EnchantmentRegistry {
 	public CustomEnchantment getPlaceholderEnchant() {
 		return placeholderEnchant;
 	}
-	
+
 	public void unregisterAll() {
 		try {
 			Field byIdField = Enchantment.class.getDeclaredField("byKey");
 			Field byNameField = Enchantment.class.getDeclaredField("byName");
 			byIdField.setAccessible(true);
 			byNameField.setAccessible(true);
+
 			@SuppressWarnings("unchecked")
 			Map<NamespacedKey, Enchantment> keyMap = (Map<NamespacedKey, Enchantment>) byIdField.get(null);
 			@SuppressWarnings("unchecked")

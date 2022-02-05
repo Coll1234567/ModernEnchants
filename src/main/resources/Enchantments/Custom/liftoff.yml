@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - RIGHT_CLICK
   
 valid-items:
   - ELYTRA
@@ -21,10 +18,12 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 25
-    conditions:
-      - on_ground(user,true)
-      - pitch(user,>89)
-      - cooldown(15)
-    effects:
-      - launch(user,0,2,0)
-      - sound(user,ENTITY_FIREWORK_ROCKET_LAUNCH,1,1)
+    actions:
+      - triggers: RIGHT_CLICK
+        conditions:
+          - on_ground(user,true)
+          - pitch(user,%pitch% > 89)
+          - cooldown(15)
+        effects:
+          - VELOCITY(user,0,2,0)
+          - PLAY_SOUND(user,ENTITY_FIREWORK_ROCKET_LAUNCH,1,1)

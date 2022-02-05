@@ -62,7 +62,11 @@ public class ItemUtils {
 				break;
 			case "seperate":
 				lore.add(index++, text);
-				lore.addAll(StringUtils.splitString(enchantment.getDescription(), 30));
+				desc = StringUtils.splitString(enchantment.getDescription(), 30);
+
+				for (String line : desc) {
+					lore.add(index++, line);
+				}
 				break;
 			default:
 				lore.add(index++, text);
@@ -70,11 +74,13 @@ public class ItemUtils {
 
 			}
 		}
+
 		if (book) {
 			meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 		} else {
 			meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
 		}
+
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 	}
@@ -112,6 +118,7 @@ public class ItemUtils {
 				lore.removeIf(line -> line.equals(desc));
 			}
 		}
+
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 	}

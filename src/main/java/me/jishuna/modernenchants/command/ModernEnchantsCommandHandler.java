@@ -13,7 +13,6 @@ public class ModernEnchantsCommandHandler extends ArgumentCommandHandler {
 		setDefault(info);
 		addArgumentExecutor("info", info);
 		addArgumentExecutor("enchant", new EnchantCommand(plugin));
-		addArgumentExecutor("effects", new EffectsCommand(plugin));
 		addArgumentExecutor("actions", new ActionsCommand(plugin));
 		addArgumentExecutor("descriptions", new DescriptionsCommand(plugin));
 		addArgumentExecutor("enchants", new ListEnchantsCommand(plugin));

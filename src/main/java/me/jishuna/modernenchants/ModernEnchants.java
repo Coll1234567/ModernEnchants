@@ -12,11 +12,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 
+import me.jishuna.actionconfiglib.ActionConfigLib;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
 import me.jishuna.commonlib.inventory.CustomInventoryManager;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
-import me.jishuna.modernenchants.api.condition.ConditionRegistry;
-import me.jishuna.modernenchants.api.effect.EffectRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
 import me.jishuna.modernenchants.api.enchantment.EnchantmentRegistry;
 import me.jishuna.modernenchants.api.enchantment.VanillaEnchantment;
@@ -40,12 +40,11 @@ public class ModernEnchants extends JavaPlugin {
 	private static final String CUSTOM_PATH = "Enchantments/Custom";
 	private static final String VANILLA_PATH = "Enchantments/Vanilla";
 
-	private EffectRegistry effectRegistry;
-	private ConditionRegistry conditionRegistry;
 	private EnchantmentRegistry enchantmentRegistry;
 
 	private MessageConfig messageConfig;
 	private YamlConfiguration configuration;
+	private ActionConfigLib actionLib;
 
 	private CustomInventoryManager inventoryManager = new CustomInventoryManager();
 
@@ -53,8 +52,10 @@ public class ModernEnchants extends JavaPlugin {
 	public void onEnable() {
 		this.loadConfiguration();
 
-		this.effectRegistry = new EffectRegistry();
-		this.conditionRegistry = new ConditionRegistry();
+		this.actionLib = ActionConfigLib.createInstance(this);
+		this.actionLib.registerEffects("me.jishuna.modernenchants.api.effect");
+		this.actionLib.registerConditions("me.jishuna.modernenchants.api.condition");
+
 		this.enchantmentRegistry = new EnchantmentRegistry();
 
 		PluginManager pm = Bukkit.getPluginManager();
@@ -126,10 +127,10 @@ public class ModernEnchants extends JavaPlugin {
 			try {
 				CustomEnchantment enchantment = new CustomEnchantment(this, config);
 				this.enchantmentRegistry.registerAndInjectEnchantment(enchantment);
-			} catch (InvalidEnchantmentException ex) {
+			} catch (ParsingException ex) {
 				String enchantName = config.getString("name", "Unknown");
-				ex.addAdditionalInfo("Error while parsing enchantment \"" + enchantName + "\":");
-				ex.log(getLogger());
+				new ParsingException("Error while parsing enchantment \"" + enchantName + "\":", ex)
+						.log(this.getLogger(), 0);
 			}
 		}
 	}
@@ -177,12 +178,8 @@ public class ModernEnchants extends JavaPlugin {
 		return this.messageConfig.getString(key);
 	}
 
-	public EffectRegistry getEffectRegistry() {
-		return effectRegistry;
-	}
-
-	public ConditionRegistry getConditionRegistry() {
-		return conditionRegistry;
+	public ActionConfigLib getActionLib() {
+		return actionLib;
 	}
 
 	public EnchantmentRegistry getEnchantmentRegistry() {

@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - WORN
   
 valid-items:
   - CHESTPLATES
@@ -21,8 +18,10 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 20
-    conditions:
-      - y_level(user,<0)
-    effects:
-      - potion_effect(user,damage_resistance,19,1)
-      - potion_effect(user,fast_digging,19,1)
+    actions:
+      - triggers: TICK
+        conditions:
+          - y_level(user,%y% < 0)
+        effects:
+          - ADD_EFFECT(user,damage_resistance,19,1)
+          - ADD_EFFECT(user,fast_digging,19,1)

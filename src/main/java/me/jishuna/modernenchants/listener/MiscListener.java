@@ -16,9 +16,9 @@ import org.bukkit.event.player.PlayerFishEvent.State;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
-import me.jishuna.modernenchants.api.ActionType;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.modernenchants.api.enchantment.CustomEnchantment;
-import me.jishuna.modernenchants.api.enchantment.EnchantmentContext;
 
 public class MiscListener implements Listener {
 	boolean ignore = false;
@@ -26,14 +26,14 @@ public class MiscListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onFish(PlayerFishEvent event) {
 		Player player = event.getPlayer();
-		ItemStack item = getRod(event.getPlayer());
+		ItemStack item = getRod(player);
 
 		if (item == null || item.getType().isAir())
 			return;
 
 		if (event.getState() == State.CAUGHT_FISH) {
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.CATCH_FISH).withItem(item)
-					.withUser(player).build();
+			ActionContext context = new ActionContext.Builder(TriggerRegistry.CATCH_FISH).event(event).item(item)
+					.user(player).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();
@@ -50,7 +50,7 @@ public class MiscListener implements Listener {
 
 	@EventHandler
 	public void onBowShoot(ProjectileLaunchEvent event) {
-		if (ignore || !(event.getEntity().getShooter()instanceof LivingEntity entity))
+		if (ignore || !(event.getEntity().getShooter() instanceof LivingEntity entity))
 			return;
 
 		Set<ItemStack> items = new HashSet<>();
@@ -62,8 +62,8 @@ public class MiscListener implements Listener {
 			if (item == null || item.getType().isAir())
 				continue;
 
-			EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.SHOOT_PROJECTILE)
-					.withItem(item).withUser(entity).build();
+			ActionContext context = new ActionContext.Builder(TriggerRegistry.SHOOT_PROJECTILE).event(event).item(item)
+					.user(entity).build();
 
 			for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 				Enchantment enchant = enchants.getKey();
@@ -84,8 +84,8 @@ public class MiscListener implements Listener {
 		if (item.getType().isAir())
 			return;
 
-		EnchantmentContext context = EnchantmentContext.Builder.create(event, ActionType.DURABILITY_LOSS).withItem(item)
-				.withUser(event.getPlayer()).build();
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.DURABILITY_LOST).event(event).item(item)
+				.user(event.getPlayer()).build();
 
 		for (Entry<Enchantment, Integer> enchants : item.getEnchantments().entrySet()) {
 			Enchantment enchant = enchants.getKey();

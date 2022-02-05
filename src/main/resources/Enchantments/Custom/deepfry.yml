@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 3
-
-actions:
-  - CATCH_FISH
   
 valid-items:
   - FISHING_ROD
@@ -21,17 +18,23 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 0
-    conditions:
-      - chance(33.3)
-    effects:
-      - smelt()
+    actions:
+      - triggers: CATCH_FISH
+        conditions:
+          - chance(33.3)
+        effects:
+          - smelt()
   2:
     min-enchanting-level: 15
-    conditions:
-      - chance(66.6)
-    effects:
-      - smelt()
+    actions:
+      - triggers: CATCH_FISH
+        conditions:
+          - chance(66.6)
+        effects:
+          - smelt()
   3:
     min-enchanting-level: 25
-    effects:
-      - smelt()
+    actions:
+      - triggers: CATCH_FISH
+        effects:
+          - smelt()

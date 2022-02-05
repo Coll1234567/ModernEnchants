@@ -11,9 +11,6 @@ weights:
 
 min-level: 1
 max-level: 1
-
-actions:
-  - WORN
   
 valid-items:
   - HELMETS
@@ -21,7 +18,9 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 20
-    conditions:
-      - y_level(user,<63)
-    effects:
-      - potion_effect(user,night_vision,220,1)
+    actions:
+      - triggers: TICK
+        conditions:
+          - y_level(user,%y% < 63)
+        effects:
+          - ADD_EFFECT(user,night_vision,220,1)

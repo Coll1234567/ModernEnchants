@@ -11,10 +11,6 @@ weights:
 
 min-level: 1
 max-level: 5
-
-actions:
-  - ATTACK_MOB_PROJECTILE
-  - ATTACK_PLAYER_PROJECTILE
   
 valid-items:
   - BOW
@@ -22,31 +18,41 @@ valid-items:
 levels:
   1:
     min-enchanting-level: 0
-    conditions:
-      - chance(3)
-    effects:
-      - lightning(opponent)
+    actions:
+      - triggers: ATTACK_PROJECTILE
+        conditions:
+          - chance(3)
+        effects:
+          - lightning(opponent)
   2:
     min-enchanting-level: 6
-    conditions:
-      - chance(6)
-    effects:
-      - lightning(opponent)
+    actions:
+      - triggers: ATTACK_PROJECTILE
+        conditions:
+          - chance(6)
+        effects:
+          - lightning(opponent)
   3:
     min-enchanting-level: 12
-    conditions:
-      - chance(9)
-    effects:
-      - lightning(opponent)
+    actions:
+      - triggers: ATTACK_PROJECTILE
+        conditions:
+          - chance(9)
+        effects:
+          - lightning(opponent)
   4:
     min-enchanting-level: 18
-    conditions:
-      - chance(12)
-    effects:
-      - lightning(opponent)
+    actions:
+      - triggers: ATTACK_PROJECTILE
+        conditions:
+          - chance(12)
+        effects:
+          - lightning(opponent)
   5:
     min-enchanting-level: 24
-    conditions:
-      - chance(15)
-    effects:
-      - lightning(opponent)
+    actions:
+      - triggers: ATTACK_PROJECTILE
+        conditions:
+          - chance(15)
+        effects:
+          - lightning(opponent)
